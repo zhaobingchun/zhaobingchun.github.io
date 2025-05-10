@@ -447,7 +447,7 @@ btf.addGlobalFn('pjaxComplete', () => {
   const getComment = ele => {
     const runTwikoo = () => {
       twikoo.getRecentComments({
-        envId: 'https://comment.jrrm.top',
+        envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
         region: '',
         pageSize: 6,
         includeReply: true

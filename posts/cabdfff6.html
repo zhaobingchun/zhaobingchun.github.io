@@ -599,7 +599,7 @@ C:\Users\iperf3&gt;iperf3.exe -c 192.168.1.43 -p 12345 -i 1 -t 20 -w 100k
     const countELement = document.getElementById('twikoo-count')
     if(!countELement) return
     twikoo.getCommentsCount({
-      envId: 'https://comment.jrrm.top',
+      envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
       region: '',
       urls: [window.location.pathname],
       includeReply: false
@@ -613,7 +613,7 @@ C:\Users\iperf3&gt;iperf3.exe -c 192.168.1.43 -p 12345 -i 1 -t 20 -w 100k
   const init = (el = document, path = location.pathname) => {
     twikoo.init({
       el: el.querySelector('#twikoo-wrap'),
-      envId: 'https://comment.jrrm.top',
+      envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
       region: '',
       onCommentLoaded: () => {
         btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
@@ -716,7 +716,7 @@ C:\Users\iperf3&gt;iperf3.exe -c 192.168.1.43 -p 12345 -i 1 -t 20 -w 100k
   const getComment = ele => {
     const runTwikoo = () => {
       twikoo.getRecentComments({
-        envId: 'https://comment.jrrm.top',
+        envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
         region: '',
         pageSize: 6,
         includeReply: true
