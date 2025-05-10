@@ -441,29 +441,40 @@ btf.addGlobalFn('pjaxComplete', () => {
     btf.addGlobalFn('pjaxComplete', () => newestComments.newestCommentInit(name, getComment), name)
   }
 }</script><script>window.addEventListener('load', () => {
-  const keyName = 'disqus-newest-comments'
+  const keyName = 'twikoo-newest-comments'
   const { changeContent, generateHtml, run } = window.newestComments
 
   const getComment = ele => {
-    fetch('https://disqus.com/api/3.0/forums/listPosts.json?forum=www-jrrm-top&related=thread&limit=6&api_key=')
-      .then(response => response.json())
-      .then(data => {
-        const disqusArray = data.response.map(item => {
+    const runTwikoo = () => {
+      twikoo.getRecentComments({
+        envId: 'https://comment.jrrm.top',
+        region: '',
+        pageSize: 6,
+        includeReply: true
+      }).then(res => {
+        const twikooArray = res.map(e => {
           return {
-            'avatar': item.author.avatar.cache,
-            'content': changeContent(item.message),
-            'nick': item.author.name,
-            'url': item.url,
-            'date': item.createdAt
+            'content': changeContent(e.comment),
+            'avatar': e.avatar,
+            'nick': e.nick,
+            'url': e.url + '#' + e.id,
+            'date': new Date(e.created).toISOString()
           }
         })
 
-        btf.saveToLocal.set(keyName, JSON.stringify(disqusArray), 10/(60*24))
-        generateHtml(disqusArray, ele)
-      }).catch(e => {
-        console.error(e)
+        btf.saveToLocal.set(keyName, JSON.stringify(twikooArray), 10/(60*24))
+        generateHtml(twikooArray, ele)
+      }).catch(err => {
+        console.error(err)
         ele.textContent= "无法获取评论，请确认相关配置是否正确"
       })
+    }
+
+    if (typeof twikoo === 'object') {
+      runTwikoo()
+    } else {
+      btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(runTwikoo)
+    }
   }
 
   run(keyName, getComment)
