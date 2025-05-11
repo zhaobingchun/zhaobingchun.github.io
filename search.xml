@@ -8,7 +8,7 @@
       <link href="/posts/4b241634.html"/>
       <url>/posts/4b241634.html</url>
       
-        <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h1 id="开始搭建"><a href="#开始搭建" class="headerlink" title="开始搭建"></a>开始搭建</h1><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1>]]></content>
+        <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>开始之前，介绍一下博客搭建的原因。<br>之前一直在使用b3log搭建的blog，由于本人一直做技术，总把时间放在了优化代码上，导致博客基本没有更新。<br>另外，最近有其他的项目需要使用到原来的ecs，导致博客网站不稳定，于是决定或一个单纯的写文章的系统，用来搭建博客。<br>于是选中了hexo，这样我看以专注于写文章，将博客放在静态服务器上，减少成本。</p><h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><ol><li>准备域名，我使用的是阿里云的域名，价格比较便宜，一年20元。</li><li>备案，域名备案，ICP 备案</li><li>选择博客部署的位置，开始选择的github page，但是后来发现github page的访问速度太慢，于是换成了cloudflare 的pages，速度快了很多。</li><li>安装nodejs，hexo的运行需要nodejs的支持。</li><li>安装hexo，hexo的安装非常简单，只需要使用npm安装即可。</li><li>安装hexo的插件，hexo的插件也非常多，可以根据自己的需求安装。</li><li>配置 CDN 加快访问速度。</li></ol><h1 id="开始搭建"><a href="#开始搭建" class="headerlink" title="开始搭建"></a>开始搭建</h1><h2 id="域名"><a href="#域名" class="headerlink" title="域名"></a>域名</h2><p>由于之前已经有博客了，本次只是迁移，所以省去了买域名和备案的过程</p><h2 id="搭建博客"><a href="#搭建博客" class="headerlink" title="搭建博客"></a>搭建博客</h2><h3 id="安装nodejs"><a href="#安装nodejs" class="headerlink" title="安装nodejs"></a>安装nodejs</h3><p>我之前一直在使用mise管理nodejs 版本，本次也直接使用mise安装nodejs<br>关于mise可以看 <a href="https://github.com/mise-tea/mise">mise</a></p><pre><code class="language-bash">brew install misemise use node@lts</code></pre><h3 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h3><pre><code class="language-bash">npm install -g hexo-cli</code></pre><h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><pre><code class="language-bash">hexo init blog</code></pre><h3 id="创建文章"><a href="#创建文章" class="headerlink" title="创建文章"></a>创建文章</h3><pre><code class="language-bash">hexo new post &quot;文章标题&quot;</code></pre><h3 id="安装butterfly主题"><a href="#安装butterfly主题" class="headerlink" title="安装butterfly主题"></a>安装butterfly主题</h3><pre><code class="language-bash">npm install hexo-theme-butterfly</code></pre><h3 id="配置butterfly主题"><a href="#配置butterfly主题" class="headerlink" title="配置butterfly主题"></a>配置butterfly主题</h3><p>打开 <code>blog/_config.yml</code> 文件，找到 <code>theme</code> 配置，将其设置为 <code>butterfly</code></p><pre><code class="language-yaml">theme: butterfly</code></pre><h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="创建github-仓库"><a href="#创建github-仓库" class="headerlink" title="创建github 仓库"></a>创建github 仓库</h3><p>在github 创建一个仓库xxx.github.io，将博客部署到github 上<br>安装hexo-deployer-git</p><pre><code class="language-bash">npm install hexo-deployer-git --save</code></pre><p>在 <code>blog/_config.yml</code> 文件中添加以下配置</p><pre><code class="language-yaml">deploy:  type: git  repo: https://github.com/xxx/xxx.github.io.git  branch: master</code></pre><h3 id="部署博客"><a href="#部署博客" class="headerlink" title="部署博客"></a>部署博客</h3><pre><code class="language-bash">hexo cleanhexo generatehexo deploy</code></pre><p>这时你的博客已经上传到github 上了，但是访问速度太慢，于是我使用cloudflare 的pages 来加速访问。</p><h3 id="配置cloudflare-的pages"><a href="#配置cloudflare-的pages" class="headerlink" title="配置cloudflare 的pages"></a>配置cloudflare 的pages</h3><p>打开cloudflare 的控制台，找到 <code>Workers 和 Pages</code> ，点击 <code>创建</code> ，选择 <code>Pages</code>，选择导入现有仓库，选择刚才创建的github 仓库，点击 <code>创建</code> ，然后点击 <code>部署</code> ，等待部署完成。</p><h3 id="配置自定义域名"><a href="#配置自定义域名" class="headerlink" title="配置自定义域名"></a>配置自定义域名</h3><p>找到刚才部署好的pages，点击 <code>管理</code> ，找到 <code>自定义域名</code> ，点击 <code>添加</code> ，输入你的域名，点击 <code>添加</code>，之后按照页面提示，添加CNAME 记录。<br><img src="/../images/blog/blog-dns.png"></p><p>现在你就可以通过你的域名访问博客了。</p><h3 id="全球加速"><a href="#全球加速" class="headerlink" title="全球加速"></a>全球加速</h3><p>由于 cloudflare 的pages 是国外的，所以访问速度比较慢，于是我考虑将博客使用国内CDN进行加速，并且通过 DNS 多线路解析，将国内用户域名解析到国内CDN上。</p><h4 id="配置国内CDN"><a href="#配置国内CDN" class="headerlink" title="配置国内CDN"></a>配置国内CDN</h4><p>我使用的是腾讯云的CDN，配置如下：<br><img src="/../images/blog/blog-cdn.png"><br><img src="/../images/blog/blog-cdn-2.png"></p><h4 id="配置DNS-多线路解析"><a href="#配置DNS-多线路解析" class="headerlink" title="配置DNS 多线路解析"></a>配置DNS 多线路解析</h4><p>我使用的是阿里云的DNS，添加两条解析记录，请求来源选择中国地区解析到腾讯云的CDN，请求来源选择境外解析到cloudflare 的pages。<br><img src="/../images/blog/blog-dns-2.png"></p><h4 id="最后使用站长工具检测下速度"><a href="#最后使用站长工具检测下速度" class="headerlink" title="最后使用站长工具检测下速度"></a>最后使用站长工具检测下速度</h4><p>国内测速：<br><img src="/../images/blog/china-test.png"><br>境外测速：<br><img src="/../images/blog/global-test.png"><br>看到大部分地区都在1s以内，速度还是非常快的。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本次博客搭建，使用的是hexo 搭建的，主题使用的是butterfly，部署在github 上，通过cloudflare 的pages 进行加速，使用国内CDN进行加速，通过DNS 多线路解析，将国内用户域名解析到国内CDN上，保证国内用户访问速度。下一期会介绍博客主题的一些配置。</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://hexo.io/zh-cn/">hexo</a><br><a href="https://butterfly.js.org/">butterfly</a><br><a href="https://www.cloudflare.com/">cloudflare</a></p>]]></content>
       
       
       <categories>
@@ -343,17 +343,6 @@
     
     
     <entry>
-      <title>友链</title>
-      <link href="/link/index.html"/>
-      <url>/link/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>分类</title>
       <link href="/categories/index.html"/>
       <url>/categories/index.html</url>
@@ -365,20 +354,9 @@
     
     
     <entry>
-      <title>留言板</title>
-      <link href="/messageboard/index.html"/>
-      <url>/messageboard/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
+      <title>友链</title>
+      <link href="/link/index.html"/>
+      <url>/link/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -398,6 +376,17 @@
     
     
     <entry>
+      <title>留言板</title>
+      <link href="/messageboard/index.html"/>
+      <url>/messageboard/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>photo</title>
       <link href="/photo/index.html"/>
       <url>/photo/index.html</url>
@@ -409,9 +398,9 @@
     
     
     <entry>
-      <title>日志</title>
-      <link href="/timeline/index.html"/>
-      <url>/timeline/index.html</url>
+      <title>说说</title>
+      <link href="/shuoshuo/index.html"/>
+      <url>/shuoshuo/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -420,9 +409,20 @@
     
     
     <entry>
-      <title>说说</title>
-      <link href="/shuoshuo/index.html"/>
-      <url>/shuoshuo/index.html</url>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>日志</title>
+      <link href="/timeline/index.html"/>
+      <url>/timeline/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
