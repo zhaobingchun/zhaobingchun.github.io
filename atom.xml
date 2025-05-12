@@ -6,7 +6,7 @@
   <link href="https://www.jrrm.top/atom.xml" rel="self"/>
   <link href="https://pubsubhubbub.appspot.com/" rel="hub"/>
   <link href="https://www.jrrm.top/"/>
-  <updated>2025-05-11T16:10:13.045Z</updated>
+  <updated>2025-05-11T16:10:48.197Z</updated>
   <id>https://www.jrrm.top/</id>
   
   <author>
@@ -28,7 +28,7 @@
     <link href="https://www.jrrm.top/posts/4b241634.html"/>
     <id>https://www.jrrm.top/posts/4b241634.html</id>
     <published>2025-05-11T05:23:35.000Z</published>
-    <updated>2025-05-11T16:10:13.045Z</updated>
+    <updated>2025-05-11T16:10:48.197Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>开始之前，介绍一下博客搭建的原因。<br>之前一直在使用b3log搭建的blog，由于本人一直做技术，总把时间放在了优化代码上，导致博客基本没有更新。<br>另外，最近有其他的项目需要使用到原来的ecs，导致博客网站不稳定，于是决定或一个单纯的写文章的系统，用来搭建博客。<br>于是选中了hexo，这样我看以专注于写文章，将博客放在静态服务器上，减少成本。</p><h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><ol><li>准备域名，我使用的是阿里云的域名，价格比较便宜，一年20元。</li><li>备案，域名备案，ICP 备案</li><li>选择博客部署的位置，开始选择的github page，但是后来发现github page的访问速度太慢，于是换成了cloudflare 的pages，速度快了很多。</li><li>安装nodejs，hexo的运行需要nodejs的支持。</li><li>安装hexo，hexo的安装非常简单，只需要使用npm安装即可。</li><li>安装hexo的插件，hexo的插件也非常多，可以根据自己的需求安装。</li><li>配置 CDN 加快访问速度。</li></ol><h1 id="开始搭建"><a href="#开始搭建" class="headerlink" title="开始搭建"></a>开始搭建</h1><h2 id="域名"><a href="#域名" class="headerlink" title="域名"></a>域名</h2><p>由于之前已经有博客了，本次只是迁移，所以省去了买域名和备案的过程</p><h2 id="搭建博客"><a href="#搭建博客" class="headerlink" title="搭建博客"></a>搭建博客</h2><h3 id="安装nodejs"><a href="#安装nodejs" class="headerlink" title="安装nodejs"></a>安装nodejs</h3><p>我之前一直在使用mise管理nodejs 版本，本次也直接使用mise安装nodejs<br>关于mise可以看 <a href="https://github.com/mise-tea/mise">mise</a></p><pre><code class="language-bash">brew install misemise use node@lts</code></pre><h3 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h3><pre><code class="language-bash">npm install -g hexo-cli</code></pre><h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><pre><code class="language-bash">hexo init blog</code></pre><h3 id="创建文章"><a href="#创建文章" class="headerlink" title="创建文章"></a>创建文章</h3><pre><code class="language-bash">hexo new post &quot;文章标题&quot;</code></pre><h3 id="安装butterfly主题"><a href="#安装butterfly主题" class="headerlink" title="安装butterfly主题"></a>安装butterfly主题</h3><pre><code class="language-bash">npm install hexo-theme-butterfly</code></pre><h3 id="配置butterfly主题"><a href="#配置butterfly主题" class="headerlink" title="配置butterfly主题"></a>配置butterfly主题</h3><p>打开 <code>blog/_config.yml</code> 文件，找到 <code>theme</code> 配置，将其设置为 <code>butterfly</code></p><pre><code class="language-yaml">theme: butterfly</code></pre><h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="创建github-仓库"><a href="#创建github-仓库" class="headerlink" title="创建github 仓库"></a>创建github 仓库</h3><p>在github 创建一个仓库xxx.github.io，将博客部署到github 上<br>安装hexo-deployer-git</p><pre><code class="language-bash">npm install hexo-deployer-git --save</code></pre><p>在 <code>blog/_config.yml</code> 文件中添加以下配置</p><pre><code class="language-yaml">deploy:  type: git  repo: https://github.com/xxx/xxx.github.io.git  branch: master</code></pre><h3 id="部署博客"><a href="#部署博客" class="headerlink" title="部署博客"></a>部署博客</h3><pre><code class="language-bash">hexo cleanhexo generatehexo deploy</code></pre><p>这时你的博客已经上传到github 上了，但是访问速度太慢，于是我使用cloudflare 的pages 来加速访问。</p><h3 id="配置cloudflare-的pages"><a href="#配置cloudflare-的pages" class="headerlink" title="配置cloudflare 的pages"></a>配置cloudflare 的pages</h3><p>打开cloudflare 的控制台，找到 <code>Workers 和 Pages</code> ，点击 <code>创建</code> ，选择 <code>Pages</code>，选择导入现有仓库，选择刚才创建的github 仓库，点击 <code>创建</code> ，然后点击 <code>部署</code> ，等待部署完成。</p><h3 id="配置自定义域名"><a href="#配置自定义域名" class="headerlink" title="配置自定义域名"></a>配置自定义域名</h3><p>找到刚才部署好的pages，点击 <code>管理</code> ，找到 <code>自定义域名</code> ，点击 <code>添加</code> ，输入你的域名，点击 <code>添加</code>，之后按照页面提示，添加CNAME 记录。<br><img src="/../images/blog/blog-dns.png"></p><p>现在你就可以通过你的域名访问博客了。</p><h3 id="全球加速"><a href="#全球加速" class="headerlink" title="全球加速"></a>全球加速</h3><p>由于 cloudflare 的pages 是国外的，所以访问速度比较慢，于是我考虑将博客使用国内CDN进行加速，并且通过 DNS 多线路解析，将国内用户域名解析到国内CDN上。</p><h4 id="配置国内CDN"><a href="#配置国内CDN" class="headerlink" title="配置国内CDN"></a>配置国内CDN</h4><p>我使用的是腾讯云的CDN，配置如下：<br><img src="/../images/blog/blog-cdn.png"><br><img src="/../images/blog/blog-cdn-2.png"></p><h4 id="配置DNS-多线路解析"><a href="#配置DNS-多线路解析" class="headerlink" title="配置DNS 多线路解析"></a>配置DNS 多线路解析</h4><p>我使用的是阿里云的DNS，添加两条解析记录，请求来源选择中国地区解析到腾讯云的CDN，请求来源选择境外解析到cloudflare 的pages。<br><img src="/../images/blog/blog-dns-2.png"></p><h4 id="最后使用站长工具检测下速度"><a href="#最后使用站长工具检测下速度" class="headerlink" title="最后使用站长工具检测下速度"></a>最后使用站长工具检测下速度</h4><p>国内测速：<br><img src="/../images/blog/china-test.png"><br>境外测速：<br><img src="/../images/blog/global-test.png"><br>看到大部分地区都在1s以内，速度还是非常快的。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本次博客搭建，使用的是hexo 搭建的，主题使用的是butterfly，部署在github 上，通过cloudflare 的pages 进行加速，使用国内CDN进行加速，通过DNS 多线路解析，将国内用户域名解析到国内CDN上，保证国内用户访问速度。下一期会介绍博客主题的一些配置。</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://hexo.io/zh-cn/">hexo</a><br><a href="https://butterfly.js.org/">butterfly</a><br><a href="https://www.cloudflare.com/">cloudflare</a></p>]]></content>
     
@@ -52,7 +52,7 @@
     <link href="https://www.jrrm.top/posts/734fbfdb.html"/>
     <id>https://www.jrrm.top/posts/734fbfdb.html</id>
     <published>2025-05-10T16:00:00.000Z</published>
-    <updated>2025-05-11T10:58:07.117Z</updated>
+    <updated>2025-05-11T16:10:48.502Z</updated>
     
     <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202505111746902725.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】朋友也是说好话的多，所以真肯提你缺点的人倒是你难得的好友。</p><p><audio src="https://file.alapi.cn/60s/audio/2025-05-11_267676730020222.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、统计局：4月份居民消费价格同比下降0.1%，其中城市持平，农村下降0.3%；4月份工业生产者出厂价格同比下降2.7%；</li><li>2、郑州、西昌等多地再发网约车从业及投资风险提示：避免盲目花费大笔资金“购车”入行；</li><li>3、上海杨浦区放大招：优秀“博主”购房最高可获200万补贴，要求粉丝量最低得在平台前8%水平；</li><li>4、港媒：香港首4个月共接待1600万游客，较2023年同期增长1.2倍，其中欧盟游客增长尤为显著；</li><li>5、深圳一对退休夫妻月入1.2万负债1.2亿，申请破产清算，法院回应：立案审查；</li><li>6、网友称用过一次免密支付后商家可随时扣款？微信、支付宝回应：不会乱扣费；</li><li>7、成都一男子为博流量在地铁上做怪异行为，致3人恐慌受伤，警方通报：已行拘；</li><li>8、重庆大学通报本科生发14篇SCI论文：存在论文和专利署名不当的学术不端行为，涉事学生及其父亲被处理；</li><li>9、国际足联宣布：女足世界杯将从32支球队扩军至48支，赛事举办时间将延长一周；</li><li>10、特朗普重申将对各国维持至少10%基准关税，但允许例外；中美经贸高层会谈10日在瑞士日内瓦开始举行；</li><li>11、美媒：特朗普签署公告，鼓励非法移民自愿离开美国；美法官裁定，特朗普政府不得继续推进大规模裁员或重组计划；</li><li>12、俄媒：苏联“宇宙-482”探测器流浪太空53载，近日已坠入雅加达以西的印度洋海域；</li><li>13、外媒：欧洲四国领导人呼吁达成俄乌30天停火；乌外长称乌方准备12日起实施至少30天全面无条件停火；俄罗斯称会考虑关于30天停火的提议；</li><li>14、外媒：巴基斯坦称对印度发动网络攻击，致印度约70%电网瘫痪，印度回应：为假消息；</li><li>15、外媒：印巴宣布同意立即停火，双方将于5月12日再次对话；10日晚巴方防空系统击落印度无人机，印称巴方违反停火协议，巴方暂无回应；</li></ul>]]></content>
     
@@ -77,7 +77,7 @@
     <link href="https://www.jrrm.top/posts/dab020e6.html"/>
     <id>https://www.jrrm.top/posts/dab020e6.html</id>
     <published>2025-05-09T16:00:00.000Z</published>
-    <updated>2025-05-11T10:58:07.116Z</updated>
+    <updated>2025-05-11T16:10:48.195Z</updated>
     
     <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202505101746816324.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】没有艰苦劳动，就没有科学创造。</p><p><audio src="https://file.alapi.cn/60s/audio/2025-05-10_267322886934876.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、我国4月货物贸易进出口同比增长5.6%，为历史次高，其中出口2.27万亿增长9.3%，进口1.57万亿，增长0.8%；</li><li>2、央行最新报告：积极落地5月推出的一揽子金融政策，促进经济供需平衡、物价合理回升；</li><li>3、新修订的《婚姻登记条例》10日起施行：办理结婚、离婚登记都无需再出示户口本；</li><li>4、湖北明确：将延长3天婚假、设置中小学春秋假，鼓励带薪年休假与小长假连休；</li><li>5、上海发布首份直播电商行业自律公约，禁止虚假宣传、商业诋毁；</li><li>6、京东首创外卖行业最严准入标准：发现无堂食餐厅奖励40元饭卡，上不封顶；</li><li>7、工信部出手整顿隐藏式车门把手：保证断电、碰撞时，车门系统能够开启；</li><li>8、百度地图被指“见缝插针”在导航路面植入广告，网友称影响行车安全，百度地图回应：将核实处理；</li><li>9、环球小姐李思萱学历造假：假文凭骗取港大硕士录取，获刑240天；</li><li>10、比特币时隔三个月再次突破10万美元，比特币市值排名升至全球第五，超越亚马逊；</li><li>11、外媒：美商务部长称下一个贸易协议签署国可能是印度，印度被曝愿意削减三分之二的关税差，力求与特朗普达成贸易协议；</li><li>12、美媒：特朗普寻求对年收入250万美元或以上的富人增税；特朗普拟废除AI芯片出口三级限制，巩固美国AI创新地位；</li><li>13、美媒：美众议院通过法案将“墨西哥湾”更名为“美国湾”，墨西哥宣布就“墨西哥湾”更名一事起诉谷歌；</li><li>14、外媒：美国枢机主教当选第267任天主教罗马教皇，称为利奥十四世，特朗普发文祝贺：历史性时刻；</li><li>15、外媒：巴基斯坦称印度袭击已致巴方33人死亡，已摧毁印度无人机77架；印度军方称在夜间击退巴方多次袭击；美国副总统万斯受访时称美国不会卷入印巴冲突；</li></ul>]]></content>
     
@@ -118,9 +118,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
-    
     <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
+    
+    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
     
   </entry>
   
@@ -170,9 +170,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
-    
     <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
+    
+    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
     
   </entry>
   
@@ -197,9 +197,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
-    
     <category term="快捷键" scheme="https://www.jrrm.top/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
+    
+    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
     
   </entry>
   
