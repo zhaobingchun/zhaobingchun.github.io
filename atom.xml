@@ -6,7 +6,7 @@
   <link href="https://www.jrrm.top/atom.xml" rel="self"/>
   <link href="https://pubsubhubbub.appspot.com/" rel="hub"/>
   <link href="https://www.jrrm.top/"/>
-  <updated>2025-05-21T00:00:07.507Z</updated>
+  <updated>2025-05-22T17:14:46.189Z</updated>
   <id>https://www.jrrm.top/</id>
   
   <author>
@@ -22,6 +22,31 @@
  <webfeeds:accentColor>0abab5</webfeeds:accentColor>
  <webfeeds:related layout="card" target="browser"/>
 
+  
+  <entry>
+    <title>【每日早报】-2025-05-22 - 星期四</title>
+    <link href="https://www.jrrm.top/posts/dd761a30.html"/>
+    <id>https://www.jrrm.top/posts/dd761a30.html</id>
+    <published>2025-05-22T17:14:46.189Z</published>
+    <updated>2025-05-22T17:14:46.189Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202505221747851301.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】纪律是集体的面貌，集体的声音，集体的动作，集体的表情，集体的信念。</p><p><audio src="https://file.alapi.cn/60s/audio/2025-05-22_271555753517486.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、南方进入降雨最强时段，安徽湖北湖南等地局地有大暴雨；两部门：内蒙古湖北湖南等地局地发生山洪灾害可能性较大；</li><li>2、云南文山暴雨有人员被大水冲走，官方回应：2人不幸遇难；</li><li>3、云南陆良一装载机因制动失效致6死4伤，家属称死者多为卖菜和买菜村民，操作人员已被警方控制；</li><li>4、广东明确：不得以任何方式强制购买校服或捆绑销售，坚决制止校服高端化奢侈化，7月起施行；</li><li>5、招商银行、平安银行、中信银行等9家股份行跟进下调存款利率，活期存款接近零利率；</li><li>6、《上海市提振消费专项行动方案》印发：加力扩围实施消费品以旧换新；</li><li>7、《哪吒之魔童闹海》延长上映至6月30日，全球票房已超158亿元；</li><li>8、八部门：支持符合条件的小微企业在新三板挂牌，规范成长后到北交所上市；</li><li>9、美国企图全球禁用中国先进计算芯片，商务部回应：将采取坚决措施维护自身正当权益；</li><li>10、美国拟对从东南亚四国进口的太阳能产品加征新关税，柬埔寨最高达3521%；</li><li>11、美媒：美国务卿称特朗普不会出席南非G20峰会；特朗普指责拜登高级助手通过自动签名笔窃取总统权力；</li><li>12、外媒：欧盟宣布解除对叙利亚的经济制裁，叙利亚国防部门：赞赏欧盟解除对叙制裁；</li><li>13、特朗普宣布1750亿美元打造“金穹”导弹防御系统，计划3年内运转，中方回应：进攻性色彩浓厚，中方严重关切；</li><li>14、外媒：巴方称以军在杰宁向多国外交使团方向开火，以色列国防部致歉，称意在驱离相关人员，未造成人员伤亡；</li><li>15、外媒：巴基斯坦一校车遭袭爆炸，造成5名儿童死亡、38人受伤，巴方称系印度策划，印度否认参与，称指控毫无依据；</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202505221747851301.png&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+      
+    
+    
+    
+    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    
+    
+    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    
+  </entry>
   
   <entry>
     <title>【每日早报】-2025-05-21 - 星期三</title>
@@ -516,35 +541,6 @@
     <category term="UDP" scheme="https://www.jrrm.top/tags/UDP/"/>
     
     <category term="C语言" scheme="https://www.jrrm.top/tags/C%E8%AF%AD%E8%A8%80/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>为什么 TCP 协议有性能问题</title>
-    <link href="https://www.jrrm.top/posts/aaf32453.html"/>
-    <id>https://www.jrrm.top/posts/aaf32453.html</id>
-    <published>2020-10-07T15:33:38.000Z</published>
-    <updated>2020-10-08T03:56:37.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20181001.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><p>TCP 协议可以说是今天互联网的基石，作为可靠的传输协议，在今天几乎所有的数据都会通过 TCP 协议传输，然而 TCP 在设计之初没有考虑到现今复杂的网络环境，当你在地铁上或者火车上被断断续续的网络折磨时，你可能都不知道这一切可能都是 TCP 协议造成的。本文会分析 TCP 协议为什么在弱网环境下有严重的性能问题。</p><blockquote><p>注：本文的分析基于 <a href="https://tools.ietf.org/html/rfc793">RFC 793</a><a href="https://draveness.me/whys-the-design-tcp-performance/#fn:2">2</a> 中定义的 TCP 协议，从 RFC 793 发布至今已经过了将近 40 年，期间多个状态为 Proposed Standard 的非强制性 RFC 都对 TCP 协议进行了修订，尝试优化 TCP 协议的性能，例如：选择性 ACK（Selective ACK, SACK）、虚假超时剖析（Forward RTO, F-RTO）和 TCP 快开启（TCP Fast Open, TFO），最新版本的 Linux 中已经包含了这些 RFC 的实现。</p></blockquote><p>底层的数据传输协议在设计时必须要对带宽的利用率和通信延迟进行权衡和取舍，所以想要解决实际生产中的全部问题是不可能的，TCP 选择了充分利用带宽，为流量而设计，期望在尽可能短的时间内传输更多的数据。</p><blockquote><p>在网络通信中，从发送方发出数据开始到收到来自接收方的确认的时间被叫做往返时延（Round-Trip Time，RTT）。</p></blockquote><p>弱网环境是丢包率较高的特殊场景，TCP 在类似场景中的表现很差，当 RTT 为 30ms 时，一旦丢包率达到了 2%，TCP 的吞吐量就会下降 89.9%，从下面的表中我们可以看出丢包对 TCP 的吞吐量极其显著的影响：</p><table><thead><tr><th align="center">RTT</th><th align="center">TCP 吞吐量</th><th align="center">TCP 吞吐量（2% 丢包率）</th></tr></thead><tbody><tr><td align="center">0 ms</td><td align="center">93.5 Mbps</td><td align="center">3.72 Mbps</td></tr><tr><td align="center">30 ms</td><td align="center">16.2 Mbps</td><td align="center">1.63 Mbps</td></tr><tr><td align="center">60 ms</td><td align="center">8.7 Mbps</td><td align="center">1.33 Mbps</td></tr><tr><td align="center">90 ms</td><td align="center">5.32 Mbps</td><td align="center">0.85 Mbps</td></tr></tbody></table><p>本文将分析在弱网环境下（丢包率高）影响 TCP 性能的三个原因：</p><ul><li>TCP 的拥塞控制算法会在丢包时主动降低吞吐量；</li><li>TCP 的三次握手增加了数据传输的延迟和额外开销；</li><li>TCP 的累计应答机制导致了数据段的传输；</li></ul><p>在上述的三个原因中，拥塞控制算法是导致 TCP 在弱网环境下有着较差表现的首要原因，三次握手和累计应答两者的影响依次递减，但是也加剧了 TCP 的性能问题。</p><h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><p>TCP 拥塞控制算法是互联网上主要的拥塞控制措施，它使用一套基于线増积减（Additive increase&#x2F;multiplicative decrease，AIMD）的网络拥塞控制方法来控制拥塞，也是造成 TCP 性能问题的主要原因。</p><p>第一次发现的互联网拥塞崩溃是在 1986 年，NSFnet 阶段一的骨干网的处理能力从 32,000bit&#x2F;s 降到了 40bit&#x2F;s，该骨干网的处理能力直到 1987 和 1988 年，TCP 协议实现了拥塞控制之后才得到解决。正是因为发生过网络阻塞造成的崩溃，所以 TCP 的拥塞控制算法就认为只要发生了丢包当前网络就发生了拥堵，从这一假设出发，TCP 最初的实现 Tahoe 和 Reno 就使用了慢启动和拥塞避免两个机制实现拥塞控制，本节中对拥塞控制的分析就是基于这个版本的实现。</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353394tcpcongestioncontrol-76a5dc74.png" alt="2020010215779393353394tcpcongestioncontrol.png"></p><p><strong>图 1 - TCP 拥塞控制</strong></p><p>每一个 TCP 连接都会维护一个拥塞控制窗口（Congestion Window），它决定了发送方同时能向接收方发送多少数据，其作用主要有两个：</p><ol><li>防止发送方向接收方发送了太多数据，导致接收方无法处理；</li><li>防止 TCP 连接的任意一方向网络中发送大量数据，导致网络拥塞崩溃；</li></ol><p>除了拥塞窗口大小（cwnd）之外，TCP 连接的双方都有接收窗口大小（rwnd），在 TCP 连接建立之初，发送方和接收方都不清楚对方的接收窗口大小，所以通信双方需要一套动态的估算机制改变数据传输的速度，在 TCP 三次握手期间，通信双方会通过 ACK 消息通知对方自己的接收窗口大小，接收窗口大小一般是带宽延迟乘积（Bandwidth-delay product, BDP）决定的，不过在这里我们就不展开介绍了。</p><p>客户端能够同时传输的最大数据段的数量是接收窗口大小和拥塞窗口大小的最小值，即 <code>min(rwnd, cwnd)</code>。TCP 连接的初始拥塞窗口大小是一个比较小的值，在 Linux 中是由 <code>TCP_INIT_CWND</code> 定义的：</p><pre><code class="language-c">/* TCP initial congestion window as per rfc6928 */#define TCP_INIT_CWND10</code></pre><p>初始拥塞控制窗口的大小从出现之后被多次修改，几个名为 Increasing TCP’s Initial Window 的 RFC 文档：RFC2414、RFC3390和 RFC6928分别增加了 <code>initcwnd</code> 的值以适应不断提高的网络传输速度和带宽。</p><p>TCP 协议使用慢启动阈值（Slow start threshold, ssthresh）来决定使用慢启动或者拥塞避免算法：</p><ul><li>当拥塞窗口大小小于慢启动阈值时，使用慢启动；</li><li>当拥塞窗口大小大于慢启动阈值时，使用拥塞避免算法；</li><li>当拥塞窗口大小等于慢启动阈值时，使用慢启动或者拥塞避免算法；</li></ul><p><img src="https://b3logfile.com/file/2020/10/2020010815784189191423tcpslowstart-c2c0baf0.png" alt="2020010815784189191423tcpslowstart.png"></p><p><strong>图 2 - TCP 的慢启动</strong></p><p>如上图所示，使用 TCP 慢启动时，发送方每收到一个响应方的 ACK 消息，拥塞窗口大小就会加一。当拥塞窗口大小大于慢启动阈值时，就会使用拥塞避免算法：</p><ol><li><strong>线性增长</strong>：每经过一个往返时间 RTT，拥塞窗口大小会加一；</li><li><strong>积式减少</strong>：当发送方发送的数据包丢包时，慢启动阈值会设置为拥塞窗口大小的一半；</li></ol><p>TCP 的早期实现 Tahoe 和 Reno 在遇到丢包时会将拥塞控制大小重置为初始值，由于拥塞窗口大小小于慢启动阈值，所以重新进入慢启动阶段。</p><p>如果 TCP 连接刚刚建立，由于 Linux 系统的默认设置，客户端能够同时发送 10 个数据段，假设我们网络的带宽是 10M，RTT 是 40ms，每个数据段的大小是 1460 字节，那么使用 BDP 计算的通信双方窗口大小上限应该是 35，这样才能充分利用网络的带宽：</p><p>rwndmax&#x3D;10×106bit&#x2F;s⋅40×10−3s1460∗8bit&#x3D;35rwndmax&#x3D;10×106bit&#x2F;s⋅40×10−3s1460∗8bit&#x3D;35</p><p>然而拥塞控制窗口的大小从 10 涨到 35 需要 2RTT 的时间，具体的过程如下：</p><ol><li>发送方向接收方发送 <code>initcwnd = 10</code> 个数据段（消耗 0.5RTT）；</li><li>接收方接收到 10 个数据段后向发送方发送 ACK（消耗 0.5RTT）；</li><li>发送方接收到发送方的 ACK，拥塞控制窗口大小由于 10 个数据段的成功发送 +10，当前拥塞控制窗口大小达到 20；</li><li>发送方向接收方发送 20 个数据段（消耗 0.5RTT）；</li><li>接收方接收到 20 个数据段后向发送方发送 ACK（消耗 0.5RTT）；</li><li>发送方接收到发送方的 ACK，拥塞控制窗口大小由于 20 个数据段的成功发送 +20，当前拥塞控制窗口大小达到 40；</li></ol><p>从 TCP 三次握手建立连接到拥塞控制窗口大小达到假定网络状况的最大值 35 需要 3.5RTT 的时间，即 140ms，这是一个比较长的时间了。</p><p>早期互联网的大多数计算设备都通过有线网络连接，出现网络不稳定的可能性也比较低，所以 TCP 协议的设计者认为丢包意味着网络出现拥塞，一旦发生丢包，客户端疯狂重试就可能导致互联网的拥塞崩溃，所以发明了拥塞控制算法来解决该问题。</p><p>但是如今的网络环境更加复杂，无线网络的引入导致部分场景下的网络不稳定成了常态，所以丢包并不一定意味着网络拥堵，如果使用更加激进的策略传输数据，在一些场景下会得到更好的效果。</p><h2 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h2><p>TCP 使用三次握手建立连接应该是全世界所有工程师都十分了解的知识点，三次握手的主要目的是避免历史错误连接的建立并让通信的双方确定初始序列号，然而三次握手的成本相当高，在不丢包的情况下，它需要建立 TCP 连接的双方进行三次通信。</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353419basic3wayhandshake-c4a1e511.png" alt="2020010215779393353419basic3wayhandshake.png"></p><p><strong>图 3 - 常见的 TCP 三次握手</strong></p><p>如果我们要从北京访问上海的服务器，由于北京到上海的直线距离约为 1000 多公里，而光速是目前通信速度的极限，所以 RTT 一定会大于 6.7ms：</p><p>RTT&#x3D;1,000,000m÷300,000m&#x2F;ms×2&#x3D;6.7msRTT&#x3D;1,000,000m÷300,000m&#x2F;ms×2&#x3D;6.7ms</p><p>然而因为光在光纤中不是直线传播的，真正的传输速度会比光速慢 ~31%，而且数据需要在各种网络设备之间来回跳转，所以很难达到理论的极限值。在生产环境中从北京到上海的 RTT 大概在 40ms 左右，所以 TCP 建立连接所需要最短时间也需要 60ms（1.5RTT）。</p><p>在网络环境较差的地铁、车站等场景中，因为丢包率较高，客户端很难与服务端快速完成三次通信并建立 TCP 连接。当客户端长时间没有收到服务端的响应时，只能不断发起重试，随着请求次数逐渐增加，访问的延迟也会越来越高。</p><p>由于大多数的 HTTP 请求都不会携带大量的数据，未被压缩的请求和响应头大小在 ~200B 到 2KB 左右，而 TCP 三次握手带来的额外开销是 222 字节，其中以太网数据帧占 <code>3 * 14 = 42</code> 字节，IP 数据帧占 <code>3 * 20 = 60</code> 字节，TCP 数据帧约占 120 字节（三次握手的开销与请求和环境有关，具体值不固定）：</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353427tcpthreewayhandshakeoverhead-ee211593.png" alt="2020010215779393353427tcpthreewayhandshakeoverhead.png"></p><p><strong>图 4 - TCP 三次握手的额外开销</strong></p><p>虽然 TCP 不会为每一个发出的数据段建立连接，但是三次握手建立连接需要的成本还是相当高，不仅需要额外增加 1.5RTT 的网络延时，还需要增加 222 字节的额外开销，所以在弱网环境下，通过三次握手建立连接会加剧 TCP 的性能问题。</p><h2 id="重传机制"><a href="#重传机制" class="headerlink" title="重传机制"></a>重传机制</h2><p>TCP 传输的可靠性是通过序列号和接收方的 ACK 来保证的，当 TCP 传输一个数据段时，它会将该数据段的副本放到重传队列上并开启计时器：</p><ul><li>如果发送方收到了该数据段对应的 ACK 响应，当前数据段就会从重传队列中删除；</li><li>如果发送方在计时器到期之间都没有收到该数据段对应的 ACK，就会重新发送当前数据段；</li></ul><p>TCP 的 ACK 机制可能会导致发送方重新传输接收方已经收到了数据段。TCP 中的 ACK 消息表示该消息之前的全部消息都已经被成功接收和处理，例如：</p><ol><li>发送方向接收方发送了序号为 1-10 的消息；</li><li>接收方向发送方发送 ACK 8 响应；</li><li>发送方认为序号为 1-8 的消息已经被成功接收；</li></ol><p>这种 ACK 的方式在实现上比较简单，更容易保证消息的顺序性，但是在以下情况可能会导致发送方重传已经接收的数据：</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353434tcpretransmissionall-8b762109.png" alt="2020010215779393353434tcpretransmissionall.png"></p><p><strong>图 5 - TCP 的重传策略</strong></p><p>如上图所示，接收方已经收到了序号为 2-5 的数据，但是由于 TCP ACK 的语义是<strong>当前数据段前的全部数据段都已经被接收和处理</strong>，所以接收方无法发送 ACK 消息，由于发送方没有收到 ACK，<strong>所有数据段</strong>对应的计时器就会超时并重新传输数据。在丢包较为严重的网络下，这种重传机制会造成大量的带宽浪费。</p><blockquote><p><a href="https://tools.ietf.org/html/rfc2581#page-6">RFC2581</a> 中提出的快速重传就会缓解上述问题，当接收方收到乱序的数据段时，会立刻发送三个连续的 ACK 触发发送方的重传。</p></blockquote><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>TCP 协议的一些设计在今天来看虽然仍然具有巨大的价值，但是并不能适用于所有场景。为了解决 TCP 的性能问题，目前业界有两种解决方案：</p><ol><li>使用 UDP 构建性能更加优异、更灵活的传输协议，例如：QUIC等；</li><li>通过不同的手段优化 TCP 协议的性能，例如：选择性 ACK（Selective ACK, SACK），TCP 快开启（TCP Fast Open, TFO）；</li></ol><p>由于 TCP 协议在操作系统内核中，不利于协议的更新，所以第一种方案目前发展的更好，HTTP&#x2F;3 就使用了 QUIC 作为传输协议。我们在这里重新回顾一下导致 TCP 性能问题的三个重要原因：</p><ul><li>TCP 的拥塞控制在发生丢包时会进行退让，减少能够发送的数据段数量，但是丢包并不一定意味着网络拥塞，更多的可能是网络状况较差；</li><li>TCP 的三次握手带来了额外开销，这些开销不只包括需要传输更多的数据，还增加了首次传输数据的网络延迟；</li><li>TCP 的重传机制在数据包丢失时可能会重新传输已经成功接收的数据段，造成带宽的浪费；</li></ul><p>TCP 协议作为互联网数据传输的基石可以说是当之无愧，虽然它确实在应对特殊场景时有些问题，但是它的设计思想有着非常多的借鉴意义并值得我们学习。</p><p>到最后，我们还是来看一些比较开放的相关问题，有兴趣的读者可以仔细思考一下下面的问题：</p><ul><li>QUIC 协议是能否保证丢包率较高时的传输性能？</li><li>除了 SACK 和 TFO 之外还有哪些手段可以优化 TCP 的性能？</li></ul><blockquote><p>如果对文章中的内容有疑问或者想要了解更多软件工程上一些设计决策背后的原因，可以在博客下面留言，作者会及时回复本文相关的疑问并选择其中合适的主题作为后续的内容。</p></blockquote>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20181001.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
-&lt;p&gt;TCP 协议可以说是今天互联网的基石，作为可靠的传输协议，在今天几乎所</summary>
-      
-    
-    
-    
-    
-    <category term="RTC" scheme="https://www.jrrm.top/tags/RTC/"/>
-    
-    <category term="实时通信" scheme="https://www.jrrm.top/tags/%E5%AE%9E%E6%97%B6%E9%80%9A%E4%BF%A1/"/>
-    
-    <category term="音视频" scheme="https://www.jrrm.top/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
-    
-    <category term="技术博客" scheme="https://www.jrrm.top/tags/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/"/>
     
   </entry>
   
