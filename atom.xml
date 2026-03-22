@@ -6,7 +6,7 @@
   <link href="https://www.jrrm.top/atom.xml" rel="self"/>
   <link href="https://pubsubhubbub.appspot.com/" rel="hub"/>
   <link href="https://www.jrrm.top/"/>
-  <updated>2026-03-22T07:02:19.749Z</updated>
+  <updated>2026-03-22T07:26:53.294Z</updated>
   <id>https://www.jrrm.top/</id>
   
   <author>
@@ -28,7 +28,7 @@
     <link href="https://www.jrrm.top/posts/b0b9e052.html"/>
     <id>https://www.jrrm.top/posts/b0b9e052.html</id>
     <published>2026-03-22T12:00:00.000Z</published>
-    <updated>2026-03-22T07:02:19.749Z</updated>
+    <updated>2026-03-22T07:26:53.294Z</updated>
     
     <content type="html"><![CDATA[<p>在 AI 辅助编程工具百花齐放的 2026 年，Claude Code 凭借强大的代码理解能力和终端原生的交互方式，成为越来越多开发者的首选工具。本文将从零开始，带你掌握 Claude Code 的核心用法，并通过实战案例展示如何用它真正提升日常开发效率。</p><h2 id="什么是-Claude-Code"><a href="#什么是-Claude-Code" class="headerlink" title="什么是 Claude Code"></a>什么是 Claude Code</h2><p>Claude Code 是 Anthropic 推出的 AI 编程助手，与传统的 IDE 插件不同，它直接运行在终端中，能够：</p><ul><li><strong>理解整个代码仓库</strong>：自动分析项目结构、依赖关系和代码逻辑</li><li><strong>直接读写文件</strong>：不需要手动复制粘贴代码</li><li><strong>执行终端命令</strong>：运行测试、构建项目、管理 Git 操作</li><li><strong>多轮对话迭代</strong>：像和一个经验丰富的同事结对编程</li></ul><p>与 GitHub Copilot 主要做行级补全不同，Claude Code 更擅长处理<strong>跨文件的复杂任务</strong>，比如重构、添加新功能、修复 Bug 等。</p><h2 id="安装与配置"><a href="#安装与配置" class="headerlink" title="安装与配置"></a>安装与配置</h2><h3 id="环境要求"><a href="#环境要求" class="headerlink" title="环境要求"></a>环境要求</h3><ul><li>Node.js 18 或更高版本</li><li>操作系统：macOS、Linux 或 Windows（WSL）</li></ul><h3 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h3><pre><code class="language-bash"># 使用 npm 全局安装npm install -g @anthropic-ai/claude-code# 验证安装claude --version# 首次运行，完成认证claude</code></pre><p>首次启动时，Claude Code 会引导你完成 Anthropic API 密钥配置或 OAuth 登录。</p><h3 id="推荐配置"><a href="#推荐配置" class="headerlink" title="推荐配置"></a>推荐配置</h3><p>在项目根目录创建 <code>CLAUDE.md</code> 文件，告诉 Claude Code 你的项目规范：</p><pre><code class="language-markdown"># CLAUDE.md## 项目简介这是一个基于 React + TypeScript 的前端项目。## 代码规范- 使用 TypeScript strict 模式- 组件使用函数式组件 + Hooks- 样式使用 Tailwind CSS- 测试使用 Vitest## 常用命令- `npm run dev` — 启动开发服务器- `npm test` — 运行测试- `npm run lint` — 代码检查</code></pre><p>这个文件就像给 AI 同事的入职文档，帮助它快速理解项目背景。</p><h2 id="核心功能实战"><a href="#核心功能实战" class="headerlink" title="核心功能实战"></a>核心功能实战</h2><h3 id="1-代码生成：从需求到实现"><a href="#1-代码生成：从需求到实现" class="headerlink" title="1. 代码生成：从需求到实现"></a>1. 代码生成：从需求到实现</h3><p>假设你需要为 Express 应用添加一个用户认证中间件：</p><pre><code>&gt; 帮我写一个 JWT 认证中间件，要求：  1. 从 Authorization header 提取 Bearer token  2. 验证 token 有效性  3. 将用户信息挂载到 req.user  4. token 过期返回 401，格式无效返回 403</code></pre><p>Claude Code 会自动：</p><ol><li>查看项目现有的认证逻辑和依赖</li><li>生成符合项目风格的中间件代码</li><li>创建对应的测试文件</li><li>更新路由文件中的引用</li></ol><h3 id="2-Bug-修复：定位并解决问题"><a href="#2-Bug-修复：定位并解决问题" class="headerlink" title="2. Bug 修复：定位并解决问题"></a>2. Bug 修复：定位并解决问题</h3><pre><code>&gt; 用户反馈登录后偶尔会被踢出，帮我排查原因</code></pre><p>Claude Code 会从日志模式、Session 管理、Token 刷新逻辑等多个角度分析，定位到可能的竞态条件或配置问题。</p><h3 id="3-代码重构：安全地大规模修改"><a href="#3-代码重构：安全地大规模修改" class="headerlink" title="3. 代码重构：安全地大规模修改"></a>3. 代码重构：安全地大规模修改</h3><pre><code>&gt; 把 src/utils 下所有的 CommonJS require 改成 ES Module import，  确保测试全部通过</code></pre><p>它会逐文件修改，每改一批就运行测试验证，确保重构过程不引入新问题。</p><h3 id="4-Git-操作：智能提交和-PR"><a href="#4-Git-操作：智能提交和-PR" class="headerlink" title="4. Git 操作：智能提交和 PR"></a>4. Git 操作：智能提交和 PR</h3><pre><code>&gt; 看看我改了什么，帮我写个合适的 commit message 并提交</code></pre><p>Claude Code 会分析 <code>git diff</code>，生成符合 Conventional Commits 规范的提交信息。</p><h2 id="高效使用技巧"><a href="#高效使用技巧" class="headerlink" title="高效使用技巧"></a>高效使用技巧</h2><h3 id="技巧-1：善用-CLAUDE-md"><a href="#技巧-1：善用-CLAUDE-md" class="headerlink" title="技巧 1：善用 CLAUDE.md"></a>技巧 1：善用 CLAUDE.md</h3><p><code>CLAUDE.md</code> 越详细，Claude Code 的表现越好。建议包含：</p><ul><li>项目架构说明</li><li>命名约定和代码风格</li><li>常见问题和解决方案</li><li>部署流程</li></ul><h3 id="技巧-2：分步骤给指令"><a href="#技巧-2：分步骤给指令" class="headerlink" title="技巧 2：分步骤给指令"></a>技巧 2：分步骤给指令</h3><p>复杂任务不要一次性描述完，分步骤来：</p><pre><code>&gt; 第一步：先帮我分析现在的数据库 schema 设计&gt; （看完分析后）&gt; 第二步：按你的建议添加索引，然后写迁移脚本</code></pre><h3 id="技巧-3：让它先读再写"><a href="#技巧-3：让它先读再写" class="headerlink" title="技巧 3：让它先读再写"></a>技巧 3：让它先读再写</h3><pre><code>&gt; 先看一下 src/api/ 下的代码结构，理解现有的 API 设计模式，  然后按同样的模式添加一个新的 /api/orders 接口</code></pre><h3 id="技巧-4：善用-compact-管理上下文"><a href="#技巧-4：善用-compact-管理上下文" class="headerlink" title="技巧 4：善用 &#x2F;compact 管理上下文"></a>技巧 4：善用 &#x2F;compact 管理上下文</h3><p>长对话中上下文会越来越大，适时使用 <code>/compact</code> 命令压缩历史，保持响应质量。</p><h2 id="Claude-Code-vs-其他-AI-编程工具"><a href="#Claude-Code-vs-其他-AI-编程工具" class="headerlink" title="Claude Code vs 其他 AI 编程工具"></a>Claude Code vs 其他 AI 编程工具</h2><table><thead><tr><th>特性</th><th>Claude Code</th><th>GitHub Copilot</th><th>Cursor</th></tr></thead><tbody><tr><td>交互方式</td><td>终端对话</td><td>IDE 内联补全</td><td>IDE 对话 + 补全</td></tr><tr><td>代码理解范围</td><td>整个仓库</td><td>当前文件 + 上下文</td><td>整个仓库</td></tr><tr><td>文件操作</td><td>直接读写</td><td>仅建议</td><td>直接读写</td></tr><tr><td>终端命令执行</td><td>✅</td><td>❌</td><td>✅</td></tr><tr><td>适合场景</td><td>复杂任务、重构</td><td>日常编码补全</td><td>全方位辅助</td></tr></tbody></table><p><strong>选择建议</strong>：如果你习惯终端工作流、经常做跨文件的复杂开发任务，Claude Code 是最佳选择；如果主要需要行级代码补全，Copilot 更合适；如果想要 IDE 集成体验，Cursor 值得尝试。</p><h2 id="实际项目案例"><a href="#实际项目案例" class="headerlink" title="实际项目案例"></a>实际项目案例</h2><p>以下是我用 Claude Code 完成的一个真实任务——为一个 Hexo 博客添加自动 SEO 优化功能：</p><pre><code>&gt; 帮我写一个 Hexo 插件，在文章生成时自动：  1. 检查 frontmatter 是否包含 description 和 keywords  2. 如果缺失，根据文章内容自动生成  3. 检查标题长度是否在 30-60 字之间  4. 输出 SEO 检查报告</code></pre><p>Claude Code 在 10 分钟内完成了插件编写、测试和文档，包含了完整的错误处理和配置选项。这个任务如果纯手工完成，至少需要 1-2 小时。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Claude Code 代表了 AI 编程工具的新范式——不是简单的代码补全，而是一个能理解项目全貌、直接执行操作的 AI 编程搭档。掌握它的关键在于：</p><ol><li><strong>写好 CLAUDE.md</strong>，让 AI 理解你的项目</li><li><strong>分步骤给指令</strong>，复杂任务拆解执行</li><li><strong>让它先读后写</strong>，确保输出符合项目规范</li><li><strong>善用终端能力</strong>，让 AI 帮你跑测试、管理 Git</li></ol><p>如果你还没试过 Claude Code，现在就是最好的开始时间。</p><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="/posts/aaf32453/">为什么 TCP 协议有性能问题</a> — 了解底层网络协议如何影响开发</li><li><a href="/posts/">博客搭建指南</a> — 从零搭建技术博客</li></ul><hr><blockquote><p>本文首发于 <a href="https://www.jrrm.top/">一个技术宅</a>，欢迎关注获取更多 AI 编程和技术实战内容。</p></blockquote>]]></content>
     
@@ -51,477 +51,331 @@
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-22 - 星期日</title>
-    <link href="https://www.jrrm.top/posts/42231983.html"/>
-    <id>https://www.jrrm.top/posts/42231983.html</id>
-    <published>2026-03-22T07:00:47.152Z</published>
-    <updated>2026-03-22T07:01:00.747Z</updated>
+    <title>博客搭建（一）</title>
+    <link href="https://www.jrrm.top/posts/4b241634.html"/>
+    <id>https://www.jrrm.top/posts/4b241634.html</id>
+    <published>2025-05-11T05:23:35.000Z</published>
+    <updated>2025-05-13T00:19:18.504Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603221774121401.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】真正的爱情越久越不生锈。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-22_379156762468753.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、我国森林面积达36.14亿亩，森林覆盖率达25.09%，成为全球“增绿”最多最快的国家；</li><li>2、睡眠健康研究白皮书：2025年我国国民平均入睡时间在00:10，比2024年提前了8分钟；</li><li>3、商务部：前2个月全国新设立外商投资企业8631家，同比增长14%；高技术产业实际使用外资同比增长20.4%；</li><li>4、网信办：全面规范短视频内容标注，网站平台落实不力将被严惩；</li><li>5、人贩子“梅姨”落网，追踪23年终告破，知情人称其长相变化很大，与此前画像相似度不到30%；</li><li>6、郑州拟出台8条楼市新政，涵盖支持青年群体安居、多子女家庭购房支持、优化公积金贷款等；</li><li>7、华为重磅发布新一代算力芯片，性能达英伟达H20的2.87倍、支持FP4低精度推理；</li><li>8、能源局：截至2月底，我国电动汽车充电基础设施总数达2101.0万个，同比增长47.8%；</li><li>9、四川发现世界第二大轻稀土矿，查明资源储量达966.56万吨，曾被误认普通铅锌矿点；</li><li>10、外媒：特斯拉拟大规模采购中国光伏设备，用于太阳能电池板与电池制造；</li><li>11、外媒：油荒开始冲击东南亚，越南、柬埔寨等国已出现加油站断供、渔船停港、寺庙暂停免费火化；</li><li>12、美媒：美股连续四周下跌，创一年最长跌势；全球债市遭遇“血洗”，黄金创43年最大单周跌幅；</li><li>13、外媒：美以再次袭击伊朗核设施，伊朗称违反国际法，暂无放射性泄漏；美媒称特朗普正谋划夺取伊朗核储备；</li><li>14、外媒：伊朗称击中以军F-16战机，此前称击中美军F-35战机；美军被曝至少已损失16架军机；</li><li>15、外媒：美军称已打击伊朗超8000个军事目标，伊朗已丧失相当一部分作战能力，伊海军基本无法出海，战机难以起飞；</li></ul>]]></content>
+    <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>开始之前，介绍一下博客搭建的原因。<br>之前一直在使用b3log搭建的blog，由于本人一直做技术，总把时间放在了优化代码上，导致博客基本没有更新。<br>另外，最近有其他的项目需要使用到原来的ecs，导致博客网站不稳定，于是决定或一个单纯的写文章的系统，用来搭建博客。<br>于是选中了hexo，这样我看以专注于写文章，将博客放在静态服务器上，减少成本。</p><h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><ol><li>准备域名，我使用的是阿里云的域名，价格比较便宜，一年20元。</li><li>备案，域名备案，ICP 备案</li><li>选择博客部署的位置，开始选择的github page，但是后来发现github page的访问速度太慢，于是换成了cloudflare 的pages，速度快了很多。</li><li>安装nodejs，hexo的运行需要nodejs的支持。</li><li>安装hexo，hexo的安装非常简单，只需要使用npm安装即可。</li><li>安装hexo的插件，hexo的插件也非常多，可以根据自己的需求安装。</li><li>配置 CDN 加快访问速度。</li></ol><h1 id="开始搭建"><a href="#开始搭建" class="headerlink" title="开始搭建"></a>开始搭建</h1><h2 id="域名"><a href="#域名" class="headerlink" title="域名"></a>域名</h2><p>由于之前已经有博客了，本次只是迁移，所以省去了买域名和备案的过程</p><h2 id="搭建博客"><a href="#搭建博客" class="headerlink" title="搭建博客"></a>搭建博客</h2><h3 id="安装nodejs"><a href="#安装nodejs" class="headerlink" title="安装nodejs"></a>安装nodejs</h3><p>我之前一直在使用mise管理nodejs 版本，本次也直接使用mise安装nodejs<br>关于mise可以看 <a href="https://github.com/mise-tea/mise">mise</a></p><pre><code class="language-bash">brew install misemise use node@lts</code></pre><h3 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h3><pre><code class="language-bash">npm install -g hexo-cli</code></pre><h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><pre><code class="language-bash">hexo init blog</code></pre><h3 id="创建文章"><a href="#创建文章" class="headerlink" title="创建文章"></a>创建文章</h3><pre><code class="language-bash">hexo new post &quot;文章标题&quot;</code></pre><h3 id="安装butterfly主题"><a href="#安装butterfly主题" class="headerlink" title="安装butterfly主题"></a>安装butterfly主题</h3><pre><code class="language-bash">npm install hexo-theme-butterfly</code></pre><h3 id="配置butterfly主题"><a href="#配置butterfly主题" class="headerlink" title="配置butterfly主题"></a>配置butterfly主题</h3><p>打开 <code>blog/_config.yml</code> 文件，找到 <code>theme</code> 配置，将其设置为 <code>butterfly</code></p><pre><code class="language-yaml">theme: butterfly</code></pre><h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="创建github-仓库"><a href="#创建github-仓库" class="headerlink" title="创建github 仓库"></a>创建github 仓库</h3><p>在github 创建一个仓库xxx.github.io，将博客部署到github 上<br>安装hexo-deployer-git</p><pre><code class="language-bash">npm install hexo-deployer-git --save</code></pre><p>在 <code>blog/_config.yml</code> 文件中添加以下配置</p><pre><code class="language-yaml">deploy:  type: git  repo: https://github.com/xxx/xxx.github.io.git  branch: master</code></pre><h3 id="部署博客"><a href="#部署博客" class="headerlink" title="部署博客"></a>部署博客</h3><pre><code class="language-bash">hexo cleanhexo generatehexo deploy</code></pre><p>这时你的博客已经上传到github 上了，但是访问速度太慢，于是我使用cloudflare 的pages 来加速访问。</p><h3 id="配置cloudflare-的pages"><a href="#配置cloudflare-的pages" class="headerlink" title="配置cloudflare 的pages"></a>配置cloudflare 的pages</h3><p>打开cloudflare 的控制台，找到 <code>Workers 和 Pages</code> ，点击 <code>创建</code> ，选择 <code>Pages</code>，选择导入现有仓库，选择刚才创建的github 仓库，点击 <code>创建</code> ，然后点击 <code>部署</code> ，等待部署完成。</p><h3 id="配置自定义域名"><a href="#配置自定义域名" class="headerlink" title="配置自定义域名"></a>配置自定义域名</h3><p>找到刚才部署好的pages，点击 <code>管理</code> ，找到 <code>自定义域名</code> ，点击 <code>添加</code> ，输入你的域名，点击 <code>添加</code>，之后按照页面提示，添加CNAME 记录。<br><img src="/../images/blog/blog-dns.png"></p><p>现在你就可以通过你的域名访问博客了。</p><h3 id="全球加速"><a href="#全球加速" class="headerlink" title="全球加速"></a>全球加速</h3><p>由于 cloudflare 的pages 是国外的，所以访问速度比较慢，于是我考虑将博客使用国内CDN进行加速，并且通过 DNS 多线路解析，将国内用户域名解析到国内CDN上。</p><h4 id="配置国内CDN"><a href="#配置国内CDN" class="headerlink" title="配置国内CDN"></a>配置国内CDN</h4><p>我使用的是腾讯云的CDN，配置如下：<br><img src="/../images/blog/blog-cdn.png"><br><img src="/../images/blog/blog-cdn-2.png"></p><h4 id="配置DNS-多线路解析"><a href="#配置DNS-多线路解析" class="headerlink" title="配置DNS 多线路解析"></a>配置DNS 多线路解析</h4><p>我使用的是阿里云的DNS，添加两条解析记录，请求来源选择中国地区解析到腾讯云的CDN，请求来源选择境外解析到cloudflare 的pages。<br><img src="/../images/blog/blog-dns-2.png"></p><h4 id="最后使用站长工具检测下速度"><a href="#最后使用站长工具检测下速度" class="headerlink" title="最后使用站长工具检测下速度"></a>最后使用站长工具检测下速度</h4><p>国内测速：<br><img src="/../images/blog/china-test.png"><br>境外测速：<br><img src="/../images/blog/global-test.png"><br>看到大部分地区都在1s以内，速度还是非常快的。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本次博客搭建，使用的是hexo 搭建的，主题使用的是butterfly，部署在github 上，通过cloudflare 的pages 进行加速，使用国内CDN进行加速，通过DNS 多线路解析，将国内用户域名解析到国内CDN上，保证国内用户访问速度。下一期会介绍博客主题的一些配置。</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://hexo.io/zh-cn/">hexo</a><br><a href="https://butterfly.js.org/">butterfly</a><br><a href="https://www.cloudflare.com/">cloudflare</a></p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603221774121401.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;开始之前，介绍一下博客搭建的原因。&lt;br&gt;之前一直在使用b3log搭建的blog，由于本人一直做技术，总把时间放在了优化代码上，导致博客基本</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="博客搭建" scheme="https://www.jrrm.top/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="博客搭建" scheme="https://www.jrrm.top/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-21 - 星期六</title>
-    <link href="https://www.jrrm.top/posts/8b8033f5.html"/>
-    <id>https://www.jrrm.top/posts/8b8033f5.html</id>
-    <published>2026-03-22T07:00:47.138Z</published>
-    <updated>2026-03-22T07:01:00.730Z</updated>
+    <title>WSLg win10Linux子系统的gui界面</title>
+    <link href="https://www.jrrm.top/posts/96b5a8f.html"/>
+    <id>https://www.jrrm.top/posts/96b5a8f.html</id>
+    <published>2021-05-04T07:44:04.000Z</published>
+    <updated>2021-05-09T07:43:32.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603211774035001.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】渐进思想是创新的最大敌人。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-21_378805699662222.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、交通运输部：道路运输从业人员年龄上限3月20日起放宽至63岁，超龄失效证件将恢复；</li><li>2、医保局：按病种付费分组方案3.0版预计7月发布，并计划明年1月正式执行；</li><li>3、“国家队”出手稳房租，西安、珠海等地保租房租金最高下调50%，普遍打5到7折；</li><li>4、20日A股沪指失守4000点关口，创年内新低，全市场超4800只个股下挫；</li><li>5、女子月经弄脏卧铺床单被要求赔偿180元，铁路通报：旅客选择自行清洗，列车员参与协助，处置全程未收费；</li><li>6、“网推律所”乱象调查：“8000元接案后1000元转手”，39招话术收割信任；</li><li>7、海南打击非法彩票举报奖励办法下月起施行，最高奖励10万元；</li><li>8、浙江一中学招聘竞赛教练，最高200万元年薪，学校回应：已有人致电咨询；</li><li>9、油价持续大幅攀升，卫生巾、纸尿裤等用品涨价压力大增，代工厂称成本上涨20%左右；</li><li>10、外媒：俄罗斯通过石油销售每天额外获得高达1.5亿美元财政收入，普京称抓住时机减轻债务；</li><li>11、特斯拉拟采购200亿中国光伏设备，合同规模在吉瓦级，光伏企业回应：确有此事；</li><li>12、美媒：美国将签证保证金国家名单扩大至50国，赴美签证申请人须缴纳最高1.5万美元；</li><li>13、外媒：北约宣布一致决定从伊拉克撤出所有人员；特朗普称北约是“纸老虎”， 并强调将记住相关国家表现；</li><li>14、外媒：美军正向中东增派3艘军舰和约2500名海军陆战队员，或即将强攻伊朗原油出口咽喉；</li><li>15、外媒：以色列多地遭导弹袭击，军事冲突以来已有4099人被送医；美官员称已有232名美军士兵在对伊朗军事行动中受伤；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20200904.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>之前讲解过怎么使用window terminal和wsl2做一个好用的linux终端工具，但是有个缺点就是，当我们使用一些linux上带界面的软件时，就没有办法使用了，当然之前有国外大神使用xmanager做过相应界面的展示，不过流畅度确实差的可怜。随着前几天微软最新的win10 insider 21370版本发布，并且带来了最新的wsl gui的解决方案WSLg，作为一个折腾佬，我也第一时间尝试了新技术。</p><h1 id="启用"><a href="#启用" class="headerlink" title="启用"></a>启用</h1><ol><li>首先，需要将win10版本更新到21236以上</li><li>如果还未安装wsl，<a href="https://www.jrrm.top/posts/c10580b9.html">参考windows Termilal 和 WSL2 的美化</a></li><li>更新wsl，在windows cmd 中输入<code>wsl --update</code>等一段时间，会看到如图<img src="https://b3logfile.com/file/2021/05/%E6%9B%B4%E6%96%B0wsl-5a81543d.jpg" alt="更新wsl.jpg">就表示更新完毕，由于我的已经更新了，所以显示有些不同</li><li>重启wsl<code>wsl --shutdowm</code></li><li>在wsl中安装gui的app<pre><code class="language-shell">## Update all packages in your distrosudo apt update## Geditsudo apt install gedit -y## Nautilussudo apt install nautilus -y</code></pre></li></ol><p>这里安装了ubuntu的 gedit 和 系统的文件管理器，我们先拿gedit测试一下 在window terminal的ubuntu终端中输入 <code>gedit</code> 可以看到如图的GUI<img src="https://b3logfile.com/file/2021/05/gedit-acd13b87.jpg" alt="gedit.jpg"></p><p>当然，如果你不习惯命令行打开，也可以在开始菜单的ubuntu下找到对应app的图标打开，如图<img src="https://b3logfile.com/file/2021/05/apps-3e3af0b0.jpg" alt="apps.jpg"></p><h1 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h1><p>之前做视频解码方面的东西时，特意在wsl下安装了ffmpeg，当时由于没有gui，在使用ffplay时，一直无法播放。现在我特意试了下在wsl下的ffplay，不出意外完全可以：</p><p><img src="https://b3logfile.com/file/2021/05/ffplay-02994bbb.jpg" alt="ffplay.jpg"></p><p>win10 果然是最好用的linux发行版</p><h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>如果你使用的是高分屏，比如我的4k屏，由于默认只支持100%，和200%的缩放，可能会导致显示字比较小，可以在 C:\ProgramData\Microsoft\WSL目录下新建文件.wslgconfig,并输入一下内容：</p><pre><code class="language-ini">[system-distro-env]WESTON_RDP_DISABLE_FRACTIONAL_HI_DPI_SCALING=false</code></pre><p>解锁其他缩放比例</p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603211774035001.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20200904.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;heade</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
+    
+    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-20 - 星期五</title>
-    <link href="https://www.jrrm.top/posts/500f2273.html"/>
-    <id>https://www.jrrm.top/posts/500f2273.html</id>
-    <published>2026-03-22T07:00:47.127Z</published>
-    <updated>2026-03-22T07:01:00.713Z</updated>
+    <title>windows Termilal和WSL2的美化</title>
+    <link href="https://www.jrrm.top/posts/c10580b9.html"/>
+    <id>https://www.jrrm.top/posts/c10580b9.html</id>
+    <published>2020-11-15T08:11:30.000Z</published>
+    <updated>2020-11-15T08:11:30.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603201773948601.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】真正的道德，跟一颗大钻石或珍奇的宝物一样受人欣赏。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-20_378446082715731.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、财政部：前2个月全国一般公共预算收入44154亿元，同比增长0.7%；</li><li>2、19日沪指跌1.39%，全市场近5000股飘绿；央行：坚定维护股票、债券、外汇等金融市场平稳运行；</li><li>3、现货黄金白银大幅下跌，金价逼近4500美元，白银跌超13% ；国际油价继续走高，一度突破每桶110美元；</li><li>4、</li><li>5、新一代小米SU7正式上市，起售价21.99万元，发布后34分钟内订单量突破1.5万台；</li><li>6、我国研制出世界最小芯片原子钟，体积仅指甲盖大小，3万多年误差不超过1秒；</li><li>7、胖东来推出企业开放日：每人收费2万，参访者若认为无实际收获，10年内可全额退费；</li><li>8、港媒：香港大埔火灾首场听证会披露，起火原因以烟头可能性最大，同时揭示多项消防措施失效；</li><li>9、内蒙古阿拉善盟一车间发生爆炸，初步核实有2人失联3人受伤，事故原因正在进一步调查；</li><li>10、2026年全球软实力指数发布：中国以73.5分排第二，在多项指标排名第一，国家声誉排名首次超越美国；</li><li>11、英媒：英国肯特郡暴发侵袭性脑膜炎疫情，已致2死11人危重，疑因大学生在夜店共用电子烟引发；</li><li>12、法媒：马克龙宣布法国启动建造新核动力航母，命名“自由法国”号，预计耗资近100亿欧元；</li><li>13、美媒：美国国债突破39万亿美元历史新高，5个月增加1万亿美元，分析人士预计年内将破40万亿美元；</li><li>14、外媒：中东多国报告能源设施遭伊朗袭击；伊朗警告称，若本国基础设施再遭袭将不再克制；</li><li>15、美媒：卡塔尔能源披露17%LNG产能遭破坏，修复需3至5年，预估将造成每年约200亿美元收入损失；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20200123.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>微软在去年就发布了windows Terminal和WSL2，不过之前都不是很稳定，现在已经差不多稳定了，在这就讲一下怎么安装跟使用技巧，先上一张效果图：</p><p><img src="https://b3logfile.com/file/2020/11/image-8af47948.png" alt="image.png"></p><p>这个使用了Dracula主题，wsl中使用了zsh。</p><h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>WSL2的安装需要win10的版本在2004（内部版本19041或更高）以上，如果你的win10版本比较低，可以使用<a href="https://www.microsoft.com/zh-cn/software-download/windows10">windows 10易升工具</a></p><p>下载后点击升级就可以了</p><p>安装 WSL 2 之前，必须启用“虚拟机平台”可选功能。使用管理员身份打开 PowerShell，执行以下命令：</p><pre><code class="language-shell">dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart</code></pre><p>然后启用WSL，打开windows控制面板，找到程序</p><p><img src="https://b3logfile.com/file/2020/11/image-6848f122.png" alt="image.png"></p><p>点击启用或关闭Windows功能</p><p><img src="https://b3logfile.com/file/2020/11/image-c6785fca.png" alt="image.png"></p><p>选择Windows Subsystem for Linux,点击确定，等待安装完，重启系统</p><p>然后到微软应用商店，搜索ubuntu(当然也可以其他发行版)安装</p><p>使用任一终端，输入以下命令查看 WSL 版本，确保 WSL 的版本为 2.0：</p><pre><code class="language-shell">$ wsl -l -v  NAME            STATE           VERSION* Ubuntu-20.04    Stopped         2</code></pre><p>如果你之前安装过 WSL，当前不是 WSL 2 版本，可以通过以下命令设置 WSL 的默认版本：</p><pre><code class="language-shell">wsl --set-version Ubuntu-20.04 2</code></pre><p>PS：从 WSL 1 更新到 WSL 2 可能需要几分钟才能完成，具体取决于目标分发版的大小。</p><p>windows Terminal的安装很简单，直接在微软应用商店中搜索，安装就可以了</p><p>打开是这样</p><p><img src="https://b3logfile.com/file/2020/11/image-f63b2c44.png" alt="image.png"></p><p>点这里可以打开设置的json文件</p><p><img src="https://b3logfile.com/file/2020/11/image-8ecd2221.png" alt="image.png"></p><h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><h2 id="安装oh-my-zsh"><a href="#安装oh-my-zsh" class="headerlink" title="安装oh-my-zsh"></a>安装oh-my-zsh</h2><p>我们需要先安装一些额外的字体来支持 oh-my-zsh 显示特殊的符号。打开 PowerShell，依次执行如下命令 Powerline 字体集合：</p><pre><code class="language-shell">git clone https://github.com/powerline/fonts.gitcd fonts.\install.ps1</code></pre><p>接着安装 zsh：在WSL中输入</p><pre><code>sudo apt updatesudo apt install git zsh -y</code></pre><p>再安装oh-my-zsh: 依然在WSL中输入</p><pre><code class="language-shell">sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</code></pre><p>安装完 oh-my-zsh 后，编辑 ~&#x2F;.zshrc 文件，将主题设置为 agnoster：</p><p><img src="https://b3logfile.com/file/2020/11/image-da3be6f4.png" alt="image.png"></p><p>再次打开 Terminal 的 JSON 配置文件，在 schemes 中添加一个主题</p><pre><code class="language-json">&quot;schemes&quot;:[    &#123;        &quot;name&quot;: &quot;Dracula&quot;,        &quot;cursorColor&quot;: &quot;#F8F8F2&quot;,        &quot;selectionBackground&quot;: &quot;#44475A&quot;,        &quot;background&quot;: &quot;#282A36&quot;,        &quot;foreground&quot;: &quot;#F8F8F2&quot;,        &quot;black&quot;: &quot;#21222C&quot;,        &quot;blue&quot;: &quot;#BD93F9&quot;,        &quot;cyan&quot;: &quot;#8BE9FD&quot;,        &quot;green&quot;: &quot;#50FA7B&quot;,        &quot;purple&quot;: &quot;#FF79C6&quot;,        &quot;red&quot;: &quot;#FF5555&quot;,        &quot;white&quot;: &quot;#F8F8F2&quot;,        &quot;yellow&quot;: &quot;#F1FA8C&quot;,        &quot;brightBlack&quot;: &quot;#6272A4&quot;,        &quot;brightBlue&quot;: &quot;#D6ACFF&quot;,        &quot;brightCyan&quot;: &quot;#A4FFFF&quot;,        &quot;brightGreen&quot;: &quot;#69FF94&quot;,        &quot;brightPurple&quot;: &quot;#FF92DF&quot;,        &quot;brightRed&quot;: &quot;#FF6E6E&quot;,        &quot;brightWhite&quot;: &quot;#FFFFFF&quot;,        &quot;brightYellow&quot;: &quot;#FFFFA5&quot;    &#125;]</code></pre><p>然后在该 JSON 文件中把 wsl 终端的主题设置为该 Dracula主题，并把字体改为你喜欢的一个 Powerline 字体：</p><p><img src="https://b3logfile.com/file/2020/11/image-236146ac.png" alt="image.png"></p><p>最后一步，再做一点点美化：把命令行的机器名称去掉，并调整用户名的背景色。编辑 agnoster 主题文件：</p><pre><code>vi ~/.oh-my-zsh/themes/agnoster.zsh-theme</code></pre><p>把 92 行修改为：</p><pre><code>prompt_segment green black &quot;%(!.%&#123;%F&#123;yellow&#125;%&#125;.)%n&quot;</code></pre><p>修改后如下：</p><p><img src="https://b3logfile.com/file/2020/11/image-6cea66db.png" alt="image.png"></p><p>配置完成</p><p>打开看看效果吧：</p><p><img src="https://b3logfile.com/file/2020/11/image-9677deb8.png" alt="image.png"></p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603201773948601.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20200123.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;heade</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-19 - 星期四</title>
-    <link href="https://www.jrrm.top/posts/b6196f05.html"/>
-    <id>https://www.jrrm.top/posts/b6196f05.html</id>
-    <published>2026-03-22T07:00:47.120Z</published>
-    <updated>2026-03-22T07:01:00.697Z</updated>
+    <title>安装wsl2后一些必要的配置</title>
+    <link href="https://www.jrrm.top/posts/a9a52e4a.html"/>
+    <id>https://www.jrrm.top/posts/a9a52e4a.html</id>
+    <published>2020-11-14T08:23:52.000Z</published>
+    <updated>2020-11-23T07:40:41.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603191773862202.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】近贤则聪；近愚则聩。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-19_378086826418291.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、国内油价24日将迎年内第六轮调整，预计每升上涨约1.6元‌，或将重回“9元时代”，加满一箱油或多花100元；</li><li>2、中办、国办发布关于做好第二轮土地承包到期后再延长30年试点工作的意见；</li><li>3、江苏出台城市发展行动方案：明确将推动省内6个城市与上海大都市圈的深度融合；</li><li>4、最新数据显示：四川去年人口减少约46万人，在目前公布的数据中，人口减少量暂居首位；</li><li>5、中疾控提醒：多国出现麻疹疫情反弹或暴发，我国面临较大输入风险，儿童应及时补种疫苗；</li><li>6、证监会：坚决清除影响资本市场改革发展的“拦路虎”“绊脚石”；</li><li>7、税务总局：有奖发票试点城市已投放奖金18.5亿元，累计吸引2.3亿人次参与，对促进消费效果初显；</li><li>8、四川一院校放6天春假让学生去赏花恋爱，校方回应：教师同时带薪休假，已持续8年；</li><li>9、腾讯年报披露：截至去年底员工超11万，年度总薪酬成本达1307亿元，人均薪酬成本超110万元；</li><li>10、特朗普称访华将推迟五到六周，中方回应：中美将继续就特朗普访华事保持沟通；</li><li>11、日媒：今年前两个月中国内地访日游客数量同比下降54.1%，对日本零售、住宿、餐饮等多个行业造成冲击；</li><li>12、美媒：特朗普授权解除船禁60天，将允许外国船只在美港口之间运输商品，以降低美境内能源运输成本；</li><li>13、外媒：特朗普称应考虑美国退出北约的可能性，此前呼吁盟友赴霍尔木兹海峡护航，英、法、德、日、韩等国反应冷淡；</li><li>14、外媒：伊朗称在未来几个小时内打击沙特、阿联酋和卡塔尔三国石油设施，敦促相关区域民众撤离；</li><li>15、外媒：伊朗总统证实拉里贾尼已遇难并发表悼词；以防长称将升级冲突，伊朗没有人有豁免权，所有伊朗人都是目标；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20181031.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="在wsl中使用主机代理"><a href="#在wsl中使用主机代理" class="headerlink" title="在wsl中使用主机代理"></a>在wsl中使用主机代理</h1><p>首先我安装的wsl发行版事ubuntu，其他系统差不多。</p><p>我们知道在Linux中使用代理的方式：</p><pre><code class="language-shell">export http_proxy=sock5://ip:portexport https_proxy=sock5://ip:prot</code></pre><p>那么我们主机的IP在局域网中总会变，但是我们发现有一个IP是在&#x2F;etc&#x2F;resolv.conf中那么我们可以用一个命令取出来，我们直接打开家目录下的.bashrc, vim ~&#x2F;.bashrc输入</p><pre><code class="language-shell">export hostip=$(cat /etc/resolv.conf | grep -oP &#39;(?&lt;=nameserver\ ).*)alias proxy=&#39;export http_proxy=&quot;sock5://$&#123;hostip&#125;:1080&quot;; export https_proxy=&quot;http://$&#123;hostip&#125;:1080&quot;; echo &quot;open proxy&quot;&#39;alias noproxy=&#39;export http_proxy= ;export https_proxy= ; echo &quot;close proxy&quot;&#39;</code></pre><p>这样我们就可以输入proxy打开代理，输入noproxy关闭代理</p><p>但是，我们发现这样是连不上主机的代理的，因为从wsl发出的网络包被windows的防火墙拦截了</p><p>解决方法是，按win+x键以管理员方式打开powershell添加以下防火墙规则</p><pre><code class="language-shell">New-NetFirewallRule -DisplayName &quot;WSL&quot; -Direction Inbound -InterfaceAlias &quot;vEthernet (WSL)&quot; -Action Allow</code></pre><p><img src="https://b3logfile.com/file/2020/11/image-3d016bd2.png" alt="image.png"></p><h1 id="主机或局域网中访问wsl中的服务"><a href="#主机或局域网中访问wsl中的服务" class="headerlink" title="主机或局域网中访问wsl中的服务"></a>主机或局域网中访问wsl中的服务</h1><p>主机中访问wsl的服务有两种方式，一种直接使用localhost访问，不过这种方式缺点就是有些调试工具不支持，而且不支持。第二种方式就是使用端口转发，这种比较麻烦的部分是wsl每次启动IP都会变，而用localhost经常会连接不上。我们可以获取wsl2的IP并写入到hosts中，感谢shayne大佬提供了<a href="https://github.com/shayne/go-wsl2-host/releases">工具</a>下载后使用管理员启动powershell执行如下命令</p><pre><code class="language-shell">.\wsl2host.exe install</code></pre><p>输入计算机用户名，密码，重启wsl后就会自动讲wsl的ip写入到hosts，ubuntu.wsl,然后设置端口转发，在powershell中执行</p><pre><code class="language-shell">netsh interface portproxy add v4tov4 listenport=监听的端口 connectaddress=ubuntu.wsl connectport=监听的端口 listenaddress=* protocol=tcp</code></pre><h1 id="wsl中开机自启"><a href="#wsl中开机自启" class="headerlink" title="wsl中开机自启"></a>wsl中开机自启</h1><p>我们经常会在wsl中安装一些服务，并希望这些服务开机自启，我们可以在wsl中的&#x2F;etc&#x2F;init.wsl写入开机启动的服务比如redis</p><pre><code class="language-shell">#!/bin/bashservice redis-server start</code></pre><p>在windows下创建启动的vbs脚本 linux-start.vbs</p><pre><code class="language-shell">Set ws = WScript.CreateObject(&quot;WScript.Shell&quot;)ws.run &quot;wsl -d ubuntu -u root /etc/init.wsl&quot;</code></pre><p>按win+r键输入：shell:startup</p><p>将linux-start.vbs拖入到这个目录就可以了，这样就实现了开机启动</p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603191773862202.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20181031.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;在wsl中使用主机代理&quot;&gt;&lt;a href=&quot;#在wsl中使用</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
+    
+    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-18 - 星期三</title>
-    <link href="https://www.jrrm.top/posts/275dda9e.html"/>
-    <id>https://www.jrrm.top/posts/275dda9e.html</id>
-    <published>2026-03-22T07:00:47.117Z</published>
-    <updated>2026-03-22T07:01:00.680Z</updated>
+    <title>win10快捷键大全</title>
+    <link href="https://www.jrrm.top/posts/ef9af717.html"/>
+    <id>https://www.jrrm.top/posts/ef9af717.html</id>
+    <published>2020-10-12T07:27:18.000Z</published>
+    <updated>2020-10-12T07:48:25.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603181773776702.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】信仰有异于迷信，若坚信信仰甚至于迷信，则无异于破坏信仰。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-18_377749025185863.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、多地宣布2027年缩减中考计分科目：生物、地理不再计入总分；</li><li>2、儿童友好建设具体措施公布：鼓励放宽免票限制、满13周岁女孩免费接种HPV、逐步推行免费学前教育；</li><li>3、儿童App宝宝巴士因推送低俗广告，被处以30万元罚款，并没收违法所得3.68元；</li><li>4、存款利率“1时代”全面来临：中小银行密集补降，部分银行三年期定存跌破2％；</li><li>5、国安部发布“龙虾”安全养殖手册：遵循最小权限、敏感数据加密等；黄仁勋GTC演讲称：“龙虾”将成个人操作系统；</li><li>6、北大攻克160余年以来由烯烃合成炔烃的化学难题，将为医药、农药、材料等领域带来源头创新革命；</li><li>7、重庆万州马拉松冠军冲线时被裁判拦停，并带离赛道，中国田协通报：对涉事裁判追加处罚至2年；</li><li>8、女足亚洲杯半决赛：中国女足1比2‌惜败东道主澳大利亚，‌无缘决赛‌；</li><li>9、腾讯宣布：韩国首尔市内地铁站全线接入微信支付，继去年覆盖釜山地铁后又一次与韩深度合作；</li><li>10、外交部：中方决定向伊朗、约旦、黎巴嫩、伊拉克四国提供紧急人道主义援助；</li><li>11、日媒：一中国籍男子在大阪街头遭袭击，被抢走500万日元现金，日本警方称已逮捕涉案两名日本青少年；</li><li>12、美媒：美财长澄清涉特朗普或推迟访华不实报道，称与霍尔木兹海峡护航无关，特朗普希望留在华盛顿协调战争事务；</li><li>13、美媒：“福特”号航母火灾被曝持续超30小时后才被扑灭，600多张床铺被烧毁，火灾始于洗衣区的一台烘干机；</li><li>14、外媒：伊朗最高领袖驳回与美国议和提案，并表示美国和以色列必须被击败并支付赔偿；</li><li>15、外媒：以色列总理下令“消灭”伊朗政府高级官员；以军称打死伊朗“动员穷人组织”指挥官苏莱曼尼；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20190709.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="Win10常用Win快捷键"><a href="#Win10常用Win快捷键" class="headerlink" title="Win10常用Win快捷键"></a>Win10常用Win快捷键</h1><pre><code class="language-bash">Win键 桌面与开始菜单切换按键Win + R 打开运行对话框Win + Q 快速打开搜索Win + I 快速打开Win10设置栏Ctrl+Alt+Del 快速打开任务管理器Alt+F4 关机快捷键</code></pre><h1 id="Win键组合快捷键大全（Win7-8以及Win10通用）"><a href="#Win键组合快捷键大全（Win7-8以及Win10通用）" class="headerlink" title="Win键组合快捷键大全（Win7&#x2F;8以及Win10通用）"></a>Win键组合快捷键大全（Win7&#x2F;8以及Win10通用）</h1><pre><code class="language-bash">Win + ←：最大化窗口到左侧的屏幕上（与开始屏幕应用无关）Win + →：最大化窗口到右侧的屏幕上（与开始屏幕应用无关）Win+ ↑：最大化窗口（与开始屏幕应用无关）Win+ ↓：最小化窗口（与开始屏幕应用无关）Win+ SHIFT +↑：垂直拉伸窗口，宽度不变（与开始屏幕应用无关）Win+ SHIFT +↓：垂直缩小窗口，宽度不变（与开始屏幕应用无关）Win+SHIFT+←：将活动窗口移至左侧显示器 （与开始屏幕应用无关）Win+SHIFT+→：将活动窗口移至右侧显示器（与开始屏幕应用无关）Win+ P：演示设置Win+ Home：最小化所有窗口，第二次键击恢复窗口（不恢复开始屏幕应用）Win+ 数字键：打开或切换位于任务栏指定位置的程序Win+Shift+数字键：打开位于任务栏指定位置程序的新实例Win+B：光标移至通知区域Win+Break：显示“系统属性”对话框Win+D：显示桌面，第二次键击恢复桌面 （不恢复开始屏幕应用）Win+E：打开我的电脑Win+Ctrl+F：搜索计算机（如果你在网络上）Win+G：循环切换侧边栏小工具Win+L：锁住电脑或切换用户Win+M：最小化所有窗口Win+Shift+M：在桌面恢复所有最小化窗口（不恢复开始屏幕应用）Win+R：打开“运行”对话框Win+T：切换任务栏上的程序Win+Alt+回车：打开Windows媒体中心Win+U：打开轻松访问中心Win+F1：打开Windows帮助和支持Win+N：插件新笔记（OneNote）Win+S：打开屏幕截图工具（OneNote）Win+Q：打开Lync，Windows 8搜索功能移除了该快捷键Win+A：接受所有来电 （在microsoft Lync中）Win+X：拒绝来电（在microsoft Lync中），如果Windows移动中心存在，该快捷键不起作用Win+减号：缩小（放大镜）Win+加号：放大（放大镜）Win+Esc：关闭放大镜Win+空格键：切换输入语言和键盘布局Win+O：禁用屏幕翻转Win+，：临时查看桌面Win+V：切换系统通知信息Win+Shift+V：反向切换系统通知信息Win+回车：打开“讲述人”Win+PgUp：将开始屏幕或开始屏幕应用移至左侧显示器Win+PgDown：将开始屏幕或开始屏幕应用移至右侧显示器Win+Shift+.：将应用移至左侧Win+.：将应用移至右侧Win+C：打开Charms栏（提供设置、设备、共享和搜索等选项）Win+I：打开设置栏Win+K：打开连接显示屏Win+H：打开共享栏Win+Q：打开应用搜索面板Win+W：打开“设置搜索”应用Win+F：打开“文件搜索”应用Win+Tab：循环切换应用Win+Shift+Tab：反向循环切换应用Win+Ctrl+Tab：循环切换应用，切换时手动选择应用Win+Z：打开“应用栏”Win+/：恢复默认输入法Win+J：显示之前操作的应用Win+X：快捷菜单</code></pre><h1 id="Win10快捷键大全"><a href="#Win10快捷键大全" class="headerlink" title="Win10快捷键大全"></a>Win10快捷键大全</h1><pre><code class="language-bash">Win键 可在开始菜单主菜单及最后一个应用程序间循环切换Win键 + C 打开“超级按钮”Win键 + I 打开当前程序的“设置”菜单Win键 + F 搜索文件或文件夹Win键 + Q 搜索应用Win键 + 空格键 切换语言或输入法(如果启用了多种语言或输入法)Win键 + Z 右键菜单(开始屏幕)Win键 + L 锁定计算机或切换用户Win键 + Tab 在已打开应用程序间循环切换(开始屏幕)Win键 + P 选择演示显示模式Win键 + E 打开计算机Win键 + R 打开“运行”对话框Win键 + D 显示桌面Win键 + M 最小化所有窗口Win键 + T 循环切换任务栏上的程序(传统桌面)Win键 + X 打开 Windows8 左下角快捷菜单Win键 + 数字键 &quot;启动锁定到任务栏中的由该数字所表示位置处的程序。如果该程序已在运行，则切换到该程序(传统桌面)&quot;Win键 + 向上键 最大化窗口(传统桌面)Win键 + 向左键 将窗口最大化到屏幕的左侧(传统桌面)Win键 + 向右键 将窗口最大化到屏幕的右侧(传统桌面)Win键 + 向下键 最小化窗口(传统桌面)Win键 + Home 最小化除活动窗口之外的所有窗口(传统桌面)开始屏幕直接输入任何字符，开始屏幕下可直接搜索进行搜索Alt+Tab 通过选择栏在所有已打开程序间切换(传统桌面)</code></pre><h1 id="其他-Win键相关快捷键"><a href="#其他-Win键相关快捷键" class="headerlink" title="其他 Win键相关快捷键"></a>其他 Win键相关快捷键</h1><pre><code class="language-bash">Win键 + G 循环切换小工具Win键 + U 打开轻松访问中心Win键 + Pause 显示“系统属性”对话框Win键 + Shift + V 反向切换系统通知信息Win键 + Shift + 加号(+) 打开放大镜并放大桌面Win键 + Shift + 减号(-) 打开放大镜并缩小桌面Win键 + O 开启或关闭屏幕方向锁定(如果您的电脑支持屏幕方向自动感应)Win键 + V 在屏幕上的通知中循环切换Win键 + Page Up 在多监视器设置中将开始屏幕移动至左监视器Win键 + Page Down 在多监视器设置中将开始屏幕移动至右监视器Win键 + Enter 打开“讲述人”Win键 + W 打开所选设置的“搜索”个性分类Win键 + H 打开“共享”个性分类Win键 + K 打开“设备”个性分类Win键 + Shift + M 将最小化的窗口还原到桌面Win键 + Shift + 向上键 将窗口拉伸到屏幕的顶部和底部Win键 + Shift + 向左键或向右键 将窗口从一个监视器移动到另一个监视器Win10快捷键大全 Win键 + ‘ 当您将应用程序向一侧对齐时，此热键将切换屏幕上应用程序的中心Win键 + . 当您将应用程序向一侧对齐时，此热键会将拆分栏移动至右侧Win键 + Shift + . 当您将应用程序向一侧对齐时，此热键会将拆分栏移动至左侧Ctrl + Win键 + F 搜索计算机(如果已连接到网络)Shift + Win键 + 数字 启动锁定到任务栏中的由该数字所表示位置处的程序的新实例Ctrl + Win键 + 数字 切换到锁定到任务栏中的由该数字所表示位置处的程序的最后一个活动窗口Alt + Win键 + 数字 打开锁定到任务栏中的由该数字所表示位置处的程序的跳转列表 (Jump List)Ctrl + Win键 + Tab 通过 Aero Flip 3-D 使用箭头键循环切换任务栏上的程序Ctrl + Win键 + B 切换到在通知区域中显示消息的程序</code></pre><h1 id="常规-通用-的键盘快捷方式："><a href="#常规-通用-的键盘快捷方式：" class="headerlink" title="常规(通用)的键盘快捷方式："></a>常规(通用)的键盘快捷方式：</h1><pre><code class="language-bash">F1 显示帮助Ctrl+Shift+Esc 打开任务管理器Ctrl+A 全选Ctrl+C(或 Ctrl+Insert) 复制选择的项目Ctrl+X 剪切选择的项目Ctrl+V(或 Shift+Insert) 粘贴选择的项目Ctrl+Z 撤消操作Ctrl+Y 重新执行某项操作Delete(或 Ctrl+D) 删除所选项目并将其移动到“回收站”Shift+Delete 不先将所选项目移动到“回收站”而直接将其删除F2 重命名选定项目Ctrl+向右键 将光标移动到下一个字词的起始处Ctrl+向左键 将光标移动到上一个字词的起始处Ctrl+向下键 将光标移动到下一个段落的起始处Ctrl+向上键 将光标移动到上一个段落的起始处Ctrl+Shift 加某个箭头键 选择一块文本Shift 加任意箭头键 在窗口中或桌面上选择多个项目，或者在文档中选择文本Ctrl 加任意箭头键+空格键 选择窗口中或桌面上的多个单个项目Ctrl+A 选择文档或窗口中的所有项目F3 搜索文件或文件夹Alt+Enter 显示所选项的属性Alt+F4 关闭活动项目或者退出活动程序Alt+空格键 为活动窗口打开快捷方式菜单Ctrl+F4 关闭活动文档(在允许同时打开多个文档的程序中)Ctrl+Alt+Tab 使用箭头键在打开的项目之间切换Ctrl+鼠标滚轮 更改桌面上的图标大小Win键 + Tab 使用 Aero Flip 3-D 循环切换任务栏上的程序Ctrl + Win键 + Tab 通过 Aero Flip 3-D 使用箭头键循环切换任务栏上的程序Alt+Esc 以项目打开的顺序循环切换项目F6 在窗口中或桌面上循环切换屏幕元素F4 在 Win资源管理器中显示地址栏列表Shift+F10 显示选定项目的快捷菜单Ctrl+Esc 打开“开始”菜单Alt+加下划线的字母 显示相应的菜单Alt+加下划线的字母 执行菜单命令(或其他有下划线的命令)F10 激活活动程序中的菜单栏向右键 打开右侧的下一个菜单或者打开子菜单向左键 打开左侧的下一个菜单或者关闭子菜单F5(或 Ctrl+R) 刷新活动窗口Alt+向上键 在 Win资源管理器中查看上一级文件夹Esc 取消当前任务插入 CD 时按住 Shift 阻止 CD 自动播放左 Alt+Shift 在启用多种输入语言时切换输入语言Ctrl+Shift 在启用多个键盘布局时切换键盘布局右或左 Ctrl+Shift 更改从右到左阅读语言的文本阅读方向</code></pre><h1 id="Win资源管理器中的快捷键"><a href="#Win资源管理器中的快捷键" class="headerlink" title="Win资源管理器中的快捷键"></a>Win资源管理器中的快捷键</h1><pre><code class="language-bash">Ctrl+N 打开新窗口Ctrl+W 关闭当前窗口Ctrl+Shift+N 新建文件夹End 显示活动窗口的底端Home 显示活动窗口的顶端F11 最大化或最小化活动窗口Ctrl+句点 顺时针旋转图片Ctrl+逗号 逆时针旋转图片Num Lock+数字键盘上的星号 (*) 显示所选文件夹下的所有子文件夹Num Lock+数字键盘上的加号 (+) 显示所选文件夹的内容Num Lock+数字键盘上的减号 (-) 折叠选定的文件夹向左键 折叠当前选项(如果它处于展开状态)，或者选择其父文件夹Alt+Enter 打开所选项目的“属性”对话框Alt+P 显示预览窗格Alt+向左键 查看上一个文件夹Backspace (退格键) 向上，返回父文件夹向右键 显示当前选项(如果它处于折叠状态)，或者选择第一个子文件夹Alt+向右键 查看下一个文件夹Alt+向上键 查看父文件夹Ctrl+Shift+E 显示所选文件夹上面的所有文件夹Ctrl+鼠标滚轮 更改文件和文件夹图标的大小和外观Alt+D 选择地址栏Ctrl+E 选择搜索框Ctrl+F 选择搜索框在对话框中使用的快捷键Ctrl+Tab 在选项卡上向前移动Ctrl+Shift+Tab 在选项卡上向后移动Tab 在选项上向前移动Shift+Tab 在选项上向后移动Alt+加下划线的字母 执行与该字母匹配的命令(或选择选项)Enter 对于许多选定命令代替单击鼠标空格键 如果活动选项是复选框，则选中或清除该复选框箭头键 如果活动选项是一组选项按钮，则选择某个按钮F1 显示帮助F4 显示活动列表中的项目Backspace 如果在“另存为”或“打开”对话框中选中了某个文件夹，则打开上一级文件夹</code></pre><h1 id="在任务栏项目中的快捷键"><a href="#在任务栏项目中的快捷键" class="headerlink" title="在任务栏项目中的快捷键"></a>在任务栏项目中的快捷键</h1><pre><code class="language-bash">按住 Shift 并单击某个任务栏按钮 打开程序，或快速打开程序的另一个实例按住 Ctrl+Shift 并单击某个任务栏按钮 以管理员身份打开程序按住 Shift 并右键单击某个任务栏按钮 显示该程序的窗口菜单按住 Shift 并右键单击某个分组的任务栏按钮 显示该组的窗口菜单按住 Ctrl 并单击某个分组的任务栏按钮 循环切换该组的窗口</code></pre><h1 id="在放大镜中的快捷键"><a href="#在放大镜中的快捷键" class="headerlink" title="在放大镜中的快捷键"></a>在放大镜中的快捷键</h1><pre><code class="language-bash">Win徽标键 + 加号 (+) 或减号 (-) 放大或缩小Ctrl+Alt+空格键 以全屏模式预览桌面Ctrl+Alt+F 切换到全屏模式Ctrl+Alt+L 切换到镜头模式Ctrl+Alt+D 切换到停靠模式Ctrl+Alt+I 反色Ctrl+Alt+箭头键 按箭头键的方向平移Ctrl+Alt+R 调整镜头的大小Win徽标键 + Esc 退出放大镜</code></pre><h1 id="在远程桌面连接中的快捷键"><a href="#在远程桌面连接中的快捷键" class="headerlink" title="在远程桌面连接中的快捷键"></a>在远程桌面连接中的快捷键</h1><pre><code class="language-bash">Alt+Page Up 将程序从左侧移动到右侧Alt+Page Down 将程序从右侧移动到左侧Alt+Insert 按照程序启动的顺序循环切换程序Alt+Home 显示“开始”菜单Ctrl+Alt+Break 在窗口和全屏之间切换Ctrl+Alt+End 显示“Win安全”对话框Alt+Delete 显示系统菜单Ctrl+Alt+数字键盘上的减号 (-) 将客户端当前活动窗口的副本放在终端服务器的剪贴板上(提供的功能与在本地计算机上按 Alt+PrtScn 相同)Ctrl+Alt+数字键盘上的加号 (+) 将整个客户端窗口区域的副本放在终端服务器的剪贴板上(提供的功能与在本地计算机上按 PrtScn 相同)Ctrl+Alt+向右键 从远程桌面控件“跳转”到主机程序中的控件(如按钮或文本框)将远程桌面控件嵌入到其他(主机)程序后，此功能非常有用Ctrl+Alt+向左键 从远程桌面控件“跳转”到主机程序中的控件(如按钮或文本框)将远程桌面控件嵌入到其他(主机)程序后，此功能非常有用</code></pre><h1 id="在Win10画图中的快捷键"><a href="#在Win10画图中的快捷键" class="headerlink" title="在Win10画图中的快捷键"></a>在Win10画图中的快捷键</h1><pre><code class="language-bash">Ctrl+N 创建新的图片Ctrl+O 打开现有图片Ctrl+S 将更改保存到图片F12 将此图片另存为新文件Ctrl+P 打印图片Alt+F4 关闭图片及其画图窗口Ctrl+Z 撤消更改Ctrl+Y 恢复更改Ctrl+A 选择整个图片Ctrl+X 剪切选择内容Ctrl+C 将选择内容复制到剪贴板Ctrl+V 从剪贴板粘贴选择内容向右键 将选择内容或活动图形向右移动一个像素向左键 将选择内容或活动图形向左移动一个像素向下键 将选择内容或活动图形向下移动一个像素向上键 将选择内容或活动图形向上移动一个像素Esc 取消某个选择Delete 删除某个选择Ctrl+B 粗体选择文本Ctrl++ 将画笔、直线或形状轮廓的宽度增加一个像素Ctrl+- 将画笔、直线或形状轮廓的宽度减少一个像素Ctrl+I 将所选文本改为斜体Ctrl+U 为所选文本添加下划线Ctrl+E 打开“属性”对话框Ctrl+W 打开“调整大小和扭曲”对话框Ctrl+Page Up 放大Ctrl+Page Down 缩小F11 以全屏模式查看图片Ctrl+R 显示或隐藏标尺Ctrl+G 显示或隐藏网格线F10 或 Alt 显示快捷键提示Shift+F10 显示当前快捷菜单F1 打开“画图”帮助</code></pre><h1 id="在写字板中的快捷键"><a href="#在写字板中的快捷键" class="headerlink" title="在写字板中的快捷键"></a>在写字板中的快捷键</h1><pre><code class="language-bash">Ctrl+N 新建一个文档Ctrl+O 打开一个现有文档Ctrl+S 将更改保存到文档F12 将此文档另存为新文件Ctrl+P 打印文档Alt+F4 关闭“写字板”Ctrl+Z 撤消更改Ctrl+Y 恢复更改Ctrl+A 选择整个文档Ctrl+X 剪切选择内容Ctrl+C 将选择内容复制到剪贴板Ctrl+V 从剪贴板粘贴选择内容Ctrl+B 将所选文本改为粗体Ctrl+I 将所选文本改为斜体Ctrl+U 为所选文本添加下划线Ctrl+= 使选择的文本成为下标Ctrl+Shift+= 使选择的文本成为上标Ctrl+L 向左对齐文本Ctrl+E 向中心对齐文本Ctrl+R 向右对齐文本Ctrl+J 对齐文本Ctrl+1 设置单倍行距Ctrl+2 设置双倍行距Ctrl+5 将行距设置为 1.5Ctrl+Shift+&gt; 增加字体大小Ctrl+Shift+&lt; 减小字体大小Ctrl+Shift+A 将字符更改为全部使用大写字母Ctrl+Shift+L 更改项目符号样式Ctrl+D 插入 Microsoft 画图图片Ctrl+F 在文档中查找文本F3 在“查找”对话框中查找文本的下一个实例Ctrl+H 在文档中替换文本Ctrl+向左键 将光标向左移动一个字Ctrl+向右键 将光标向右移动一个字Ctrl+向上键 将光标移动到上一行Ctrl+向下键 将光标移动到下一行Ctrl+Home 移动到文档的开头Ctrl+End 移动到文档的结尾Ctrl+Page Up 向上移动一个页面Ctrl+Page Down 向下移动一个页面Ctrl+Delete 删除下一个字F10 显示快捷键提示Shift+F10 显示当前快捷菜单F1 打开“写字板”帮助</code></pre><h1 id="在计算器中的快捷键"><a href="#在计算器中的快捷键" class="headerlink" title="在计算器中的快捷键"></a>在计算器中的快捷键</h1><pre><code class="language-bash">Alt+1 切换到标准模式Alt+2 切换到科学型模式Alt+3 切换到程序员模式Alt+4 切换到统计信息模式Ctrl+E 打开日期计算Ctrl+H 将计算历史记录打开或关闭Ctrl+U 打开单位转换Alt+C 计算或解决日期计算和工作表F1 打开“计算器”帮助Ctrl+Q 按下 M- 按钮Ctrl+P 按下 M+ 按钮Ctrl+M 按下 MS 按钮Ctrl+R 按下 MR 按钮Ctrl+L 按下 MC 按钮% 按下 % 按钮F9 按下 +/– 按钮/ 按下 / 按钮* 按下 * 按钮+ 按下 + 按钮- 按下 – 按钮R 按下 1/× 按钮@ 按下平方根按钮0-9 按下数字按钮 (0-9)= 按下 = 按钮. 按下 。(小数点)按钮Backspace 按下 Backspace 按钮Esc 按下 C 按钮Del 按下 CE 按钮Ctrl+Shift+D 清除计算历史记录F2 编辑计算历史记录向上箭头键 在计算历史记录中向上导航向下箭头键 在计算历史记录中向下导航Esc 取消编辑计算历史记录 输入 编辑后重新计算计算历史记录F3 在科学型模式下选择“角度”F4 在科学型模式下选择“弧度”F5 在科学型模式下选择“梯度”I 在科学型模式下按 Inv 按钮D 在科学型模式下按 Mod 按钮Ctrl+S 在科学型模式下按 sinh 按钮Ctrl+O 在科学型模式下按 cosh 按钮Ctrl+T 在科学型模式下按 tanh 按钮( 在科学型模式下按 ( 按钮) 在科学型模式下按 ) 按钮N 在科学型模式下按 ln 按钮; 在科学型模式下按 Int 按钮S 在科学型模式下按 sin 按钮O 在科学型模式下按 cos 按钮T 在科学型模式下按 tan 按钮M 在科学型模式下按 dms 按钮P 在科学型模式下按 pi 按钮V 在科学型模式下按 F-E 按钮X 在科学型模式下按 Exp 按钮Q 在科学型模式下按 x^2 按钮Y 在科学型模式下按 x^y 按钮# 在科学型模式下按 x^3 按钮L 在科学型模式下按 log 按钮! 在科学型模式下按 n! 按钮Ctrl+Y 在科学型模式下按 y√x 按钮Ctrl+B 在科学型模式下按 3√x 按钮Ctrl+G 在科学型模式下按 10x 按钮F5 在程序员模式下选择 HexF6 在程序员模式下选择 DecF7 在程序员模式下选择 OctF8 在程序员模式下选择 BinF12 在程序员模式下选择 QwordF2 在程序员模式下选择 DwordF3 在程序员模式下选择 WordF4 在程序员模式下选择 ByteK 在程序员模式下按 RoR 按钮J 在程序员模式下按 RoL 按钮&lt; 在程序员模式下按 Lsh 按钮&gt; 在程序员模式下按 Rsh 按钮% 在程序员模式下按 Mod 按钮( 在程序员模式下按 ( 按钮) 在程序员模式下按 ) 按钮| 在程序员模式下按 Or 按钮^ 在程序员模式下按 Xor 按钮~ 在程序员模式下按 Not 按钮&amp; 在程序员模式下按 And 按钮A-F 在程序员模式下按 A-F 按钮空格键 在程序员模式下切换位值A 在统计信息模式下按 Average 按钮Ctrl+A 在统计信息模式下按 Average Sq 按钮S 在统计信息模式下按 Sum 按钮Ctrl+S 在统计信息模式下按 Sum Sq 按钮T 在统计信息模式下按 S.D. 按钮Ctrl+T 在统计信息模式下按 Inv S.D. 按钮D 在统计信息模式下按 CAD 按钮</code></pre><h1 id="在-Win日记中的快捷键"><a href="#在-Win日记中的快捷键" class="headerlink" title="在 Win日记中的快捷键"></a>在 Win日记中的快捷键</h1><pre><code class="language-bash">Ctrl+N 开始新的便笺Ctrl+O 打开最近使用的便笺Ctrl+S 将更改保存到便笺Ctrl+Shift+V 将便笺移动到特定的文件夹Ctrl+P 打印便笺Alt+F4 关闭便笺及其日记本窗口Ctrl+Z 撤消更改Ctrl+Y 恢复更改Ctrl+A 选择页面上的所有项目Ctrl+X 剪切选择内容Ctrl+C 将选择内容复制到剪贴板Ctrl+V 从剪贴板粘贴选择内容Esc 取消某个选择删除 删除某个选择Ctrl+F 开始基本查找Ctrl+G 转到页面F5 刷新查找结果F6 在便笺列表和便笺之间切换Ctrl+Shift+C 显示便笺列表中列标题的快捷菜单F11 以全屏模式查看便笺F1 打开“日记本”帮助</code></pre><h1 id="在帮助查看器中的快捷键"><a href="#在帮助查看器中的快捷键" class="headerlink" title="在帮助查看器中的快捷键"></a>在帮助查看器中的快捷键</h1><pre><code class="language-bash">Alt+C 显示目录Alt+N 显示“连接设置”菜单F10 显示“选项”菜单Alt+向左键 返回先前查看过的主题Alt+向右键 向前移动到下一个(先前已查看过的)主题Alt+A 显示客户支持页面Alt+Home 显示帮助和支持主页Home 移动到主题的开头End 移动到主题的末尾Ctrl+F 搜索当前主题Ctrl+P 打印主题F3 将光标移动到搜索框</code></pre>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603181773776702.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20190709.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;&quot;&gt;&lt;a href=&quot;#&quot; class=&quot;headerlin</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
+    
+    <category term="快捷键" scheme="https://www.jrrm.top/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-17 - 星期二</title>
-    <link href="https://www.jrrm.top/posts/427199a6.html"/>
-    <id>https://www.jrrm.top/posts/427199a6.html</id>
-    <published>2026-03-22T07:00:47.113Z</published>
-    <updated>2026-03-22T07:01:00.663Z</updated>
+    <title>Linux下网络测试常用的几款命令行工具介绍</title>
+    <link href="https://www.jrrm.top/posts/cabdfff6.html"/>
+    <id>https://www.jrrm.top/posts/cabdfff6.html</id>
+    <published>2020-10-12T07:13:55.000Z</published>
+    <updated>2020-10-12T07:15:30.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603171773690301.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】贻误时机或张惶失措，就等于丧失一切。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-17_377371340583032.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、2月70城房价公布：北京、上海等10城新房价格环比上涨；二手房价格环比下跌城市降到66个，连续2个月减少；</li><li>2、上海：调整商业用房购房贷款最低首付款比例为不低于30%；深圳：职工下月起可自愿申请提高公积金个人缴存比例；</li><li>3、南京市人社局：优先批准职工在子女春秋假期间的带薪休假申请；</li><li>4、国家医保局：2025年基本医保参保率巩固在95%，医保基金运行平稳；</li><li>5、三部门印发指导意见：允许基层医疗卫生机构为符合条件的慢性病患者开具最长12周的长处方；</li><li>6、国航、东航、南航发布维护旅客权益公告：国内机票买贵了可免费退，第三方平台加价可追责；</li><li>7、OPPO、vivo官宣调价，渠道商透露：调价主要涉及3600元以下机型，涨幅在200至400元之间；</li><li>8、第51届日内瓦国际发明展闭幕：中国代表团共获得90项金奖、95项银奖和52项铜奖；</li><li>9、捐赠二战相册的埃文·凯尔宣布定居中国，他表示在中国找到“归属感”，未来将远程打理典当行生意；</li><li>10、美对包括中国在内的60个经济体发起301调查，商务部回应：坚决反对，已向美方提出交涉；</li><li>11、韩媒：高市早苗涉独岛言论引韩国抗议，韩国外交部表示将坚决严正应对；</li><li>12、外媒：亚足联确认伊朗仍计划参加2026世界杯；5名在澳大利亚的伊朗女足队员决定放弃庇护申请，返回伊朗；</li><li>13、英媒：霍尔木兹海峡14日通航船只数量首次降为零；特朗普被曝寻求本周组建霍尔木兹海峡“护航联盟”；</li><li>14、外媒：伊朗首次用射程2000公里的“泥石”导弹打击以色列；美媒称以色列拦截弹药库存严重不足；</li><li>15、外媒：伊朗新任最高领袖被曝正在莫斯科治疗，俄方对此不予置评；以色列总理发视频辟谣死亡传言，网友质疑视频由AI生成；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20190315.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>因为后面需要做udp弱网下的优化，所以这边先介绍几款网络测试中常用的工具。方便后面测试使用。</p><ol><li>tc: <a href="https://tldp.org/HOWTO/Traffic-Control-HOWTO">介绍</a> 主要是用来模拟网络延迟，丢包环境，在我们测试弱网环境有非常大的帮助，当然还有一些其他的工具，大都是根据tc封装的，原理大家可以看介绍</li><li>iftop: <a href="http://www.ex-parrot.com/pdw/iftop/">介绍</a> 主要用来统计网卡的收发带宽，对于评估服务器并发瓶颈很有用处，具体看介绍</li><li>iperf3: <a href="https://iperf.fr/">介绍</a> 主要用来测试网卡速度，可以配合tc与我们自己的程序，判断我们网络瓶颈。</li></ol><h1 id="TC常用命令"><a href="#TC常用命令" class="headerlink" title="TC常用命令"></a>TC常用命令</h1><ul><li>模拟延迟传输：</li></ul><pre><code class="language-bash"># tc qdisc add dev eth0 root netem delay 100ms</code></pre><p>该命令将 eth0 网卡的传输设置为延迟 100 毫秒发送，更真实的情况下,延迟值不会这么精确，会有一定的波动，后面用下面的情况来模拟出带有波动性的延迟值</p><ul><li>模拟延迟波动：</li></ul><pre><code class="language-bash"># tc qdisc add dev eth0 root netem delay 100ms 10ms</code></pre><p>该命令将 eth0 网卡的传输设置为延迟 100ms ± 10ms (90 ~ 110 ms 之间的任意值)发送。 还可以更进一步加强这种波动的随机性</p><ul><li>延迟波动随机性：</li></ul><pre><code class="language-bash"># tc qdisc add dev eth0 root netem delay 100ms 10ms 30%</code></pre><p>该命令将 eth0 网卡的传输设置为 100ms ,同时,大约有 30% 的包会延迟 ± 10ms 发送。</p><ul><li>模拟网络丢包：</li></ul><pre><code class="language-bash"># tc qdisc add dev eth0 root netem loss 1%</code></pre><p>该命令将 eth0 网卡的传输设置为随机丢掉 1% 的数据包</p><ul><li>网络丢包成功率：</li></ul><pre><code class="language-bash"># tc qdisc add dev eth0 root netem loss 1% 30%</code></pre><p>该命令将 eth0 网卡的传输设置为随机丢掉 1% 的数据包,成功率为 30%</p><ul><li>删除相关配置（将之前命令中的 add 改为 del 即可删除配置）：</li></ul><pre><code class="language-bash"># tc qdisc del dev eth0 root netem delay 100ms</code></pre><ul><li>模拟包重复：</li></ul><pre><code class="language-bash"># tc qdisc add dev eth0 root netem duplicate 1%</code></pre><p>该命令将 eth0 网卡的传输设置为随机产生 1% 的重复数据包</p><ul><li>模拟包损坏：</li></ul><pre><code class="language-bash"># tc qdisc add dev eth0 root netem corrupt 0.2%</code></pre><p>该命令将 eth0 网卡的传输设置为随机产生 0.2% 的损坏的数据包 。 (内核版本需在 2.6.16 以上)</p><ul><li>模拟包乱序：</li></ul><pre><code class="language-bash"># tc qdisc change dev eth0 root netem delay 10ms reorder 25% 50%</code></pre><p>该命令将 eth0 网卡的传输设置为:有 25% 的数据包(50%相关)会被立即发送,其他的延迟10 秒。</p><p>新版本中,如下命令也会在一定程度上打乱发包的次序:# tc qdisc add dev eth0 root netem delay 100ms 10ms</p><ul><li>查看网卡配置：</li></ul><pre><code class="language-bash"># tc qdisc show dev eth0</code></pre><p>该命令将 查看并显示 eth0 网卡的相关传输配置</p><ul><li>查看丢包率：</li></ul><pre><code class="language-bash"># tc -s qdisc show dev eth0</code></pre><h1 id="iftop常用操作"><a href="#iftop常用操作" class="headerlink" title="iftop常用操作"></a>iftop常用操作</h1><pre><code># iftop</code></pre><ul><li>iftop界面相关说明</li></ul><pre><code class="language-bash">    界面上面显示的是类似刻度尺的刻度范围，为显示流量图形的长条作标尺用的。    中间的&lt;= =&gt;这两个左右箭头，表示的是流量的方向。    TX：发送流量    RX：接收流量    TOTAL：总流量    Cumm：运行iftop到目前时间的总流量    peak：流量峰值    rates：分别表示过去 2s 10s 40s 的平均流量</code></pre><ul><li><p>iftop相关参数</p><p>常用的参数</p></li></ul><pre><code class="language-bash">    -i设定监测的网卡，如：# iftop -i eth1      -B 以bytes为单位显示流量(默认是bits)，如：# iftop -B      -n使host信息默认直接都显示IP，如：# iftop -n      -N使端口信息默认直接都显示端口号，如: # iftop -N      -F显示特定网段的进出流量，如# iftop -F 10.10.1.0/24或# iftop -F 10.10.1.0/255.255.255.0      -h（display this message），帮助，显示参数信息      -p使用这个参数后，中间的列表显示的本地主机信息，出现了本机以外的IP信息;      -b使流量图形条默认就显示;      -f这个暂时还不太会用，过滤计算包用的;      -P使host信息及端口信息默认就都显示;      -m设置界面最上边的刻度的最大值，刻度分五个大段显示，例：# iftop -m 100M</code></pre><ul><li>进入iftop画面后的一些操作命令(注意大小写)</li></ul><pre><code class="language-bash">    按h切换是否显示帮助;      按n切换显示本机的IP或主机名;      按s切换是否显示本机的host信息;      按d切换是否显示远端目标主机的host信息;      按t切换显示格式为2行/1行/只显示发送流量/只显示接收流量;      按N切换显示端口号或端口服务名称;      按S切换是否显示本机的端口信息;      按D切换是否显示远端目标主机的端口信息;      按p切换是否显示端口信息;      按P切换暂停/继续显示;      按b切换是否显示平均流量图形条;      按B切换计算2秒或10秒或40秒内的平均流量;      按T切换是否显示每个连接的总流量;      按l打开屏幕过滤功能，输入要过滤的字符，比如ip,按回车后，屏幕就只显示这个IP相关的流量信息;      按L切换显示画面上边的刻度;刻度不同，流量图形条会有变化;      按j或按k可以向上或向下滚动屏幕显示的连接记录;      按1或2或3可以根据右侧显示的三列流量数据进行排序;      按&lt;根据左边的本机名或IP排序;      按&gt;根据远端目标主机的主机名或IP排序;      按o切换是否固定只显示当前的连接;      按f可以编辑过滤代码，这是翻译过来的说法，我还没用过这个！      按!可以使用shell命令，这个没用过！没搞明白啥命令在这好用呢！      按q退出监控。</code></pre><h1 id="iperf3常用命令"><a href="#iperf3常用命令" class="headerlink" title="iperf3常用命令"></a>iperf3常用命令</h1><p>iperf3 所提供的选项非常多，以下介绍一些常用的参数。</p><p>服务器端命令行:</p><pre><code class="language-bash">-s    表示服务器端；-p    定义端口号；-i    设置每次报告之间的时间间隔，单位为秒，如果设置为非零值，就会按照此时间间隔输出测试报告，默认值为零</code></pre><p>客户端命令行:</p><pre><code class="language-bash">-c    表示服务器的IP地址；-p    表示服务器的端口号；-t    参数可以指定传输测试的持续时间,Iperf在指定的时间内，重复的发送指定长度的数据包，默认是10秒钟.-i    设置每次报告之间的时间间隔，单位为秒，如果设置为非零值，就会按照此时间间隔输出测试报告，默认值为零；-w    设置套接字缓冲区为指定大小，对于TCP方式，此设置为TCP窗口大小，对于UDP方式，此设置为接受UDP数据包的缓冲区大小，限制可以接受数据包的最大值.--logfile    参数可以将输出的测试结果储存至文件中.-J  来输出JSON格式测试结果.-R  反向传输,缺省iperf3使用上传模式：Client负责发送数据，Server负责接收；如果需要测试下载速度，则在Client侧使用-R参数即可.</code></pre><p>常用启动命令：</p><pre><code>服务端：[root@master ~]# iperf3 -s -p 12345 -i 1客户端：C:\Users\iperf3&gt;iperf3.exe -c 192.168.1.43 -p 12345 -i 1 -t 20 -w 100k</code></pre>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603171773690301.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20190315.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;heade</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="RTC" scheme="https://www.jrrm.top/tags/RTC/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="实时通信" scheme="https://www.jrrm.top/tags/%E5%AE%9E%E6%97%B6%E9%80%9A%E4%BF%A1/"/>
+    
+    <category term="网络测试" scheme="https://www.jrrm.top/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/"/>
+    
+    <category term="linuxtc" scheme="https://www.jrrm.top/tags/linuxtc/"/>
+    
+    <category term="iftop" scheme="https://www.jrrm.top/tags/iftop/"/>
+    
+    <category term="iperf" scheme="https://www.jrrm.top/tags/iperf/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-16 - 星期一</title>
-    <link href="https://www.jrrm.top/posts/a4676e8a.html"/>
-    <id>https://www.jrrm.top/posts/a4676e8a.html</id>
-    <published>2026-03-22T07:00:47.110Z</published>
-    <updated>2026-03-22T07:01:00.646Z</updated>
+    <title>软路由配置AdGuardHome，比smartdns更好用的DNS服务器</title>
+    <link href="https://www.jrrm.top/posts/b71a6509.html"/>
+    <id>https://www.jrrm.top/posts/b71a6509.html</id>
+    <published>2020-10-11T08:48:31.000Z</published>
+    <updated>2020-10-11T08:48:31.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603161773603001.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】人生大病，只是一“傲”字。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-16_377018236076473.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、央视315晚会曝光名单全记录：漂白鸡爪、三无神药、量子增高骗局、假医学专家、违规电动车、AI 投毒产业链、编造荐股骗局；</li><li>2、市场监管总局：将彻查“3·15”晚会曝光的相关违法行为；</li><li>3、广东多地美宜佳门店被曝卖假烟，官方通报：已查获非法卷烟139.99万支，涉及306家门店；</li><li>4、市场监管总局发布2025年消费维权数据：共受理投诉2036.6万件，挽回经济损失超40亿元；</li><li>5、央行宣布：3月16日将开展5000亿元买断式逆回购操作，期限6个月；</li><li>6、个人贷款息费乱象迎监管新规：综合融资成本将“一表明示”，8月1日起施行；</li><li>7、云南砚山一村民在家宰猪后村口售卖被罚5000元，当事人称：本想赚点生活费，已缴纳罚款；</li><li>8、首批被反噬的“养虾人”已出现：IP、姓名、单位等信息被“龙虾”曝光在3000人群里；</li><li>9、“AI养龙虾”项目创始人宣布：腾讯正式成为OpenClaw赞助商；</li><li>10、北京至朝鲜平壤直飞航班将从3月30日起恢复运行，机票现已开放预订；</li><li>11、日媒：日本16日起释放约8000万桶国家石油储备，相当于日本45天所需的石油供应；</li><li>12、外媒：特朗普呼吁多国护航霍尔木兹海峡，法国明确拒绝，日本称自主判断，韩国称慎重考虑，英国称正在考虑；</li><li>13、外媒：伊朗高官称乌克兰向以色列提供帮助，乌克兰已成为伊朗的合法打击目标；泽连斯基称未卷入与伊朗战争；</li><li>14、外媒：伊朗革命卫队称将以色列总理视为打击目标；伊朗称对以色列安全中心和警察总部发动大规模袭击；</li><li>15、外媒：以军称已遭到伊朗方面六次弹道导弹袭击；以色列称对伊朗的军事行动至少再持续三周；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20200803.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="AdGuardHome是什么"><a href="#AdGuardHome是什么" class="headerlink" title="AdGuardHome是什么"></a>AdGuardHome是什么</h1><p>AdGuardHome 是AdGuard 里DNS Server的开源版本，项目地址<a href="https://github.com/AdguardTeam/AdGuardHome">AdGuardHome</a></p><p>那么什么是DNS服务器呢？</p><p>我们百度了一下答案：</p><p>DNS（Domain Name Server，域名服务器）是进行域名(domain name)和与之相对应的IP地址 (IP address)转换的服务器。DNS中保存了一张域名(domain name)和与之相对应的IP地址 (IP address)的表，以解析消息的域名。 域名是Internet上某一台计算机或计算机组的名称，用于在数据传输时标识计算机的电子方位（有时也指地理位置）。域名是由一串用点分隔的名字组成的，通常包含组织名，而且始终包括两到三个字母的后缀，以指明组织的类型或该域所在的国家或地区。</p><p>既然有现成的DNS服务器，那为什么我们要自己搭建呢？</p><p>我们知道我们访问一个网站时，只要在浏览器地址栏输入域名就可以了，但是中间浏览器做了什么呢，第一步就是解析域名，这就需要dns服务器，但是做dns服务器的有很多，到底用哪一个呢，这时候就轮到我们自己搭建的服务器出场了。通过AdGuardHome在解析域名时，可以同时向多个公共dns服务器发送请求，并选择解析到的最快的地址，这样就不用忍受有的网站因为解析到的地址比较远导致慢，我们从多个服务器上找到最快的地址，然后之后就访问这个最快的地址。另外，因为DNS解析是从我们自己的服务器走的，我们还可以对一些知道的钓鱼网站，广告网站进行过滤。</p><h1 id="怎么安装AdGuardHome"><a href="#怎么安装AdGuardHome" class="headerlink" title="怎么安装AdGuardHome"></a>怎么安装AdGuardHome</h1><p>现在很多提供的软路由固件都会集成AdGuardHome插件，如果没有可以到软件中搜索安装如图<img src="https://b3logfile.com/file/2020/10/adguard-13a1f4b0.jpg" alt="adguard.jpg"></p><p>因为我的已经安装了，如果没有安装应该在可用软件包里面有</p><p>下面是安装后的界面<img src="https://b3logfile.com/file/2020/10/adguardindex-1090632b.jpg" alt="adguardindex.jpg"></p><h1 id="配置AdGuardHome"><a href="#配置AdGuardHome" class="headerlink" title="配置AdGuardHome"></a>配置AdGuardHome</h1><p>我们点击这个界面的手动配置看到配置文件</p><pre><code class="language-bash">bind_host: 0.0.0.0bind_port: 3000users:- name: root  password: &quot;你的加密后密码&quot;http_proxy: &quot;&quot;language: &quot;&quot;rlimit_nofile: 0debug_pprof: falseweb_session_ttl: 720dns:  bind_host: 0.0.0.0  port: 7913  statistics_interval: 1  querylog_enabled: true  querylog_file_enabled: true  querylog_interval: 90  querylog_size_memory: 1000  anonymize_client_ip: false  protection_enabled: true  blocking_mode: default  blocking_ipv4: &quot;&quot;  blocking_ipv6: &quot;&quot;  blocked_response_ttl: 10  parental_block_host: family-block.dns.adguard.com  safebrowsing_block_host: standard-block.dns.adguard.com  ratelimit: 20  ratelimit_whitelist: []  refuse_any: true  upstream_dns:  - 119.29.29.29  - 114.114.114.114  - 223.5.5.5  - 101.226.4.6  - 180.76.76.76  - 1.2.4.8  - 8.8.8.8  bootstrap_dns:  - 1.1.1.1:53  - 1.0.0.1:53  - 114.114.114.114:53  - 8.8.8.8:53  - 8.8.4.4:53  - 1.1.1.1:53  - 208.67.220.220:53  - 208.67.222.222:53  all_servers: true  fastest_addr: false  allowed_clients: []  disallowed_clients: []  blocked_hosts: []  cache_size: 4194304  cache_ttl_min: 0  cache_ttl_max: 0  bogus_nxdomain: []  aaaa_disabled: false  enable_dnssec: false  edns_client_subnet: false  filtering_enabled: true  filters_update_interval: 24  parental_enabled: false  safesearch_enabled: false  safebrowsing_enabled: false  safebrowsing_cache_size: 1048576  safesearch_cache_size: 1048576  parental_cache_size: 1048576  cache_time: 30  rewrites: []  blocked_services: []tls:  enabled: false  server_name: &quot;&quot;  force_https: false  port_https: 443  port_dns_over_tls: 853  allow_unencrypted_doh: false  strict_sni_check: false  certificate_chain: &quot;&quot;  private_key: &quot;&quot;  certificate_path: &quot;&quot;  private_key_path: &quot;&quot;filters:- enabled: false  url: https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt  name: AdGuard Simplified Domain Names filter  id: 1- enabled: false  url: https://adaway.org/hosts.txt  name: AdAway  id: 2- enabled: false  url: https://www.malwaredomainlist.com/hostslist/hosts.txt  name: MalwareDomainList.com Hosts List  id: 4- enabled: false  url: https://gitee.com/privacy-protection-tools/anti-ad/raw/master/easylist.txt  name: anti-AD  id: 1592929148- enabled: true  url: http://sub.adtchrome.com/adt-chinalist-easylist.txt  name: ChinaList+EasyList(修正)  id: 1592929149whitelist_filters: []user_rules: []dhcp:  enabled: false  interface_name: &quot;&quot;  gateway_ip: &quot;&quot;  subnet_mask: &quot;&quot;  range_start: &quot;&quot;  range_end: &quot;&quot;  lease_duration: 86400  icmp_timeout_msec: 1000clients: []log_compress: falselog_localtime: falselog_max_backups: 0log_max_size: 100log_max_age: 3log_file: &quot;&quot;verbose: falseschema_version: 6</code></pre><p>贴一下我的配置：</p><p>主要可能要改的就是</p><p>bind_port:  改用你想使用网页配置的端口</p><p>password：这个修改成你想要的密码 （注意是加密后的密码，在基本设置最下方选项中选择改变网页密码，可以添加一个加密模板，输入原始密码，会计算出加密密码）</p><p>dns 下的 port 这个修改你dns服务器使用的端口</p><p>其他的可以到网页上设置</p><p>修改之后可以点击保存并应用，然后就可以打开AdGuardHome网页设置了</p><p><img src="https://b3logfile.com/file/2020/10/adguardweb-77b6ca83.jpg" alt="adguardweb.jpg"></p><p>然后我们点击上面的设置-&gt;DNS设置</p><p>设置上游服务器</p><p><img src="https://b3logfile.com/file/2020/10/image-44bd7cdb.png" alt="image.png"></p><p>设置下上游DNS服务器和Bootstrap DNS服务器</p><p>附一下我自己的设置，你们可以从里面挑选你们那比较快的</p><p>上游DNS服务器</p><pre><code class="language-bash">119.29.29.29114.114.114.114223.5.5.5101.226.4.6180.76.76.761.2.4.88.8.8.8</code></pre><p>Bootstrap DNS服务器</p><pre><code class="language-bash">1.1.1.1:531.0.0.1:53114.114.114.114:538.8.8.8:538.8.4.4:531.1.1.1:53208.67.220.220:53208.67.222.222:53</code></pre><p>点一下测试上游DNS，把出错的删除掉应用就可以了</p><h1 id="让软路由使用AdGuardHome解析"><a href="#让软路由使用AdGuardHome解析" class="headerlink" title="让软路由使用AdGuardHome解析"></a>让软路由使用AdGuardHome解析</h1><p>我们的DNS服务器已经配置好了，怎么让软路由使用AdGuardHome解析呢，那就是让我们的DNS请求直接转发到AdGuardHome，之前我们设置了DNS的端口，现在我们设置DNS请求转发到这个端口</p><p><img src="https://b3logfile.com/file/2020/10/image-45e3de31.png" alt="image.png"></p><p>我们进入软路有的网络-&gt;DHCP&#x2F;DNS下，将DNS转发设置成127.0.0.1:7913(端口要填你自己之前设置的)</p><p>现在保存应该就可以了。效果就大家自己体验了。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这篇文章给大家讲述了，在软路由中如何安装AdGuardHome插件，以及如何配置AdGuardHome，使用AdGuardHome作解析，优化DNS服务器，达到网页秒开的效果（当然具体要大家测试，比较你的网络环境跟我的不一样）。当然AdGuardHome的功能远不止这些，其他的功能还是大家自己研究，我这里就不介绍了，我只介绍DNS相关的功能。</p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603161773603001.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20200803.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;AdGuardHome是什么&quot;&gt;&lt;a href=&quot;#AdGu</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="软路由" scheme="https://www.jrrm.top/tags/%E8%BD%AF%E8%B7%AF%E7%94%B1/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="AdGuardHome" scheme="https://www.jrrm.top/tags/AdGuardHome/"/>
+    
+    <category term="DNS解析" scheme="https://www.jrrm.top/tags/DNS%E8%A7%A3%E6%9E%90/"/>
+    
+    <category term="网页秒开" scheme="https://www.jrrm.top/tags/%E7%BD%91%E9%A1%B5%E7%A7%92%E5%BC%80/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-15 - 星期日</title>
-    <link href="https://www.jrrm.top/posts/43313a00.html"/>
-    <id>https://www.jrrm.top/posts/43313a00.html</id>
-    <published>2026-03-22T07:00:47.106Z</published>
-    <updated>2026-03-22T07:01:00.629Z</updated>
+    <title>从零编写基于UDP的通信程序</title>
+    <link href="https://www.jrrm.top/posts/df78044c.html"/>
+    <id>https://www.jrrm.top/posts/df78044c.html</id>
+    <published>2020-10-10T12:16:37.000Z</published>
+    <updated>2020-10-10T12:21:18.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603151773516602.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】不好的书使无知者更加无知。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-15_376671745847723.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、财政部：2026年全国社会保险基金预算收入130890.39亿元，增长3.9%；</li><li>2、财税专家李旭红：未来将逐步扩大个税综合征收范围，最终实现综合与分类计税“更彻底的结合”；</li><li>3、多平台低价机票藏“小字加价”套路，通过默认勾选等方式“无意识搭售”让你不知不觉多掏钱；</li><li>4、两部门：打击珠宝玉石等领域“假证书、假机构、假产品、假网站”等突出问题；</li><li>5、广西桂林一30平店面开出10家档口变美食城，骑手称大多是预制菜，官方通报：已停业整改，相关网店已关停；</li><li>6、月之暗面Kimi估值涨至180亿美元，不到3个月翻4倍，据悉新一轮10亿美元融资正在进行；</li><li>7、女足亚洲杯：中国队加时赛2比0淘汰中国台北队，晋级四强并，直通2027年巴西女足世界杯参赛资格；</li><li>8、苹果公司宣布：15日起降低中国App Store佣金率，标准佣金率将从30%降至25%‌；</li><li>9、海关总署公告：4月1日起跨境电商退货不再“绕路”，商品可全国跨关区通退；</li><li>10、第四次石油危机逼近：霍尔木兹断航，2000万桶&#x2F;日供应中断，规模远超1973年；</li><li>11、外媒：伊朗被曝正考虑允许部分油轮通过霍尔木兹海峡，前提是运载石油必须以人民币结算；</li><li>12、外媒：美军称大规模打击伊朗石油出口枢纽哈尔克岛军事目标；特朗普称将联合多国派遣军舰，确保霍尔木兹海峡通航安全；</li><li>13、美媒：美国白宫拟建一座“地下中心”为访客提供安检服务，有望2028年投入使用；</li><li>14、外媒：伊朗袭击美军中东三大军事基地，反导系统雷达、机库被击中；哈马斯呼吁伊朗不要将袭击目标对准邻国；</li><li>15、外媒：美国悬赏伊朗新最高领袖等高官线索，最高1000万美元；伊拉克民兵组织1.5亿第纳尔悬赏美高官线索；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20190822.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="为什么使用UDP"><a href="#为什么使用UDP" class="headerlink" title="为什么使用UDP"></a>为什么使用UDP</h1><p>首先，我们知道TCP在弱网环境下有性能问题参考</p><p><a href="https://www.jrrm.top/blogs/zhaobingchun/articles/2020/10/07/1602084817644">为什么 TCP 协议有性能问题</a></p><p>那么使用UDP有有哪些优势呢：</p><ul><li>UDP是无连接的，即通信时不需要创建连接（发送数据结束时也没有连接可以释放）所以减小了开销和发送数据前的时延；</li><li>UDP采用最大努力交付，不保证可靠交付，因此主机不需要维护复杂的连接状态；</li><li>UDP是面向报文的，只在应用层交下来的报文前增加了首部后就向下交付IP层；</li><li>UDP是无阻塞控制的，即使网络中存在阻塞，也不会影响发送端的发送频率；</li><li>UDP支持一对一、一对多、多对一、多对多的交互通信；</li><li>DUP的首部开销小，只有8个字节，它比TCP的20个字节的首部要短。</li></ul><h1 id="怎样实现UDP通信"><a href="#怎样实现UDP通信" class="headerlink" title="怎样实现UDP通信"></a>怎样实现UDP通信</h1><p><img src="https://b3logfile.com/file/2020/10/server-e8398b56.png" alt="server.png"><br>udp通信流程图</p><p>首先实现server端:</p><pre><code class="language-c">int main(int argc, char **argv) &#123;    if(argc &lt; 2) &#123;        printf(&quot;Usage: %s port\n&quot;, argv[0]);        return -1;    &#125;    int buf_size = BUF_SIZE;    int len = sizeof(int);    int s;    struct sockaddr_in addr;      unsigned short port = atoi(argv[1]);    s = socket(AF_INET, SOCK_DGRAM, 0);  // 创建socket    if(s &lt; 0) &#123;        return -1;    &#125;    // 服务端应该处理多个客户端请求，适当增大缓冲区，防止因为服务器处理慢导致丢包setsockopt(s, SOL_SOCKET, SO_SNDBUF, &amp;buf_size, len);  // 设置发送bufsetsockopt(s, SOL_SOCKET, SO_RCVBUF, &amp;buf_size, len);  // 设置接收buf    memset(&amp;addr, 0, sizeof(struct sockaddr_in));    addr.sin_family = AF_INET;    addr.sin_port = htons(port);    addr.sin_addr.s_addr = htonl(INADDR_ANY);    // 绑定服务端端口号，客户端向此端口发送数据就可以    if(bind(s, (struct sockaddr *)&amp;addr, sizeof(struct sockaddr)) &lt; 0 )&#123;        return -1;    &#125;    // int flags;// if ((flags = fcntl(s, F_GETFL, 0)) &lt; 0 || fcntl(s, F_SETFL, flags | O_NONBLOCK) &lt; 0) &#123;// return -1;// &#125;    struct sockaddr_in recv_addr;    socklen_t addr_len = sizeof(struct sockaddr_in);    char buf[1024];    while(1)&#123;        memset(buf, 0, sizeof(buf));        // 接收其他客户端消息        int ret = recvfrom(s, buf, 1024, 0, (struct sockaddr*)&amp;recv_addr, &amp;addr_len);        if(ret &lt;= 0) &#123;            printf(&quot;server recv err: %d\n&quot;, ret);            return -1;        &#125;        char addr_s[INET_ADDRSTRLEN];        inet_ntop(addr.sin_family, &amp;recv_addr.sin_addr, addr_s, sizeof(addr_s));        printf(&quot;recv from[%s:%d]: %s\n&quot;, addr_s, ntohs(recv_addr.sin_port), buf);        // 回复客户端        memset(buf, 0, sizeof(buf));        sprintf(buf, &quot;ok&quot;);        sendto(s, buf, strlen(buf), 0, (struct sockaddr*)&amp;recv_addr, addr_len);    &#125;      return 0;&#125;</code></pre><p>实现相应客户端</p><pre><code class="language-c">int main(int argc, char **argv) &#123;    if(argc &lt; 3) &#123;        printf(&quot;Usage: %s addr port\n&quot;, argv[0]);        return -1;    &#125;    int s;    struct sockaddr_in addr;      unsigned short port = atoi(argv[2]);    s = socket(AF_INET, SOCK_DGRAM, 0);  // 创建socket    if(s &lt; 0) &#123;        printf(&quot;create socket err %d\n&quot;, s);        return -1;    &#125;    memset(&amp;addr, 0, sizeof(struct sockaddr_in));    addr.sin_family = AF_INET;    addr.sin_port = htons(port);    addr.sin_addr.s_addr = inet_addr(argv[1]);    char buf[1024];    struct sockaddr_in recv_addr;    socklen_t addr_len = sizeof(struct sockaddr_in);    while (1)    &#123;        memset(buf, 0, 1024);        scanf(&quot;%s&quot;, buf);        if(strncmp(buf, &quot;quit&quot;, 4) == 0) &#123;            return 0;        &#125;        // 发送数据        sendto(s, buf, strlen(buf), 0, (struct sockaddr*)&amp;addr, sizeof(struct sockaddr));        memset(buf, 0, sizeof(buf));        // 响应服务端返回        int ret = recvfrom(s, buf, 1024, 0, (struct sockaddr*)&amp;recv_addr, &amp;addr_len);        if(ret &lt;= 0) &#123;            printf(&quot;server recv err: %d\n&quot;, ret);            return -1;        &#125;        char addr_s[INET_ADDRSTRLEN];        inet_ntop(addr.sin_family, &amp;recv_addr.sin_addr, addr_s, sizeof(addr_s));        printf(&quot;recv from[%s:%d]: %s\n&quot;, addr_s, ntohs(recv_addr.sin_port), buf);    &#125;    return 0;&#125;</code></pre><h1 id="实现结果查看"><a href="#实现结果查看" class="headerlink" title="实现结果查看"></a>实现结果查看</h1><p><img src="https://b3logfile.com/file/2020/10/result-198a0829.jpg" alt="result.jpg"><br>程序效果</p><p>实现了客户端发送，服务器响应打印，并回复客户端，可以看到发送消息后，客户端正常收到服务器回复的ok</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本例通过最简单的socket编程，实现了简单的udp通信，当然实际在服务器处理中还有很多复杂的逻辑，比如服务器目前是阻塞在udp的recvfrom，实际中服务器不可能只做这一件事，需要使用非阻塞方式，或者使用多线程模式。另外，我们知道udp是不可靠传输，需要制定协议，做消息重排序，丢包重传，或者使用fec技术恢复，这些留在下篇介绍。</p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603151773516602.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20190822.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;为什么使用UDP&quot;&gt;&lt;a href=&quot;#为什么使用UDP&quot; </summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="RTC" scheme="https://www.jrrm.top/tags/RTC/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="实时通信" scheme="https://www.jrrm.top/tags/%E5%AE%9E%E6%97%B6%E9%80%9A%E4%BF%A1/"/>
+    
+    <category term="UDP" scheme="https://www.jrrm.top/tags/UDP/"/>
+    
+    <category term="C语言" scheme="https://www.jrrm.top/tags/C%E8%AF%AD%E8%A8%80/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-14 - 星期六</title>
-    <link href="https://www.jrrm.top/posts/eacea53d.html"/>
-    <id>https://www.jrrm.top/posts/eacea53d.html</id>
-    <published>2026-03-22T07:00:47.103Z</published>
-    <updated>2026-03-22T07:01:00.612Z</updated>
+    <title>为什么 TCP 协议有性能问题</title>
+    <link href="https://www.jrrm.top/posts/aaf32453.html"/>
+    <id>https://www.jrrm.top/posts/aaf32453.html</id>
+    <published>2020-10-07T15:33:38.000Z</published>
+    <updated>2020-10-08T03:56:37.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603141773430201.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】在这个世界上，良心应该更大于天才。巴尔扎克说：良心比天才更难得。良心是我们自己对自己的反应。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-14_376333522846080.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、2026年春运正式收官：全社会跨区域人员流动量约94亿人次，比去年同期增长4.3%，再创历史新高；</li><li>2、央行：今年前两个月社会融资规模增量累计为9.6万亿元，其中人民币贷款增加5.61万亿元；</li><li>3、市场监管总局：加大对“大字吸睛、小字免责”等广告乱象整治力度；</li><li>4、广电总局整治电视剧演员“争番位”乱象：以演员真实姓名的姓氏笔画为序排列；</li><li>5、多地学校通知取消“家长护学岗”制度；无锡相关部门回复：原本就是不强制的；</li><li>6、全球首个植入式脑机接口三类医疗器械获批上市，可助瘫痪患者凭大脑意念控制手套完成抓握等动作；</li><li>7、手机行业迎近5年最大规模涨价潮：经销商透露部分新机型涨幅可能500到2000元之间；</li><li>8、长三角首台“华龙一号”核电机组首次并网发电，发电量预计可满足500万人年用电需求；</li><li>9、商务部：第6轮中美经贸高级别磋商将于3月14日至17日在法国举行；</li><li>10、联合国称伊朗已有约320万人因冲突流离失所；中国红十字会决定向伊朗提供20万美元紧急人道主义援助，抚恤伊朗遇难学生家长；</li><li>11、美媒：美国首次公开估算战事成本，称上周对伊朗军事行动花费约110亿美元，相当于造一艘福特级航母；</li><li>12、外媒：伊拉克民兵武装称袭击两架美军加油机，导致一架被击落，另一架被迫降落，美军确认坠毁飞机上6人全部遇难；</li><li>13、美媒：美国同日发生两起袭击事件，一处犹太教堂遭冲门爆炸威胁，一所大学内发生枪击致美军伤亡，嫌疑人均事发后死亡；</li><li>14、韩媒：韩国济州航空空难时隔一年多再发现遇难者遗骸，李在明下令迅速彻查；</li><li>15、外媒：美国发布30天豁免令，允许各国购买滞留海上的俄罗斯石油，泽连斯基称此举将为俄带来100亿美元战争资金；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20181001.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><p>TCP 协议可以说是今天互联网的基石，作为可靠的传输协议，在今天几乎所有的数据都会通过 TCP 协议传输，然而 TCP 在设计之初没有考虑到现今复杂的网络环境，当你在地铁上或者火车上被断断续续的网络折磨时，你可能都不知道这一切可能都是 TCP 协议造成的。本文会分析 TCP 协议为什么在弱网环境下有严重的性能问题。</p><blockquote><p>注：本文的分析基于 <a href="https://tools.ietf.org/html/rfc793">RFC 793</a><a href="https://draveness.me/whys-the-design-tcp-performance/#fn:2">2</a> 中定义的 TCP 协议，从 RFC 793 发布至今已经过了将近 40 年，期间多个状态为 Proposed Standard 的非强制性 RFC 都对 TCP 协议进行了修订，尝试优化 TCP 协议的性能，例如：选择性 ACK（Selective ACK, SACK）、虚假超时剖析（Forward RTO, F-RTO）和 TCP 快开启（TCP Fast Open, TFO），最新版本的 Linux 中已经包含了这些 RFC 的实现。</p></blockquote><p>底层的数据传输协议在设计时必须要对带宽的利用率和通信延迟进行权衡和取舍，所以想要解决实际生产中的全部问题是不可能的，TCP 选择了充分利用带宽，为流量而设计，期望在尽可能短的时间内传输更多的数据。</p><blockquote><p>在网络通信中，从发送方发出数据开始到收到来自接收方的确认的时间被叫做往返时延（Round-Trip Time，RTT）。</p></blockquote><p>弱网环境是丢包率较高的特殊场景，TCP 在类似场景中的表现很差，当 RTT 为 30ms 时，一旦丢包率达到了 2%，TCP 的吞吐量就会下降 89.9%，从下面的表中我们可以看出丢包对 TCP 的吞吐量极其显著的影响：</p><table><thead><tr><th align="center">RTT</th><th align="center">TCP 吞吐量</th><th align="center">TCP 吞吐量（2% 丢包率）</th></tr></thead><tbody><tr><td align="center">0 ms</td><td align="center">93.5 Mbps</td><td align="center">3.72 Mbps</td></tr><tr><td align="center">30 ms</td><td align="center">16.2 Mbps</td><td align="center">1.63 Mbps</td></tr><tr><td align="center">60 ms</td><td align="center">8.7 Mbps</td><td align="center">1.33 Mbps</td></tr><tr><td align="center">90 ms</td><td align="center">5.32 Mbps</td><td align="center">0.85 Mbps</td></tr></tbody></table><p>本文将分析在弱网环境下（丢包率高）影响 TCP 性能的三个原因：</p><ul><li>TCP 的拥塞控制算法会在丢包时主动降低吞吐量；</li><li>TCP 的三次握手增加了数据传输的延迟和额外开销；</li><li>TCP 的累计应答机制导致了数据段的传输；</li></ul><p>在上述的三个原因中，拥塞控制算法是导致 TCP 在弱网环境下有着较差表现的首要原因，三次握手和累计应答两者的影响依次递减，但是也加剧了 TCP 的性能问题。</p><h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><p>TCP 拥塞控制算法是互联网上主要的拥塞控制措施，它使用一套基于线増积减（Additive increase&#x2F;multiplicative decrease，AIMD）的网络拥塞控制方法来控制拥塞，也是造成 TCP 性能问题的主要原因。</p><p>第一次发现的互联网拥塞崩溃是在 1986 年，NSFnet 阶段一的骨干网的处理能力从 32,000bit&#x2F;s 降到了 40bit&#x2F;s，该骨干网的处理能力直到 1987 和 1988 年，TCP 协议实现了拥塞控制之后才得到解决。正是因为发生过网络阻塞造成的崩溃，所以 TCP 的拥塞控制算法就认为只要发生了丢包当前网络就发生了拥堵，从这一假设出发，TCP 最初的实现 Tahoe 和 Reno 就使用了慢启动和拥塞避免两个机制实现拥塞控制，本节中对拥塞控制的分析就是基于这个版本的实现。</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353394tcpcongestioncontrol-76a5dc74.png" alt="2020010215779393353394tcpcongestioncontrol.png"></p><p><strong>图 1 - TCP 拥塞控制</strong></p><p>每一个 TCP 连接都会维护一个拥塞控制窗口（Congestion Window），它决定了发送方同时能向接收方发送多少数据，其作用主要有两个：</p><ol><li>防止发送方向接收方发送了太多数据，导致接收方无法处理；</li><li>防止 TCP 连接的任意一方向网络中发送大量数据，导致网络拥塞崩溃；</li></ol><p>除了拥塞窗口大小（cwnd）之外，TCP 连接的双方都有接收窗口大小（rwnd），在 TCP 连接建立之初，发送方和接收方都不清楚对方的接收窗口大小，所以通信双方需要一套动态的估算机制改变数据传输的速度，在 TCP 三次握手期间，通信双方会通过 ACK 消息通知对方自己的接收窗口大小，接收窗口大小一般是带宽延迟乘积（Bandwidth-delay product, BDP）决定的，不过在这里我们就不展开介绍了。</p><p>客户端能够同时传输的最大数据段的数量是接收窗口大小和拥塞窗口大小的最小值，即 <code>min(rwnd, cwnd)</code>。TCP 连接的初始拥塞窗口大小是一个比较小的值，在 Linux 中是由 <code>TCP_INIT_CWND</code> 定义的：</p><pre><code class="language-c">/* TCP initial congestion window as per rfc6928 */#define TCP_INIT_CWND10</code></pre><p>初始拥塞控制窗口的大小从出现之后被多次修改，几个名为 Increasing TCP’s Initial Window 的 RFC 文档：RFC2414、RFC3390和 RFC6928分别增加了 <code>initcwnd</code> 的值以适应不断提高的网络传输速度和带宽。</p><p>TCP 协议使用慢启动阈值（Slow start threshold, ssthresh）来决定使用慢启动或者拥塞避免算法：</p><ul><li>当拥塞窗口大小小于慢启动阈值时，使用慢启动；</li><li>当拥塞窗口大小大于慢启动阈值时，使用拥塞避免算法；</li><li>当拥塞窗口大小等于慢启动阈值时，使用慢启动或者拥塞避免算法；</li></ul><p><img src="https://b3logfile.com/file/2020/10/2020010815784189191423tcpslowstart-c2c0baf0.png" alt="2020010815784189191423tcpslowstart.png"></p><p><strong>图 2 - TCP 的慢启动</strong></p><p>如上图所示，使用 TCP 慢启动时，发送方每收到一个响应方的 ACK 消息，拥塞窗口大小就会加一。当拥塞窗口大小大于慢启动阈值时，就会使用拥塞避免算法：</p><ol><li><strong>线性增长</strong>：每经过一个往返时间 RTT，拥塞窗口大小会加一；</li><li><strong>积式减少</strong>：当发送方发送的数据包丢包时，慢启动阈值会设置为拥塞窗口大小的一半；</li></ol><p>TCP 的早期实现 Tahoe 和 Reno 在遇到丢包时会将拥塞控制大小重置为初始值，由于拥塞窗口大小小于慢启动阈值，所以重新进入慢启动阶段。</p><p>如果 TCP 连接刚刚建立，由于 Linux 系统的默认设置，客户端能够同时发送 10 个数据段，假设我们网络的带宽是 10M，RTT 是 40ms，每个数据段的大小是 1460 字节，那么使用 BDP 计算的通信双方窗口大小上限应该是 35，这样才能充分利用网络的带宽：</p><p>rwndmax&#x3D;10×106bit&#x2F;s⋅40×10−3s1460∗8bit&#x3D;35rwndmax&#x3D;10×106bit&#x2F;s⋅40×10−3s1460∗8bit&#x3D;35</p><p>然而拥塞控制窗口的大小从 10 涨到 35 需要 2RTT 的时间，具体的过程如下：</p><ol><li>发送方向接收方发送 <code>initcwnd = 10</code> 个数据段（消耗 0.5RTT）；</li><li>接收方接收到 10 个数据段后向发送方发送 ACK（消耗 0.5RTT）；</li><li>发送方接收到发送方的 ACK，拥塞控制窗口大小由于 10 个数据段的成功发送 +10，当前拥塞控制窗口大小达到 20；</li><li>发送方向接收方发送 20 个数据段（消耗 0.5RTT）；</li><li>接收方接收到 20 个数据段后向发送方发送 ACK（消耗 0.5RTT）；</li><li>发送方接收到发送方的 ACK，拥塞控制窗口大小由于 20 个数据段的成功发送 +20，当前拥塞控制窗口大小达到 40；</li></ol><p>从 TCP 三次握手建立连接到拥塞控制窗口大小达到假定网络状况的最大值 35 需要 3.5RTT 的时间，即 140ms，这是一个比较长的时间了。</p><p>早期互联网的大多数计算设备都通过有线网络连接，出现网络不稳定的可能性也比较低，所以 TCP 协议的设计者认为丢包意味着网络出现拥塞，一旦发生丢包，客户端疯狂重试就可能导致互联网的拥塞崩溃，所以发明了拥塞控制算法来解决该问题。</p><p>但是如今的网络环境更加复杂，无线网络的引入导致部分场景下的网络不稳定成了常态，所以丢包并不一定意味着网络拥堵，如果使用更加激进的策略传输数据，在一些场景下会得到更好的效果。</p><h2 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h2><p>TCP 使用三次握手建立连接应该是全世界所有工程师都十分了解的知识点，三次握手的主要目的是避免历史错误连接的建立并让通信的双方确定初始序列号，然而三次握手的成本相当高，在不丢包的情况下，它需要建立 TCP 连接的双方进行三次通信。</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353419basic3wayhandshake-c4a1e511.png" alt="2020010215779393353419basic3wayhandshake.png"></p><p><strong>图 3 - 常见的 TCP 三次握手</strong></p><p>如果我们要从北京访问上海的服务器，由于北京到上海的直线距离约为 1000 多公里，而光速是目前通信速度的极限，所以 RTT 一定会大于 6.7ms：</p><p>RTT&#x3D;1,000,000m÷300,000m&#x2F;ms×2&#x3D;6.7msRTT&#x3D;1,000,000m÷300,000m&#x2F;ms×2&#x3D;6.7ms</p><p>然而因为光在光纤中不是直线传播的，真正的传输速度会比光速慢 ~31%，而且数据需要在各种网络设备之间来回跳转，所以很难达到理论的极限值。在生产环境中从北京到上海的 RTT 大概在 40ms 左右，所以 TCP 建立连接所需要最短时间也需要 60ms（1.5RTT）。</p><p>在网络环境较差的地铁、车站等场景中，因为丢包率较高，客户端很难与服务端快速完成三次通信并建立 TCP 连接。当客户端长时间没有收到服务端的响应时，只能不断发起重试，随着请求次数逐渐增加，访问的延迟也会越来越高。</p><p>由于大多数的 HTTP 请求都不会携带大量的数据，未被压缩的请求和响应头大小在 ~200B 到 2KB 左右，而 TCP 三次握手带来的额外开销是 222 字节，其中以太网数据帧占 <code>3 * 14 = 42</code> 字节，IP 数据帧占 <code>3 * 20 = 60</code> 字节，TCP 数据帧约占 120 字节（三次握手的开销与请求和环境有关，具体值不固定）：</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353427tcpthreewayhandshakeoverhead-ee211593.png" alt="2020010215779393353427tcpthreewayhandshakeoverhead.png"></p><p><strong>图 4 - TCP 三次握手的额外开销</strong></p><p>虽然 TCP 不会为每一个发出的数据段建立连接，但是三次握手建立连接需要的成本还是相当高，不仅需要额外增加 1.5RTT 的网络延时，还需要增加 222 字节的额外开销，所以在弱网环境下，通过三次握手建立连接会加剧 TCP 的性能问题。</p><h2 id="重传机制"><a href="#重传机制" class="headerlink" title="重传机制"></a>重传机制</h2><p>TCP 传输的可靠性是通过序列号和接收方的 ACK 来保证的，当 TCP 传输一个数据段时，它会将该数据段的副本放到重传队列上并开启计时器：</p><ul><li>如果发送方收到了该数据段对应的 ACK 响应，当前数据段就会从重传队列中删除；</li><li>如果发送方在计时器到期之间都没有收到该数据段对应的 ACK，就会重新发送当前数据段；</li></ul><p>TCP 的 ACK 机制可能会导致发送方重新传输接收方已经收到了数据段。TCP 中的 ACK 消息表示该消息之前的全部消息都已经被成功接收和处理，例如：</p><ol><li>发送方向接收方发送了序号为 1-10 的消息；</li><li>接收方向发送方发送 ACK 8 响应；</li><li>发送方认为序号为 1-8 的消息已经被成功接收；</li></ol><p>这种 ACK 的方式在实现上比较简单，更容易保证消息的顺序性，但是在以下情况可能会导致发送方重传已经接收的数据：</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353434tcpretransmissionall-8b762109.png" alt="2020010215779393353434tcpretransmissionall.png"></p><p><strong>图 5 - TCP 的重传策略</strong></p><p>如上图所示，接收方已经收到了序号为 2-5 的数据，但是由于 TCP ACK 的语义是<strong>当前数据段前的全部数据段都已经被接收和处理</strong>，所以接收方无法发送 ACK 消息，由于发送方没有收到 ACK，<strong>所有数据段</strong>对应的计时器就会超时并重新传输数据。在丢包较为严重的网络下，这种重传机制会造成大量的带宽浪费。</p><blockquote><p><a href="https://tools.ietf.org/html/rfc2581#page-6">RFC2581</a> 中提出的快速重传就会缓解上述问题，当接收方收到乱序的数据段时，会立刻发送三个连续的 ACK 触发发送方的重传。</p></blockquote><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>TCP 协议的一些设计在今天来看虽然仍然具有巨大的价值，但是并不能适用于所有场景。为了解决 TCP 的性能问题，目前业界有两种解决方案：</p><ol><li>使用 UDP 构建性能更加优异、更灵活的传输协议，例如：QUIC等；</li><li>通过不同的手段优化 TCP 协议的性能，例如：选择性 ACK（Selective ACK, SACK），TCP 快开启（TCP Fast Open, TFO）；</li></ol><p>由于 TCP 协议在操作系统内核中，不利于协议的更新，所以第一种方案目前发展的更好，HTTP&#x2F;3 就使用了 QUIC 作为传输协议。我们在这里重新回顾一下导致 TCP 性能问题的三个重要原因：</p><ul><li>TCP 的拥塞控制在发生丢包时会进行退让，减少能够发送的数据段数量，但是丢包并不一定意味着网络拥塞，更多的可能是网络状况较差；</li><li>TCP 的三次握手带来了额外开销，这些开销不只包括需要传输更多的数据，还增加了首次传输数据的网络延迟；</li><li>TCP 的重传机制在数据包丢失时可能会重新传输已经成功接收的数据段，造成带宽的浪费；</li></ul><p>TCP 协议作为互联网数据传输的基石可以说是当之无愧，虽然它确实在应对特殊场景时有些问题，但是它的设计思想有着非常多的借鉴意义并值得我们学习。</p><p>到最后，我们还是来看一些比较开放的相关问题，有兴趣的读者可以仔细思考一下下面的问题：</p><ul><li>QUIC 协议是能否保证丢包率较高时的传输性能？</li><li>除了 SACK 和 TFO 之外还有哪些手段可以优化 TCP 的性能？</li></ul><blockquote><p>如果对文章中的内容有疑问或者想要了解更多软件工程上一些设计决策背后的原因，可以在博客下面留言，作者会及时回复本文相关的疑问并选择其中合适的主题作为后续的内容。</p></blockquote>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603141773430201.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20181001.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;p&gt;TCP 协议可以说是今天互联网的基石，作为可靠的传输协议，在今天几乎所</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="RTC" scheme="https://www.jrrm.top/tags/RTC/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="实时通信" scheme="https://www.jrrm.top/tags/%E5%AE%9E%E6%97%B6%E9%80%9A%E4%BF%A1/"/>
+    
+    <category term="音视频" scheme="https://www.jrrm.top/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
+    
+    <category term="技术博客" scheme="https://www.jrrm.top/tags/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-13 - 星期五</title>
-    <link href="https://www.jrrm.top/posts/91a46b66.html"/>
-    <id>https://www.jrrm.top/posts/91a46b66.html</id>
-    <published>2026-03-22T07:00:47.099Z</published>
-    <updated>2026-03-22T07:01:00.595Z</updated>
+    <title>为软路由选择系统，从零打造自己的专属软路由系统</title>
+    <link href="https://www.jrrm.top/posts/1161209.html"/>
+    <id>https://www.jrrm.top/posts/1161209.html</id>
+    <published>2020-07-04T13:57:17.000Z</published>
+    <updated>2020-10-08T03:57:30.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603121773339898.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】苦想没盼头，苦干有奔头。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-13_375955684147623.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、十四届全国人大四次会议12日闭幕，会议表决通过多项决议和法律；</li><li>2、司法部：今年将在全国统一推行行政检查“扫码入企”，实现检查过程透明化；</li><li>3、重庆正式实施中小学春秋假，每学年两次每次2-3天，可与法定节假日连休，期间严禁布置书面作业；</li><li>4、全球首个智慧康养机器人养老驿站在北京亦庄投用，目前已部署40余款机器人，覆盖餐饮、康养等多个领域；</li><li>5、微信上线新功能：通话弹窗新增“忽略”选项，不想接的微信语音或视频会被静默处理，对方不会收到已拒绝的提示；</li><li>6、全国首个烧烤学院正式启动招生，毕业生可获大专学历，校方回应：报名满30人就开班；</li><li>7、武汉一男子做核磁被“绑”机器一整晚，天亮后被保洁员解救，涉事科室称：交接失误，相关医护人员已被停职；</li><li>8、湖南一网友发布“爷爷奶奶129岁，相知相恋100年”内容引质疑，官方通报：内容不实，相关账号已被禁言；</li><li>9、河北一公司月薪7000招聘职业农民，负责种植小麦、玉米，要求30至35岁男性，工作人员称：限当地人，已招满；</li><li>10、美国将对中国、欧盟等16个贸易伙伴发起新一轮调查，外交部回应：关税战、贸易战不符合任何一方的利益；</li><li>11、英媒：英国议会已投票通过法案，决定废除上议院世袭贵族席位‌，延续700年的政治传统或将终结‌；</li><li>12、美媒：美国国防部被曝“龙虾门”，1500万吃牛排、690万吃龙虾尾，5个工作日花掉501亿美元；</li><li>13、美媒：FBI警告称伊朗或对加州发动无人机袭击，加州州长表示已提升警戒级别，做好应急准备；</li><li>14、美媒：美军“福特”号航空母舰主洗衣房发生火灾，舰方称与战斗无关，目前火势已得到控制；</li><li>15、外媒：伊朗新任最高领袖发表首次讲话，称霍尔木兹海峡将继续关闭，誓言追究袭击事件的责任，并为死者复仇；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20180221.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="软路由系统"><a href="#软路由系统" class="headerlink" title="软路由系统"></a>软路由系统</h1><p>常见软路由系统主要有爱快，openwrt，ros，爱快分流功能强大，适合公司，openwrt开源，功能插件比较多，适合折腾。ros据说比较稳定，我没试过，不多评论。这里我们选openwrt，毕竟要专属，就要折腾。</p><h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>我们选择自己编译openwrt，只保留自己使用的插件</p><p>系统：windows 10 的wsl</p><p>代码：</p><p>主仓库: <code>https://github.com/coolsnowwolf/lede.git</code></p><p>常用插件仓库：<code>https://github.com/zhaobingchun/openwrt-packages.git</code></p><h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><h2 id="配置wsl的环境，到win10应用商店，搜索ubuntu安装"><a href="#配置wsl的环境，到win10应用商店，搜索ubuntu安装" class="headerlink" title="配置wsl的环境，到win10应用商店，搜索ubuntu安装"></a>配置wsl的环境，到win10应用商店，搜索ubuntu安装</h2><h2 id="配置ubuntu环境"><a href="#配置ubuntu环境" class="headerlink" title="配置ubuntu环境"></a>配置ubuntu环境</h2><h3 id="修改环境变量"><a href="#修改环境变量" class="headerlink" title="修改环境变量"></a>修改环境变量</h3><p>打开wsl命令行输入：<code>sudo vim /etc/profile</code> 点击键盘i进入输入模式</p><p>在文件末尾输入：<code>export PATH=$(echo &quot;$PATH&quot; | sed -e &#39;s/:\/mnt.*//g&#39;)</code> 保存退出 按键盘esc 输入：wq</p><p>在命令行输入：<code>source /etc/profile</code> 重新载入配置</p><h3 id="安装依赖软件"><a href="#安装依赖软件" class="headerlink" title="安装依赖软件"></a>安装依赖软件</h3><p>在命令行输入：<code>sudo apt-get update</code></p><p>然后输入：</p><pre><code>sudo apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3.5 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget swig</code></pre><h3 id="下载代码"><a href="#下载代码" class="headerlink" title="下载代码"></a>下载代码</h3><p>在命令行输入：</p><pre><code>git clone https://github.com/coolsnowwolf/lede.git</code></pre><p>下载代码</p><p>添加第三方仓库：</p><p>两种方式：</p><p>一、进入代码目录</p><pre><code>cd ledecd packagemkdir openwrt-packagescd openwrt-packages</code></pre><p>然后将你要用到的插件放到这个目录中</p><p>二、进入代码目录</p><pre><code>cd ledevim feeds.conf.default</code></pre><p>使用我提供的仓库，在文件中插入这两行</p><pre><code>src-git kenzo https://github.com/kenzok8/openwrt-packagessrc-git small https://github.com/kenzok8/small</code></pre><p>保存</p><p>然后执行</p><pre><code>./scripts/feeds update -a./scripts/feeds install -a</code></pre><h3 id="配置编译"><a href="#配置编译" class="headerlink" title="配置编译"></a>配置编译</h3><p>现在开始打造属于自己的系统</p><p>输入：<code>make menuconfig</code></p><p>附上图：</p><p><img src="https://b3logfile.com/file/2020/07/image-c10d1070.png" alt="image.png"></p><p>第一步：修改Targe Images 键盘选中，按Enter键进入</p><p><img src="https://b3logfile.com/file/2020/07/image-7450d03b.png" alt="image.png"></p><p>把build efi image 跟 build vmware image 去掉，用不到，通过键盘方向键移动到相应位置，按键盘n 取消，如果要选中按y 前面出现 * 是选中，或者按空格键切换，* 编译到固件中，M 编译成模块 空 不选中，如果想搜索，可以按键盘 &#x2F; ,按两下esc 键，回到上一级</p><p>第二步：配置插件</p><p>选中LuCI 按Enter 进入</p><p><img src="https://b3logfile.com/file/2020/07/image-f35a5136.png" alt="image.png"></p><p>选中Applications 按Enter进入</p><p><img src="https://b3logfile.com/file/2020/07/image-af347bbf.png" alt="image.png"></p><p>这里只说一下我自己用的插件吧，其他的自己折腾</p><p>luci-app-accesscontrol  &#x2F;&#x2F; 修改控制台密码的</p><p>luci-app-adguardhome &#x2F;&#x2F; dns服务器，加速dns解析，拦截广告的</p><p>luci-app-advancedsetting &#x2F;&#x2F; 高级设置，在网页上改dnsmq，hosts的，不懂别乱改</p><p>luci-app-arpbind &#x2F;&#x2F; 绑定IP地址跟mac地址的，就是让你的设备固定IP</p><p>luci-app-ddns &#x2F;&#x2F; ddns 就是把你总变的公网IP绑定到域名上，方便外网访问</p><p>luci-app-diskman &#x2F;&#x2F; 硬盘分区的，主要系统盘太大，分个区间放东西用</p><p>luci-app-filetranfer &#x2F;&#x2F; 往路由器传文件的，省的用winscp了</p><p>luci-app-flowoffload &#x2F;&#x2F; 加速nat转发的，不知道个啥原理，反正看到加速就装了</p><p>luci-app-netdata &#x2F;&#x2F; 这个系统资源监控软件看起来比较强大</p><p>luci-app-openclash &#x2F;&#x2F; 这个代理上网的，看起来比较强大</p><p>luci-app-serverchan &#x2F;&#x2F; 这个是用来微信通知路由的太热了的</p><p>luci-app-ttyd &#x2F;&#x2F; 这个是在网页上敲命令行的，省的开xshell了</p><p>luci-app-unblockmusic &#x2F;&#x2F; 这个是解锁网易云变灰歌曲的，就是告诉它没变灰然后代理到其他服务器听</p><p>luci-app-upnp &#x2F;&#x2F; 这个是自动端口映射的，需要你的软件支持，可以在外网访问家里的服务</p><p>luci-app-usb-printer &#x2F;&#x2F; 这个是连接打印机的，能把usb打印机变成网络打印机</p><p>luci-app-vlmscd &#x2F;&#x2F; 这个是激活系统跟office的</p><p>按两下esc返回上一层</p><p>选中themes 按Enter进入</p><p><img src="https://b3logfile.com/file/2020/07/image-58bbde3d.png" alt="image.png"></p><p>选中 luci-theme-opentomato 个人比较喜欢这个主题，当然可以选其他的</p><p><img src="https://b3logfile.com/file/2020/07/image-2e25834a.png" alt="image.png"></p><p>一直按esc 直到出现save 选ok</p><p>然后开始编译：<code>make -j1 V=s</code> 第一次建议单线程编译，当然我没有听建议的，也能编过</p><p>然后等待跑码完，就编译好了自己的软路由系统</p><p>最后镜像文件在：<code>bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img</code></p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603121773339898.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20180221.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;软路由系统&quot;&gt;&lt;a href=&quot;#软路由系统&quot; class=</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="软路由" scheme="https://www.jrrm.top/tags/%E8%BD%AF%E8%B7%AF%E7%94%B1/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-12 - 星期四</title>
-    <link href="https://www.jrrm.top/posts/51d0d0a6.html"/>
-    <id>https://www.jrrm.top/posts/51d0d0a6.html</id>
-    <published>2026-03-22T07:00:47.096Z</published>
-    <updated>2026-03-22T07:01:00.579Z</updated>
+    <title>NAS上安装emby，打造家庭媒体中心</title>
+    <link href="https://www.jrrm.top/posts/4200a223.html"/>
+    <id>https://www.jrrm.top/posts/4200a223.html</id>
+    <published>2020-06-26T10:57:24.000Z</published>
+    <updated>2020-10-08T03:57:15.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603121773257401.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】一个顽强坚持自己在正义事业中的目标的人是不会因同伴发疯似地狂叫“错了”而动摇决心，也不会因暴君威胁恫吓的脸色而恐惧退缩。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-12_375625502175619.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、公积金改革大潮真的来了：时隔10年再被写入政府工作报告，10万亿存量资金有望获得盘活契机；</li><li>2、国家超算互联网宣布：龙虾用户每人免费送1000万Tokens；多所高校要求警惕OpenClaw安全风险，部分严禁校内使用；</li><li>3、我国科学家在银河系边缘发现一对“双胞胎”，为恒星诞生理论提供了新的观测证据；</li><li>4、中国糖尿病治疗领域取得突破：基于干细胞的胰岛再生与移植技术正式进入临床研究阶段；</li><li>5、19名硕士拟录为酿酒工、成装工引发关注，汾酒回应：确为一线岗位，学历高上升空间更大，工资也有差异；</li><li>6、网红20元1米大肉串被曝成本仅4.5元，批发商称：成分是纯鸭肉+羊油，跟牛羊肉没有关系；</li><li>7、华莱士正式宣布退市，上市近十年间仅融资1000万元，门店曾突破2万家超越肯德基、麦当劳、德克士在华的门店总和；</li><li>8、今年2月52条中日航线取消全部航班，2514个赴日航班取消，取消率高达48.5%；</li><li>9、福布斯年度亿万富豪榜：共3428人上榜，马斯克蝉联首富；中国539人上榜，其中张一鸣位列全球第26位；</li><li>10、外媒：国际能源署建议释放4亿桶战略石油储备，规模创历史之最；特朗普宣布将在得州建设美国50年来首座新炼油厂；</li><li>11、外媒：国际足联主席称特朗普欢迎伊朗到美国参加世界杯；伊朗体育部长称不可能参加美加墨世界杯；</li><li>12、韩媒：驻韩美军6台“萨德”已全部运出基地，将重新部署至中东地区，韩政府回应：反对了但没用；</li><li>13、美媒：特朗普称伊朗境内几乎已无可打击的目标，美国对伊朗军事行动即将结束；伊朗称美海军已”逃离”伊朗周边海域；</li><li>14、外媒：伊朗警告将对美以经济目标采取报复行动，并提醒民众远离银行等潜在目标；</li><li>15、美媒：美军内部调查初步认定“误击”伊朗学校；美前主持人谴责美军，称“不值得为这样的国家而战”；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20190902.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>本文介绍在nas上安装emby，打造家庭媒体中心，先上个最终效果图</p><p><img src="https://b3logfile.com/file/2020/06/image-ba5b82f5.png" alt="image.png"></p><h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>本文安装依然使用群晖系统介绍，关于群晖的介绍可以看这篇文章：</p><p><a href="https://www.jrrm.top/blogs/zhaobingchun/articles/2020/06/12/1591970565782">使用nas挂载Google Drive，扩展你的NAS空间</a></p><p>打开NAS的套件中心，正常套件中心是没有emby套件的，我们需要加入emby的源</p><p>打开设置-&gt;套件来源-&gt;新增 名称填写emby，地址填写</p><p><code>https://synology.emby.media/?package_repository=360efc6e-de72-4073-b603-2bfbd7001586</code></p><p>点击确定</p><p>在搜索中，搜索emby</p><p><img src="https://b3logfile.com/file/2020/06/image-6b8505c0.png" alt="image.png"></p><p>因为我已经按照过，所以这边已经按照了，你选择按照，然后需要等一段时间，就安装好了。</p><p>然后点击打开</p><p><img src="https://b3logfile.com/file/2020/06/image-d8e73a08.png" alt="image.png"></p><p>选择中文，Next，</p><p><img src="https://b3logfile.com/file/2020/06/image-44cd2245.png" alt="image.png"></p><p>创建用户名，Next</p><p><img src="https://b3logfile.com/file/2020/06/image-3548eb66.png" alt="image.png"></p><p>这一步设置媒体库，先跳过，直接点Next</p><p><img src="https://b3logfile.com/file/2020/06/image-7aa1949e.png" alt="image.png"></p><p>这里语言选中文，国家选中国，Next</p><p><img src="https://b3logfile.com/file/2020/06/image-ff03433f.png" alt="image.png"></p><p>这里直接Next</p><p><img src="https://b3logfile.com/file/2020/06/image-2d6503cb.png" alt="image.png"></p><p>这里勾选accept，Next</p><p><img src="https://b3logfile.com/file/2020/06/image-d7ea924d.png" alt="image.png"></p><p>Finish</p><p><img src="https://b3logfile.com/file/2020/06/image-2ad75156.png" alt="image.png"></p><p>点这边，登录你的账号</p><p>点设置，控制台，选择媒体库，添加媒体库</p><p><img src="https://b3logfile.com/file/2020/06/image-84212536.png" alt="image.png"></p><p>首先添加电影，内容类型选电影，显示名称自己输入，文件夹，选择你存放电影的文件夹，当然可以选上篇文章我们挂载的google drive 盘。源数据下载器，可以选择默认，或者安装豆瓣插件使用豆瓣下载。保存，等待刮削就可以了。</p><p>有的选择视频文件夹时，会不显示存放媒体的文件夹，这是文件夹权限问题，打开控制面板，选择共享文件夹，编辑，权限，讲embysrv用户读写权限勾选，如图：</p><p><img src="https://b3logfile.com/file/2020/06/image-08e0bf87.png" alt="image.png"></p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603121773257401.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20190902.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;heade</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="NAS" scheme="https://www.jrrm.top/tags/NAS/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="emby" scheme="https://www.jrrm.top/tags/emby/"/>
+    
+    <category term="家庭媒体中心" scheme="https://www.jrrm.top/tags/%E5%AE%B6%E5%BA%AD%E5%AA%92%E4%BD%93%E4%B8%AD%E5%BF%83/"/>
     
   </entry>
   
   <entry>
-    <title>【每日早报】-2026-03-11 - 星期三</title>
-    <link href="https://www.jrrm.top/posts/a0c8d076.html"/>
-    <id>https://www.jrrm.top/posts/a0c8d076.html</id>
-    <published>2026-03-22T07:00:47.092Z</published>
-    <updated>2026-03-22T07:01:00.562Z</updated>
+    <title>使用NAS挂载Google Drive，扩展你的NAS空间</title>
+    <link href="https://www.jrrm.top/posts/c2df7b71.html"/>
+    <id>https://www.jrrm.top/posts/c2df7b71.html</id>
+    <published>2020-06-12T14:02:46.000Z</published>
+    <updated>2020-10-08T03:56:59.000Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603111773171001.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】营销学不仅适用于产品与服务，也适用于组织与人，所有的组织不管是否进行货币交易，事实上都需要搞营销。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-11_375265329360983.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、今年前2月我国进出口总值7.73万亿元，同比增18.3%，创同期新高，其中出口增长19.2%，进口增长17.1%；</li><li>2、2026年全国一般公共预算安排国防支出1.94万亿元，比上年执行数增长6.9％；</li><li>3、春节后，多家农商行、村镇银行等中小银行下调存款利率，最高降幅达30基点；</li><li>4、成都拟出台住房公积金新政：阶段性取消贷款次数限制，无公积金贷款余额就按首套执行；</li><li>5、江苏无锡一地推出“赘肉换牛肉”减重挑战赛， 1斤赘肉换1斤牛肉，多减多得，网友称：太会了；</li><li>6、“龙虾补贴”密集出炉：龙岗、合肥、常熟、无锡等地相继发布专项扶持政策，最高补贴1000万；</li><li>7、国家互联网应急中心发布风险提示：“小龙虾”已出现四大严重安全风险；工信部专家：审慎使用“龙虾”等智能体；</li><li>8、6G网要来了上热搜：下载1部4K电影不到1秒，宽带可以达到5G的10倍以上；</li><li>9、中朝国际旅客列车3月12日起双向开行，车票已开始线下发售；</li><li>10、加拿大正式撤销关闭TikTok当地业务的决定，TikTok回应：期待投资新项目；</li><li>11、美英气象机构预测：地球或将迎“超级厄尔尼诺”现象，明年夏季气温可能创历史新高；</li><li>12、加媒：加拿大警方称美国驻多伦多领事馆遭枪击，建筑正面可见多个弹孔；</li><li>13、外媒：消息称伊朗新任最高领袖“在袭击中受伤”，未公开发表讲话，官方回应：新任领袖状况良好，届时会发表讲话；</li><li>14、外媒：特朗普称有可能有条件同伊朗谈判；伊朗提出停火首要条件，伊外长称新任最高领袖不会与美国进行任何谈判；</li><li>15、外媒：美军称已损失总价值3.3亿美元的“死神”无人机；美防长称将对伊朗发起“最高强度”的军事打击；</li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603111773171001.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
-      
-    
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【每日早报】-2026-03-10 - 星期二</title>
-    <link href="https://www.jrrm.top/posts/3f029ffe.html"/>
-    <id>https://www.jrrm.top/posts/3f029ffe.html</id>
-    <published>2026-03-22T07:00:47.088Z</published>
-    <updated>2026-03-22T07:01:00.545Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603091773081425.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】我们为今生创造家园，为来生建造墓穴。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-10_374898154455435.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、2026年2月份居民消费价格同比上涨1.3%，创下近三年来的最大同比涨幅；</li><li>2、代表钟宝申：建议将8小时工作制缩短为7小时，提高加班待遇，建立加班费“五年追溯机制”；</li><li>3、农业农村部部长韩俊：人均烹调用油超推荐量40%，建议消费者适当减油、增豆、加奶；</li><li>4、中国传媒大学一口气砍掉翻译、摄影、艺术管理等16个专业，校方回应：AI时代课堂须彻底重构；</li><li>5、无锡高新区发布“养龙虾”12条，最高补贴500万元；AI推高内存芯片价格1年飙升近700%，手机和电脑将迎来全面涨价；</li><li>6、最高检报告：我国社会治安形势持续向好，是世界上最安全国家之一；</li><li>7、安徽一医院自制4面锦旗挂科室内进行宣传被处罚，市监局回应：该行为构成虚假宣传；</li><li>8、作家贾平凹早年作品被指部分内容与国外作品极度相似，有些甚至完全相同，本人尚未回应；</li><li>9、女足亚洲杯小组赛：中国女足2比1战胜朝鲜队，以三战全胜、小组第一强势晋级八强；</li><li>10、国际油价突破每桶100美元，创三年多来新高；伊朗议长表示国际油价或长期维持三位数；</li><li>11、亚太股市遭遇黑色星期一：‌日经225指数跌5.2%‌，‌韩国KOSPI指数跌5.96%并触发熔断‌；</li><li>12、日媒：日本首次部署远程导弹，最大射程上千公里，可攻击邻国沿海区域；日本北海道9日23时发生5.9级地震；</li><li>13、美媒：纽约时报证实伊朗小学遭美军战斧导弹袭击，此前特朗普称是伊朗自导自演，伊朗指控美以袭击行为构成战争罪；</li><li>14、美媒：美军对伊军事打击首周耗60亿美元，巨额花费引美国内多方质疑；美议员声称推翻伊朗美国将在中东大赚；</li><li>15、外媒：哈梅内伊次子当选伊朗最高领袖；伊朗军方称使用超重型导弹打击美以，以此向新任最高领袖致敬；</li></ul>]]></content>
+    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20180607.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="Google-Drive介绍"><a href="#Google-Drive介绍" class="headerlink" title="Google Drive介绍"></a><strong>Google Drive介绍</strong></h1><p>Google Drive是谷歌公司推出的一项在线云存储服务。通过这项服务，用户可以获得15GB的免费存储空间。同时，如果用户有更大的需求，则可以通过付费的方式获得更大的存储空间。</p><p>Google Drive服务有本地客户端版本、也有网络界面版本，后者与Google Docs界面相似，支持直接从网页浏览器打开多达30多种文件格式，包括高清视频和Photoshop文件，即使在没有安装相关软件的情况下也可以直接打开。</p><p>另外，Google还向第三方提供API接口，允许用户从其它程序上传文件存储到Google Drive。</p><h1 id="团队盘"><a href="#团队盘" class="headerlink" title="团队盘"></a>团队盘</h1><p>Google 为企业用户合作提供的一种网盘，使用GSuit账号，可以创建团队盘，分享给团队中用户，GSuit账号的网盘不限空间，创建的团队盘也不限空间。如图的共享云端硬盘</p><p><img src="https://b3logfile.com/file/2020/06/image-5b2db5a6.png" alt="image.png"></p><h1 id="NAS-介绍"><a href="#NAS-介绍" class="headerlink" title="NAS 介绍"></a>NAS 介绍</h1><p>NAS（Network Attached Storage：网络附属存储）按字面简单说就是连接在网络上，具备资料存储功能的装置，因此也称为“<a href="https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C%E5%AD%98%E5%82%A8%E5%99%A8/9485387">网络存储器</a>”。它是一种专用数据<a href="https://baike.baidu.com/item/%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1%E5%99%A8">存储服务器</a>。它以数据为中心，将存储设备与服务器彻底分离，集中管理数据，从而释放带宽、提高性能、降低总拥有成本、保护投资。其成本远远低于使用服务器存储，而效率却远远高于后者。</p><p>常用的NAS系统有群晖，威联通，FreeNAS等</p><h1 id="rclone-介绍"><a href="#rclone-介绍" class="headerlink" title="rclone 介绍"></a>rclone 介绍</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Rclone 是一款的命令行工具，支持在不同对象存储、网盘间同步、上传、下载数据。</p><ul><li>官网网址：<a href="https://www.moewah.com/go/aHR0cHM6Ly9yY2xvbmUub3Jn">https://rclone.org</a></li><li>Github 项目：<a href="https://www.moewah.com/go/aHR0cHM6Ly9naXRodWIuY29tL25jdy9yY2xvbmU=">https://github.com/ncw/rclone</a></li></ul><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>SSH到NAS(至于怎么启用SSH就不介绍了)， 运行下面的命令行：</p><pre><code>curl https://rclone.org/install.sh | sudo bash</code></pre><p>请注意，此脚本首先检查安装的rclone版本，如果不需要，将不会重新下载。</p><h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>运行下面的命令行：</p><p><code>rclone config</code></p><p>根据提示进行操作</p><p><img src="https://b3logfile.com/file/2020/06/image-a4edf16c.png" alt="image.png"></p><p>上面是我挂载好的盘，输入n 创建一个新的远程配置：</p><p><img src="https://b3logfile.com/file/2020/06/image-f2d001e4.png" alt="image.png"><img src="https://b3logfile.com/file/2020/06/image-9e795163.png" alt="image.png"><img src="https://b3logfile.com/file/2020/06/image-50434c5c.png" alt="image.png"></p><p>这部要选择挂载的配置，我们选择goole drive，输入13</p><p><img src="https://b3logfile.com/file/2020/06/image-a9809880.png" alt="image.png">这步要求输入client_id，可以选择空，使用rclone的client_id与client_secrt,不过我们选择自己创建的，可以更加安全，打开 <a href="https://console.cloud.google.com/apis/credentials?project=%E4%BD%A0%E7%9A%84%E9%A1%B9%E7%9B%AE">https://console.cloud.google.com/apis/credentials?project=你的项目</a>:</p><p><img src="https://b3logfile.com/file/2020/06/image-7c761483.png" alt="image.png"></p><p>点击创建凭据，选择OAuth客户端ID，我之前创建过，所以我这边会有之前的应用</p><p><img src="https://b3logfile.com/file/2020/06/image-5fd7f494.png" alt="image.png"></p><p>应用类型选择桌面应用，点击创建</p><p>这时候就会弹出你的客户端ID和密钥</p><p><img src="https://b3logfile.com/file/2020/06/image-26633f77.png" alt="image.png"></p><p>将这两个数据填入到rclone 的config中</p><p><img src="https://b3logfile.com/file/2020/06/image-c922b099.png" alt="image.png"></p><p>scope 输入 1</p><p><img src="https://b3logfile.com/file/2020/06/image-b9a5fd40.png" alt="image.png"></p><p>root_folder_id 我们之间使用跟目录，选默认</p><p><img src="https://b3logfile.com/file/2020/06/image-fd961d8d.png" alt="image.png"></p><p>service_account_file 是如果我们使用sa账号，credentials 文件的路径，我们不使用，保持默认</p><p><img src="https://b3logfile.com/file/2020/06/image-23fc0edf.png" alt="image.png"></p><p>advance config 我们不使用，直接默认</p><p>auto config 因为我们是在nas上安装，所以选择n</p><p><img src="https://b3logfile.com/file/2020/06/image-68bb7aa4.png" alt="image.png"></p><p>这时候给我们一个网址，我们访问，授权一下</p><p><img src="https://b3logfile.com/file/2020/06/image-ddb8becd.png" alt="image.png"></p><p>复制这段代码</p><p><img src="https://b3logfile.com/file/2020/06/image-efe3ae69.png" alt="image.png"></p><p>这时候询问是不是团队盘，我们选 y 是</p><p><img src="https://b3logfile.com/file/2020/06/image-58f71d3e.png" alt="image.png"></p><p>这时候让你输入团队盘的序号</p><p>输入序号，确认，就配置好了我们的团队盘</p><p>这时候我们就可以挂载了，输入下面这行指令</p><p><code>/usr/bin/rclone mount 你配置时输入的名字: 你本地文件夹名字 --allow-other --allow-non-empty --buffer-size 32M --vfs-read-chunk-size=32M --vfs-read-chunk-size-limit 2048M --vfs-cache-mode writes --dir-cache-time 96h --daemon</code></p><p>等执行完</p><p>我们可以输入</p><p><code>df -h</code></p><p>查看是否挂载成功</p><p><img src="https://b3logfile.com/file/2020/06/image-3967a561.png" alt="image.png"></p><p>可以看到这个1.0P大小的盘就是我们挂载好的谷歌硬盘了</p><h2 id="开机自动挂载"><a href="#开机自动挂载" class="headerlink" title="开机自动挂载"></a>开机自动挂载</h2><p>现在已经挂载好了，我们需要每次开机时都自动挂载，我们可以在群晖上创建任务计划</p><p>在控制面版 -》任务计划 -》新增 -》触发任务 -》用户自定义脚本</p><p>事件选开机 任务设置-》用户自定义脚本，填写我们挂载的指令</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>好了，现在我们就将google drive挂载到我们本地NAS了，下期我会讲一下，怎样安装emby使用我们挂载的google drive打造家庭媒体中心</p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603091773081425.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20180607.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;Google-Drive介绍&quot;&gt;&lt;a href=&quot;#Goog</summary>
       
     
     
     
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
     
+    <category term="NAS" scheme="https://www.jrrm.top/tags/NAS/"/>
     
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="无限空间" scheme="https://www.jrrm.top/tags/%E6%97%A0%E9%99%90%E7%A9%BA%E9%97%B4/"/>
     
-  </entry>
-  
-  <entry>
-    <title>【每日早报】-2026-03-09 - 星期一</title>
-    <link href="https://www.jrrm.top/posts/1e185ac9.html"/>
-    <id>https://www.jrrm.top/posts/1e185ac9.html</id>
-    <published>2026-03-22T07:00:47.082Z</published>
-    <updated>2026-03-22T07:01:00.528Z</updated>
+    <category term="网盘" scheme="https://www.jrrm.top/tags/%E7%BD%91%E7%9B%98/"/>
     
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603091772998202.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】我们不能只要有所得，也要有所贡献。耀得暗室象白昼一般呢，但至少有些用处，可以使暗室中的人认识到一点周围的真正情形。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-09_374561591157169.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、多地景区免票3月旅游市场“淡季不淡”，其中庐山风景区搜索量周环比上涨156%；</li><li>2、湖北宜昌、新疆哈密等多地宣布下调停车费：具体包括降低起步价、延长免费时段，短时停放更划算；</li><li>3、吉林省长：吉林成功退出地方债务重点省份，高风险金融机构清零；</li><li>4、胖东来万人投票结果公布：超8成员工拒绝“降薪增假”方案，目前年休40天，每天工作7小时；</li><li>5、AI“养龙虾”应用走红，官方提示：需警惕信息泄露、系统受控等一系列安全风险；</li><li>6、深圳龙岗拟推“龙虾十条”产业政策，其中对“一人公司”项目最高可给予1000万元股权投资支持；</li><li>7、用APP人脸认证时一定要穿衣服，专家提醒：后台审核人员可看到完整场景；</li><li>8、山东菏泽一70多岁老人每天睁眼就刷手机持续到凌晨，近视达2300度，医生称：老年人玩手机更易近视；</li><li>9、我国科研团队成功合成毫米级纯相六方金刚石，其硬度可比传统金刚石高出超过50%；</li><li>10、我国已对50个国家实施单方面免签，同29个国家全面互免签证；</li><li>11、墨媒：墨西哥为消除外界对2026年世界杯安全问题的担忧，将在3座主办城市部署近10万名安保人员；</li><li>12、外媒：霍尔木兹海峡航运骤降90%，日均仅8艘船只通过；国际油价突破91美元，一周暴涨35%；</li><li>13、外媒：伊朗宣布已选出新的最高领袖，但未透露其姓名；特朗普称未经我批准，伊朗新任最高领袖不会在位太久；</li><li>14、外媒：伊朗称摧毁4台美军“萨德”系统雷达；特朗普称美军3天内击沉42艘伊朗舰艇，并打掉其通信系统；</li><li>15、外媒：美以被曝考虑派特种部队夺取伊朗浓缩铀；特朗普宣称伊朗南部小学遭袭致至少165人遇难事件“是伊朗所为”；</li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603091772998202.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
-      
-    
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【每日早报】-2026-03-08 - 星期日</title>
-    <link href="https://www.jrrm.top/posts/9912bb08.html"/>
-    <id>https://www.jrrm.top/posts/9912bb08.html</id>
-    <published>2026-03-22T07:00:47.062Z</published>
-    <updated>2026-03-22T07:01:00.512Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603081772911802.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】志比精金，心如坚石。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-08_374199389835702.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、2025年中国人均预期寿命达79.25岁，比2020年提高了1.32岁，平均每年增长0.26岁；</li><li>2、发改委：推动3岁以下婴幼儿入托率提高6个百分点，养老机构护理型床位占比达到73%；</li><li>3、人社部：今年高校毕业生预计1270万人，将开展大规模就业见习和能力实训；</li><li>4、代表樊芸建议：未来5年逐渐取消公摊面积；代表霍启刚建议：降低中等收入群体税率；</li><li>5、卫健委建议：成年男性腰围一般控制在90厘米以内，女性一般控制在85厘米以内；</li><li>6、教育部：” 课间 15 分钟 “ 以及 “ 每天体育 2 小时 “ 已在所有省份全部部署推行；</li><li>7、雷军公开预判：AI时代来临，未来每周或仅需工作3天，每天只要工作2小时；</li><li>8、乒乓球澳门世界杯票价公布：最低80元，VIP套餐高达4580元；</li><li>9、2月末我国外汇储备规模超3.4万亿美元，较1月末升0.85%；央行连续16个月增持黄金节奏稳健；</li><li>10、安世荷兰批量禁用安世中国员工办公软件，商务部回应：如再次引发全球半导体产供链危机，荷方须承担全部责任；</li><li>11、日媒：日本首次在冲绳部署新型反潜巡逻机，强化西南方向军事部署动作频频；</li><li>12、印媒：美国发布30天豁免令，允许印度暂时购买俄石油，印度回应：印方购买俄石油从不需要得到任何国家许可；</li><li>13、外媒：伊朗发射导弹夜袭“林肯”号航母；美官员称“福特”号航母已从东地中海调往红海；</li><li>14、外媒：伊朗总统向邻国表示歉意，称不再攻击邻国，也不发射导弹；</li><li>15、外媒：伊朗称强力打击造成美第五舰队21人死亡，阿联酋美军基地200人死伤；特朗普称考虑扩大打击范围，伊朗或遭受非常沉重打击；</li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603081772911802.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
-      
-    
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【每日早报】-2026-03-07 - 星期六</title>
-    <link href="https://www.jrrm.top/posts/ca0b2885.html"/>
-    <id>https://www.jrrm.top/posts/ca0b2885.html</id>
-    <published>2026-03-22T07:00:47.059Z</published>
-    <updated>2026-03-22T07:01:00.495Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603071772825402.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】理想的书籍是智慧的钥匙。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-07_373855378321509.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、2026年全球银行品牌价值500强发布：共70家中资银行入选，其中工行、建行、中行、农行位列前四；</li><li>2、世界知识产权组织：2025年中国以73718件国际专利申请继续位居全球首位，同比增长5.3%；</li><li>3、我国初中、高中、高等教育学龄人口将分别于2026年、2029年、2032年达峰；</li><li>4、“十五五”时期，普通高中将增加学位200万个以上；“双一流”高校本科扩招10万人以上；</li><li>5、代表余淼杰建议：最低法定年假从5天提到10天；代表张健建议：中小学春秋假也要考虑家长放假；</li><li>6、代表张翼建议：实施农民养老金倍增计划，到2035年达到每月500~600元；</li><li>7、国际油价单日暴涨创六年新高，国内油价下周一将迎年内最大涨幅，加满一箱油预计多花20元左右；</li><li>8、财政部：个人消费贷款贴息政策升级，花呗、微粒贷等网络消费信贷都可享受贴息；</li><li>9、国产AI短剧《霍去病》火到海外：播放量超5亿，3000元成本、3人团队5天产出80集；</li><li>10、山西一男子吃火锅花113元，发票抽奖中10万元，网友称：真的羡慕了；</li><li>11、中国足协：伊朗U23男足因故退出西安国际青年足球锦标赛，越南U23男足替代出战；</li><li>12、美媒：美国24个州联合起诉特朗普政府，要求叫停新关税政策；</li><li>13、外媒：也门胡塞武装称全面支持伊朗，并准备随时参战；法国允许美军机使用法基地，称已获完全保证；</li><li>14、外媒：伊朗使用无人机对巴林的亚马逊数据中心实施打击，美国科技巨头首次成战场目标；</li><li>15、美媒：特朗普称与伊朗不会达成任何协议，除非其无条件投降；特朗普威胁称伊朗战争结束后，下一个目标就是古巴；</li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603071772825402.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
-      
-    
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【每日早报】-2026-03-01 - 星期日</title>
-    <link href="https://www.jrrm.top/posts/1e87b1e0.html"/>
-    <id>https://www.jrrm.top/posts/1e87b1e0.html</id>
-    <published>2026-03-22T07:00:47.055Z</published>
-    <updated>2026-03-22T07:01:00.478Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603011772306101.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】劳动者最理解幸福。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-01_371724635172967.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、2025年全国居民人均可支配收入43377元，比上年增长5.0%；人均消费支出29476元，比上年增长4.4%；</li><li>2、2025年我国免签入境外国人3008万人次，增长近5成；2026年1月全国吸收外资920.1亿元，同比下降5.7%；</li><li>3、我国农民工总量突破3亿人，比上年增长0.5%，平均年龄超43岁，其中约6成农民工为外出就业；</li><li>4、我国生育保险扩围已覆盖近2.6亿人，较上年增加666万人；</li><li>5、我国首个人形机器人与具身智能标准体系发布，产业迈入规范化发展新阶段；</li><li>6、广东汕头动物园一女童投喂狮子被隔栏抓腿拉扯，园方回应：女孩已送医无大碍，系饲养员违规放行；</li><li>7、网传辽宁葫芦岛多所小学要求班主任退出班级家长微信群，当地教育局回应：属实；</li><li>8、网传新能源汽车开征“里程税”10省市试点，多地回应：没有通知，也</li><li>9、国际金价已连续7个月上涨，创十年最长连涨纪录，国内金饰克价突破1600元；</li><li>10、日内瓦“全球治理之友小组”正式成立，包括42个创始成员国在内的近60个国家代表出席成立会议；</li><li>11、德媒：德国总理默茨访华后不满德国每周4天工作制，称无法维持德国的繁荣，需要更加努力；</li><li>12、外媒：美以对伊朗发动袭击，约30个伊朗境内目标遭袭，已致伊朗201人死亡，747人受伤；安理会应中俄要求紧急开会；</li><li>13、外媒：伊朗称重创美军舰，已打击14个中东美军基地，美军称尚无伤亡；伊朗宣布关闭霍尔木兹海峡，任何船不得通过；</li><li>14、外媒：美以空袭伊朗致中东多国宣布关闭领空，海湾地区国际航班大面积取消或绕行；</li><li>15、外媒：阿富汗称击毙110名巴基斯坦士兵，并击落一架巴战斗机，巴基斯坦否认战斗机被击落，称其为假消息；</li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603011772306101.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
-      
-    
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【每日早报】-2026-02-27 - 星期五</title>
-    <link href="https://www.jrrm.top/posts/8314b5ba.html"/>
-    <id>https://www.jrrm.top/posts/8314b5ba.html</id>
-    <published>2026-03-22T07:00:47.052Z</published>
-    <updated>2026-03-22T07:01:00.462Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202602271772132401.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】一滴水只有放进大海里才永远不会干涸，一个人只有当他把自己和集体事业融合在一起的时候才能最有力量。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-02-27_371014807953823.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、我国新一代太阳能电池研究取得新进展，光电转换效率超15%；我国锂电池核心技术获首创突破，续航能力成倍提升；</li><li>2、中国AI调用量首次超过美国，四款大模型霸榜全球前五，国产算力需求正经历指数级增长；</li><li>3、多家头部手机品牌或将集体调价，预计最大涨幅25%，属行业首次；</li><li>4、市场监管总局新规：外卖商户必须有实体门店，无堂食商户必须设专门标识，6月起实施；</li><li>5、新疆一24岁女子自然受孕产下5胞胎，1男4女，最轻仅870克，概率仅为六千万分之一；</li><li>6、北京协和医院发布阿尔茨海默病新药数据，早期患者疾病进展有望放缓；</li><li>7、节后淡季机票价格大跳水：较春节回落超一成，多条热门航线票价低至百元；</li><li>8、篮球世界杯预选赛：中国男篮客场87比80战胜日本男篮，取得首场胜利；</li><li>9、湖南蓝山县委书记抖音账号成民情留言板，粉丝已破10万，本人回应：都是职责所在；</li><li>10、最高法：缅北明家、白家两大跨境武装犯罪集团已被彻底摧毁；</li><li>11、中国公民大阪街头被劫500万日元，嫌犯仍在逃，驻大阪总领馆再次提醒近期避免赴日；</li><li>12、韩媒：韩国股市又暴涨，2026年涨幅已接近50%，股市市值超越法国成全球第九大股市；</li><li>13、韩媒：朝鲜劳动党第九次代表大会闭幕，金正恩称韩国是“永远的敌人”，韩方回应：表示遗憾；</li><li>14、美媒：2025年美国迁出人口数量超过迁入人口，为90年来首次；</li><li>15、报告揭露：美国用技术霸权收割全球虚拟货币资产，陈志、赵志鹏案获利近200亿美元，专家称实质上构成对他国财产间接掠夺；</li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202602271772132401.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
-      
-    
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【每日早报】-2026-02-26 - 星期四</title>
-    <link href="https://www.jrrm.top/posts/43600e7a.html"/>
-    <id>https://www.jrrm.top/posts/43600e7a.html</id>
-    <published>2026-03-22T07:00:47.049Z</published>
-    <updated>2026-03-22T07:01:00.445Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202602261772062638.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】生活不会辜负每一个认真努力的人，但也不会偏爱任何一个偷懒侥幸的人。</p><p><audio src="null" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、2026年全国票房突破90亿元，两天连跨两个十亿大关，暂列全球单一市场第一；</li><li>2、上海发布楼市“沪七条”：符合条件非沪籍居民可在外环内增购1套住房，公积金最高能贷324万；</li><li>3、庐山风景区公告：今年3月对全体海内外游客免门票；</li><li>4、贵州盘州一乡倡议“双方二婚不摆酒”引热议，当地回应：村民自治非强制；</li><li>5、甘肃一中学超长作息表引关注：早5点35读书，晚11点20放学；当地教育局回应：尚未执行；</li><li>6、教育部：将严防“阴阳课表”，严查挤占体育课、课间不准学生出教室等行为；</li><li>7、广州时隔27年将重启赛马：已与香港跨境养马9年，赛事将沿用与香港同样的标准；</li><li>8、在岸、离岸人民币对美元汇率均升破6.87，创34个月新高；</li><li>9、我国可重复使用火箭“朱雀三号”计划于今年第二季度再次挑战回收；</li><li>10、中德联合声明发布：同意强化体育领域合作、继续开展气候变化与绿色转型对话；</li><li>11、中领馆提醒：18-65岁在俄长期居留男性，须同意在俄军事单位等至少服役1年；</li><li>12、日媒：高市早苗被曝向自民党议员发放数万日元礼品，在野党将展开追责；</li><li>13、美媒：比尔·盖茨就与爱泼斯坦的关系向基金会员工道歉，并再度否认参与其犯罪行为；</li><li>14、美媒：美国政府削减儿童疫苗接种计划，遭15个州联合起诉；纽约州要求特朗普政府退还135亿美元关税；</li><li>15、美媒：特朗普发表107分钟史上最长国情咨文，谈及移民、经济和犯罪问题；民调显示6成美国人认为特朗普年纪越大越反复无常；</li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202602261772062638.png&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
-      
-    
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
-    
-    
-    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    <category term="GoogleDrive" scheme="https://www.jrrm.top/tags/GoogleDrive/"/>
     
   </entry>
   
