@@ -4,6 +4,37 @@
   
     
     <entry>
+      <title>Claude Code 入门指南：用 AI 助手提升编程效率的完整教程</title>
+      <link href="/posts/b0b9e052.html"/>
+      <url>/posts/b0b9e052.html</url>
+      
+        <content type="html"><![CDATA[<p>在 AI 辅助编程工具百花齐放的 2026 年，Claude Code 凭借强大的代码理解能力和终端原生的交互方式，成为越来越多开发者的首选工具。本文将从零开始，带你掌握 Claude Code 的核心用法，并通过实战案例展示如何用它真正提升日常开发效率。</p><h2 id="什么是-Claude-Code"><a href="#什么是-Claude-Code" class="headerlink" title="什么是 Claude Code"></a>什么是 Claude Code</h2><p>Claude Code 是 Anthropic 推出的 AI 编程助手，与传统的 IDE 插件不同，它直接运行在终端中，能够：</p><ul><li><strong>理解整个代码仓库</strong>：自动分析项目结构、依赖关系和代码逻辑</li><li><strong>直接读写文件</strong>：不需要手动复制粘贴代码</li><li><strong>执行终端命令</strong>：运行测试、构建项目、管理 Git 操作</li><li><strong>多轮对话迭代</strong>：像和一个经验丰富的同事结对编程</li></ul><p>与 GitHub Copilot 主要做行级补全不同，Claude Code 更擅长处理<strong>跨文件的复杂任务</strong>，比如重构、添加新功能、修复 Bug 等。</p><h2 id="安装与配置"><a href="#安装与配置" class="headerlink" title="安装与配置"></a>安装与配置</h2><h3 id="环境要求"><a href="#环境要求" class="headerlink" title="环境要求"></a>环境要求</h3><ul><li>Node.js 18 或更高版本</li><li>操作系统：macOS、Linux 或 Windows（WSL）</li></ul><h3 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h3><pre><code class="language-bash"># 使用 npm 全局安装npm install -g @anthropic-ai/claude-code# 验证安装claude --version# 首次运行，完成认证claude</code></pre><p>首次启动时，Claude Code 会引导你完成 Anthropic API 密钥配置或 OAuth 登录。</p><h3 id="推荐配置"><a href="#推荐配置" class="headerlink" title="推荐配置"></a>推荐配置</h3><p>在项目根目录创建 <code>CLAUDE.md</code> 文件，告诉 Claude Code 你的项目规范：</p><pre><code class="language-markdown"># CLAUDE.md## 项目简介这是一个基于 React + TypeScript 的前端项目。## 代码规范- 使用 TypeScript strict 模式- 组件使用函数式组件 + Hooks- 样式使用 Tailwind CSS- 测试使用 Vitest## 常用命令- `npm run dev` — 启动开发服务器- `npm test` — 运行测试- `npm run lint` — 代码检查</code></pre><p>这个文件就像给 AI 同事的入职文档，帮助它快速理解项目背景。</p><h2 id="核心功能实战"><a href="#核心功能实战" class="headerlink" title="核心功能实战"></a>核心功能实战</h2><h3 id="1-代码生成：从需求到实现"><a href="#1-代码生成：从需求到实现" class="headerlink" title="1. 代码生成：从需求到实现"></a>1. 代码生成：从需求到实现</h3><p>假设你需要为 Express 应用添加一个用户认证中间件：</p><pre><code>&gt; 帮我写一个 JWT 认证中间件，要求：  1. 从 Authorization header 提取 Bearer token  2. 验证 token 有效性  3. 将用户信息挂载到 req.user  4. token 过期返回 401，格式无效返回 403</code></pre><p>Claude Code 会自动：</p><ol><li>查看项目现有的认证逻辑和依赖</li><li>生成符合项目风格的中间件代码</li><li>创建对应的测试文件</li><li>更新路由文件中的引用</li></ol><h3 id="2-Bug-修复：定位并解决问题"><a href="#2-Bug-修复：定位并解决问题" class="headerlink" title="2. Bug 修复：定位并解决问题"></a>2. Bug 修复：定位并解决问题</h3><pre><code>&gt; 用户反馈登录后偶尔会被踢出，帮我排查原因</code></pre><p>Claude Code 会从日志模式、Session 管理、Token 刷新逻辑等多个角度分析，定位到可能的竞态条件或配置问题。</p><h3 id="3-代码重构：安全地大规模修改"><a href="#3-代码重构：安全地大规模修改" class="headerlink" title="3. 代码重构：安全地大规模修改"></a>3. 代码重构：安全地大规模修改</h3><pre><code>&gt; 把 src/utils 下所有的 CommonJS require 改成 ES Module import，  确保测试全部通过</code></pre><p>它会逐文件修改，每改一批就运行测试验证，确保重构过程不引入新问题。</p><h3 id="4-Git-操作：智能提交和-PR"><a href="#4-Git-操作：智能提交和-PR" class="headerlink" title="4. Git 操作：智能提交和 PR"></a>4. Git 操作：智能提交和 PR</h3><pre><code>&gt; 看看我改了什么，帮我写个合适的 commit message 并提交</code></pre><p>Claude Code 会分析 <code>git diff</code>，生成符合 Conventional Commits 规范的提交信息。</p><h2 id="高效使用技巧"><a href="#高效使用技巧" class="headerlink" title="高效使用技巧"></a>高效使用技巧</h2><h3 id="技巧-1：善用-CLAUDE-md"><a href="#技巧-1：善用-CLAUDE-md" class="headerlink" title="技巧 1：善用 CLAUDE.md"></a>技巧 1：善用 CLAUDE.md</h3><p><code>CLAUDE.md</code> 越详细，Claude Code 的表现越好。建议包含：</p><ul><li>项目架构说明</li><li>命名约定和代码风格</li><li>常见问题和解决方案</li><li>部署流程</li></ul><h3 id="技巧-2：分步骤给指令"><a href="#技巧-2：分步骤给指令" class="headerlink" title="技巧 2：分步骤给指令"></a>技巧 2：分步骤给指令</h3><p>复杂任务不要一次性描述完，分步骤来：</p><pre><code>&gt; 第一步：先帮我分析现在的数据库 schema 设计&gt; （看完分析后）&gt; 第二步：按你的建议添加索引，然后写迁移脚本</code></pre><h3 id="技巧-3：让它先读再写"><a href="#技巧-3：让它先读再写" class="headerlink" title="技巧 3：让它先读再写"></a>技巧 3：让它先读再写</h3><pre><code>&gt; 先看一下 src/api/ 下的代码结构，理解现有的 API 设计模式，  然后按同样的模式添加一个新的 /api/orders 接口</code></pre><h3 id="技巧-4：善用-compact-管理上下文"><a href="#技巧-4：善用-compact-管理上下文" class="headerlink" title="技巧 4：善用 &#x2F;compact 管理上下文"></a>技巧 4：善用 &#x2F;compact 管理上下文</h3><p>长对话中上下文会越来越大，适时使用 <code>/compact</code> 命令压缩历史，保持响应质量。</p><h2 id="Claude-Code-vs-其他-AI-编程工具"><a href="#Claude-Code-vs-其他-AI-编程工具" class="headerlink" title="Claude Code vs 其他 AI 编程工具"></a>Claude Code vs 其他 AI 编程工具</h2><table><thead><tr><th>特性</th><th>Claude Code</th><th>GitHub Copilot</th><th>Cursor</th></tr></thead><tbody><tr><td>交互方式</td><td>终端对话</td><td>IDE 内联补全</td><td>IDE 对话 + 补全</td></tr><tr><td>代码理解范围</td><td>整个仓库</td><td>当前文件 + 上下文</td><td>整个仓库</td></tr><tr><td>文件操作</td><td>直接读写</td><td>仅建议</td><td>直接读写</td></tr><tr><td>终端命令执行</td><td>✅</td><td>❌</td><td>✅</td></tr><tr><td>适合场景</td><td>复杂任务、重构</td><td>日常编码补全</td><td>全方位辅助</td></tr></tbody></table><p><strong>选择建议</strong>：如果你习惯终端工作流、经常做跨文件的复杂开发任务，Claude Code 是最佳选择；如果主要需要行级代码补全，Copilot 更合适；如果想要 IDE 集成体验，Cursor 值得尝试。</p><h2 id="实际项目案例"><a href="#实际项目案例" class="headerlink" title="实际项目案例"></a>实际项目案例</h2><p>以下是我用 Claude Code 完成的一个真实任务——为一个 Hexo 博客添加自动 SEO 优化功能：</p><pre><code>&gt; 帮我写一个 Hexo 插件，在文章生成时自动：  1. 检查 frontmatter 是否包含 description 和 keywords  2. 如果缺失，根据文章内容自动生成  3. 检查标题长度是否在 30-60 字之间  4. 输出 SEO 检查报告</code></pre><p>Claude Code 在 10 分钟内完成了插件编写、测试和文档，包含了完整的错误处理和配置选项。这个任务如果纯手工完成，至少需要 1-2 小时。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Claude Code 代表了 AI 编程工具的新范式——不是简单的代码补全，而是一个能理解项目全貌、直接执行操作的 AI 编程搭档。掌握它的关键在于：</p><ol><li><strong>写好 CLAUDE.md</strong>，让 AI 理解你的项目</li><li><strong>分步骤给指令</strong>，复杂任务拆解执行</li><li><strong>让它先读后写</strong>，确保输出符合项目规范</li><li><strong>善用终端能力</strong>，让 AI 帮你跑测试、管理 Git</li></ol><p>如果你还没试过 Claude Code，现在就是最好的开始时间。</p><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="/posts/aaf32453/">为什么 TCP 协议有性能问题</a> — 了解底层网络协议如何影响开发</li><li><a href="/posts/">博客搭建指南</a> — 从零搭建技术博客</li></ul><hr><blockquote><p>本文首发于 <a href="https://www.jrrm.top/">一个技术宅</a>，欢迎关注获取更多 AI 编程和技术实战内容。</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI实战 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI编程 </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> 开发效率 </tag>
+            
+            <tag> AI工具 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>【每日早报】-2026-03-22 - 星期日</title>
       <link href="/posts/42231983.html"/>
       <url>/posts/42231983.html</url>
@@ -5768,17 +5799,6 @@
     
     
     <entry>
-      <title>友链</title>
-      <link href="/link/index.html"/>
-      <url>/link/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>分类</title>
       <link href="/categories/index.html"/>
       <url>/categories/index.html</url>
@@ -5790,9 +5810,9 @@
     
     
     <entry>
-      <title>留言板</title>
-      <link href="/messageboard/index.html"/>
-      <url>/messageboard/index.html</url>
+      <title>友链</title>
+      <link href="/link/index.html"/>
+      <url>/link/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -5823,6 +5843,17 @@
     
     
     <entry>
+      <title>留言板</title>
+      <link href="/messageboard/index.html"/>
+      <url>/messageboard/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>标签</title>
       <link href="/tags/index.html"/>
       <url>/tags/index.html</url>
@@ -5834,9 +5865,9 @@
     
     
     <entry>
-      <title>说说</title>
-      <link href="/shuoshuo/index.html"/>
-      <url>/shuoshuo/index.html</url>
+      <title>日志</title>
+      <link href="/timeline/index.html"/>
+      <url>/timeline/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -5845,9 +5876,9 @@
     
     
     <entry>
-      <title>日志</title>
-      <link href="/timeline/index.html"/>
-      <url>/timeline/index.html</url>
+      <title>说说</title>
+      <link href="/shuoshuo/index.html"/>
+      <url>/shuoshuo/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
