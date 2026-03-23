@@ -4,6 +4,64 @@
   
     
     <entry>
+      <title>【每日早报】-2026-03-23 - 星期一</title>
+      <link href="/posts/c529f842.html"/>
+      <url>/posts/c529f842.html</url>
+      
+        <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603231774207802.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】篝火能把严寒驱散，团结能把困难赶跑。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-23_379507521044573.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、央行行长最新发声：将继续实施适度宽松的货币政策，运用多种工具保持流动性充裕；</li><li>2、央视曝光：活鱼被人为麻醉流向餐桌，或“喝过”工业酒精，只为方便装卸、保鲜；</li><li>3、黑龙江明确：省属高校逐步消除高校8人间宿舍，改善住宿条件，此前山西、广东也已发布类似规定；</li><li>4、河南一物业学习“胖东来”模式，请老师免费为业主孩子辅导作业，物业费收缴率从10%提升至90%；</li><li>5、中国AI大模型周调用量达4.69万亿Token，连续两周超越美国；</li><li>6、微信推出官方“龙虾”插件：连接后通过微信聊天的方式，能快速调用自己的“龙虾”高效互动；</li><li>7、多位知名配音演员对“AI仿声”进行集体维权，称被AI“偷走”声音，希望构建合法共存生态；</li><li>8、上海一名74岁老人菜市场扒窃被刑拘，警方称：年龄不是“免罪金牌”；</li><li>9、香港再现黄金大劫案：涉及73条均重1公斤的金条，总值约1亿港元，警方已拘捕5人，找回全部失窃黄金；</li><li>10、日媒：中国车企去年全球累计销量为近2700万辆，首次超越日本跃居世界第一；</li><li>11、韩媒：三星工会93.1%赞成率通过罢工议案，5月总罢工或冲击全球芯片供应链；</li><li>12、美媒：马斯克官宣开建史上最大芯片厂：年产能目标为现有全球产能50倍，80%将直接服务太空任务；</li><li>13、外媒：以色列特拉维夫市中心遭伊朗导弹袭击，至少8人受伤；以军称冲突以来伊朗已发射超400枚集束弹袭击以色列；</li><li>14、英媒：英核动力潜艇已抵达阿拉伯海，携带射程1600公里“战斧”巡航导弹，英国首相府已批准打击伊朗目标；</li><li>15、外媒：特朗普要求伊朗48小时内开放霍尔木兹海峡，否则打击电厂，伊朗强硬回应：若电厂遭袭，将全面关闭海峡，彻底摧毁中东所有美国持股公司；</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 每日早报 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 每日早报 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>别再只用 ChatGPT 写代码了！2026 年程序员必备的 5 个 AI 编程神器</title>
+      <link href="/posts/2222efb2.html"/>
+      <url>/posts/2222efb2.html</url>
+      
+        <content type="html"><![CDATA[<p>你是不是还在用 ChatGPT 复制粘贴代码？</p><p>说实话，2026 年了，AI 编程早就不是”聊天框里问问题”这么简单了。现在的 AI 编程工具可以直接读你的整个项目、理解上下文、自动改 bug、甚至帮你做代码审查。</p><p>今天给大家盘点 5 个<strong>真正能提升开发效率</strong>的 AI 编程工具，每一个我都实际用过，附上真实使用体验。</p><h2 id="Claude-Code-—-终端里的全能搭档"><a href="#Claude-Code-—-终端里的全能搭档" class="headerlink" title="Claude Code — 终端里的全能搭档"></a>Claude Code — 终端里的全能搭档</h2><p>如果你习惯命令行开发，Claude Code 绝对会让你惊艳。</p><p>它不是一个编辑器插件，而是一个<strong>直接在终端运行的 AI 编程助手</strong>。它能读取你整个项目的文件结构，理解代码之间的依赖关系，然后直接帮你修改文件。</p><p><strong>最强的地方：</strong></p><ul><li>一句话就能重构整个模块，它会自动找到所有需要改的文件</li><li>可以直接执行 shell 命令，跑测试、装依赖一气呵成</li><li>支持 git 操作，改完代码直接帮你 commit</li></ul><p><strong>适合场景：</strong> 大型项目重构、多文件联动修改、快速原型开发</p><p><strong>实际体验：</strong> 让它重构一个 500 行的 Python 模块，从拆分函数到更新所有调用方，3 分钟搞定，手动做至少要半小时。</p><blockquote><p>想深入了解 Claude Code？看这篇详细教程：<a href="/posts/b0b9e052/">Claude Code 入门指南：用 AI 助手提升编程效率的完整教程</a></p></blockquote><h2 id="Cursor-—-最像”未来-IDE”的编辑器"><a href="#Cursor-—-最像”未来-IDE”的编辑器" class="headerlink" title="Cursor — 最像”未来 IDE”的编辑器"></a>Cursor — 最像”未来 IDE”的编辑器</h2><p>Cursor 是基于 VS Code 魔改的 AI 编辑器，界面熟悉但能力完全不同。</p><p><strong>核心能力：</strong></p><ul><li><strong>Composer 模式</strong>：描述需求，自动在多个文件间生成代码</li><li><strong>Tab 补全</strong>：不只是补全一行，而是预判你接下来要写的整个逻辑块</li><li><strong>内联编辑</strong>：选中一段代码，用自然语言说要改什么，直接原地修改</li></ul><p><strong>适合场景：</strong> 日常开发、前端项目、需要频繁在文件间跳转的工作</p><p><strong>实际体验：</strong> 写 React 组件时，描述一下 UI 交互逻辑，它能把组件、样式、状态管理一次性生成，准确率能到 80% 以上。</p><h2 id="GitHub-Copilot-—-老牌选手，胜在稳定"><a href="#GitHub-Copilot-—-老牌选手，胜在稳定" class="headerlink" title="GitHub Copilot — 老牌选手，胜在稳定"></a>GitHub Copilot — 老牌选手，胜在稳定</h2><p>Copilot 可能是大家最熟悉的 AI 编程工具了。虽然不如前两个那么”激进”，但胜在<strong>稳定、可靠、生态完善</strong>。</p><p><strong>2026 年的新变化：</strong></p><ul><li>Copilot Workspace 支持从 Issue 直接生成 PR</li><li>代码审查功能已经很成熟，能发现逻辑漏洞</li><li>支持所有主流 IDE，不挑编辑器</li></ul><p><strong>适合场景：</strong> 团队协作开发、代码审查、不想换编辑器的同学</p><h2 id="Windsurf-—-前端开发者的福音"><a href="#Windsurf-—-前端开发者的福音" class="headerlink" title="Windsurf — 前端开发者的福音"></a>Windsurf — 前端开发者的福音</h2><p>如果你是前端开发者，Windsurf（原 Codeium 团队出品）值得重点关注。</p><p><strong>亮点：</strong></p><ul><li>对前端框架理解极深（React &#x2F; Vue &#x2F; Svelte 都很强）</li><li>内置预览，改了代码直接看效果</li><li>Cascade 功能可以跨文件理解项目结构</li></ul><p><strong>适合场景：</strong> 前端项目、全栈开发、需要快速出活儿的场景</p><h2 id="Aider-—-开源-本地模型的自由组合"><a href="#Aider-—-开源-本地模型的自由组合" class="headerlink" title="Aider — 开源 + 本地模型的自由组合"></a>Aider — 开源 + 本地模型的自由组合</h2><p>不想把代码传到云端？Aider 是开源社区的答案。</p><p><strong>特色：</strong></p><ul><li>完全开源，可以搭配任何 LLM（本地模型也行）</li><li>通过 git 管理所有 AI 的修改，随时可以回滚</li><li>命令行界面，极客感拉满</li></ul><p><strong>适合场景：</strong> 对代码隐私敏感的项目、想用本地模型的团队、开源贡献者</p><h2 id="怎么选？"><a href="#怎么选？" class="headerlink" title="怎么选？"></a>怎么选？</h2><table><thead><tr><th>需求</th><th>推荐工具</th></tr></thead><tbody><tr><td>最强代码理解能力</td><td>Claude Code</td></tr><tr><td>最好的 IDE 体验</td><td>Cursor</td></tr><tr><td>团队协作、不折腾</td><td>GitHub Copilot</td></tr><tr><td>前端开发为主</td><td>Windsurf</td></tr><tr><td>注重隐私、爱折腾</td><td>Aider</td></tr></tbody></table><h2 id="我的建议"><a href="#我的建议" class="headerlink" title="我的建议"></a>我的建议</h2><p>不要只用一个工具。我现在的工作流是：</p><p><strong>日常开发用 Cursor</strong>（IDE 体验好），<strong>复杂重构用 Claude Code</strong>（跨文件理解强），<strong>代码审查用 Copilot</strong>（和 GitHub 集成好）。</p><p>三个工具各司其职，效率直接翻倍。</p><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="/posts/b0b9e052/">Claude Code 入门指南：用 AI 助手提升编程效率的完整教程</a> — 详细的 Claude Code 使用教程</li><li><a href="/posts/aaf32453/">为什么 TCP 协议有性能问题</a> — 深入理解底层网络协议</li></ul><hr><blockquote><p>本文首发于 <a href="https://www.jrrm.top/">一个技术宅</a>，欢迎关注获取更多 AI 编程和技术实战内容。</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI实战 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI编程 </tag>
+            
+            <tag> 开发工具 </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Cursor </tag>
+            
+            <tag> GitHub Copilot </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code 入门指南：用 AI 助手提升编程效率的完整教程</title>
       <link href="/posts/b0b9e052.html"/>
       <url>/posts/b0b9e052.html</url>
@@ -72,9 +130,9 @@
             
             <tag> win10 </tag>
             
-            <tag> wsl </tag>
-            
             <tag> 效率提高 </tag>
+            
+            <tag> wsl </tag>
             
         </tags>
       
@@ -116,9 +174,9 @@
             
             <tag> win10 </tag>
             
-            <tag> wsl </tag>
-            
             <tag> 效率提高 </tag>
+            
+            <tag> wsl </tag>
             
         </tags>
       
@@ -139,9 +197,9 @@
             
             <tag> win10 </tag>
             
-            <tag> 效率提高 </tag>
-            
             <tag> 快捷键 </tag>
+            
+            <tag> 效率提高 </tag>
             
         </tags>
       
@@ -324,9 +382,9 @@
     
     
     <entry>
-      <title>分类</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
+      <title>about</title>
+      <link href="/about/index.html"/>
+      <url>/about/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -346,20 +404,9 @@
     
     
     <entry>
-      <title>about</title>
-      <link href="/about/index.html"/>
-      <url>/about/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
+      <title>友链</title>
+      <link href="/link/index.html"/>
+      <url>/link/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -379,9 +426,9 @@
     
     
     <entry>
-      <title>友链</title>
-      <link href="/link/index.html"/>
-      <url>/link/index.html</url>
+      <title>分类</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -404,6 +451,17 @@
       <title>日志</title>
       <link href="/timeline/index.html"/>
       <url>/timeline/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
