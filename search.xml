@@ -4,6 +4,62 @@
   
     
     <entry>
+      <title>图解 QUIC 协议：为什么它比 TCP 快</title>
+      <link href="/posts/a5eb7b2b.html"/>
+      <url>/posts/a5eb7b2b.html</url>
+      
+        <content type="html"><![CDATA[<p>你可能已经在用 QUIC 了，只是你不知道。</p><p>打开 Chrome 浏览器，访问 Google、YouTube、Cloudflare 托管的任意网站——底层传输协议很可能已经是 QUIC 而不是 TCP。</p><p>但 QUIC 到底是什么？它凭什么比用了几十年的 TCP 还快？今天用图解的方式，把 QUIC 的核心原理讲清楚。</p><h2 id="TCP-的三个痛点"><a href="#TCP-的三个痛点" class="headerlink" title="TCP 的三个痛点"></a>TCP 的三个痛点</h2><p>在理解 QUIC 之前，先看 TCP 在现代互联网中暴露出的三个核心问题。</p><blockquote><p>如果你对 TCP 的性能问题感兴趣，推荐先看这篇：<a href="/posts/aaf32453/">为什么 TCP 协议有性能问题</a></p></blockquote><h3 id="痛点-1：握手太慢"><a href="#痛点-1：握手太慢" class="headerlink" title="痛点 1：握手太慢"></a>痛点 1：握手太慢</h3><p>TCP 建立连接需要三次握手（1.5 RTT），如果加上 TLS 1.2 的握手，总共需要 <strong>3 个 RTT</strong> 才能开始传数据：</p><pre><code>客户端                    服务器  |--- SYN ------------&gt;|     ← TCP 第 1 次  |&lt;--- SYN+ACK --------|     ← TCP 第 2 次  |--- ACK ------------&gt;|     ← TCP 第 3 次  |--- ClientHello ----&gt;|     ← TLS 第 1 次  |&lt;--- ServerHello ----|     ← TLS 第 2 次  |--- Finished -------&gt;|     ← TLS 第 3 次  |&lt;--- Finished --------|     ← TLS 第 4 次  |--- 数据 ------------&gt;|     ← 终于可以发数据了！</code></pre><p>3 个 RTT，如果服务器在美国，客户端在中国，光速往返延迟约 200ms，光握手就要 <strong>600ms</strong>。</p><h3 id="痛点-2：队头阻塞"><a href="#痛点-2：队头阻塞" class="headerlink" title="痛点 2：队头阻塞"></a>痛点 2：队头阻塞</h3><p>TCP 是字节流协议，严格保序。如果一个包丢了，后面所有包都得等它重传完成才能交给应用层，即使后面的包属于完全不同的 HTTP 请求。</p><pre><code>请求 A 的包：[1] [2] [丢失] [4] [5]请求 B 的包：          [6] [7] [8]  ← 全部被阻塞！</code></pre><p>HTTP&#x2F;2 虽然在应用层实现了多路复用，但底层还是一条 TCP 连接，队头阻塞问题依然存在。</p><h3 id="痛点-3：连接不可迁移"><a href="#痛点-3：连接不可迁移" class="headerlink" title="痛点 3：连接不可迁移"></a>痛点 3：连接不可迁移</h3><p>TCP 连接用四元组（源 IP、源端口、目标 IP、目标端口）标识。手机从 Wi-Fi 切换到 4G，IP 变了，TCP 连接直接断开，需要重新握手。</p><h2 id="QUIC-如何解决这三个问题"><a href="#QUIC-如何解决这三个问题" class="headerlink" title="QUIC 如何解决这三个问题"></a>QUIC 如何解决这三个问题</h2><p>QUIC（Quick UDP Internet Connections）基于 UDP 构建，从协议层面解决了上述三个痛点。</p><h3 id="解决方案-1：0-RTT-握手"><a href="#解决方案-1：0-RTT-握手" class="headerlink" title="解决方案 1：0-RTT 握手"></a>解决方案 1：0-RTT 握手</h3><p>QUIC 把传输层握手和加密握手合并为一步，首次连接只需 <strong>1 个 RTT</strong>，重连甚至可以 <strong>0-RTT</strong>：</p><pre><code>【首次连接：1 RTT】客户端                    服务器  |--- Initial ---------&gt;|  ← 同时发送加密参数 + 数据  |&lt;--- Handshake -------|  ← 返回证书 + 密钥  |--- 数据 -------------&gt;|  ← 1 RTT 后开始传数据【重连：0 RTT】客户端                    服务器  |--- 数据 + 缓存凭证 --&gt;|  ← 直接发数据！  |&lt;--- 数据 -------------|  </code></pre><p>原理：QUIC 使用 TLS 1.3，客户端缓存上次连接的加密参数，重连时直接用缓存凭证加密数据，不需要额外握手。</p><p>比 TCP + TLS 1.2 快了 <strong>2 个 RTT</strong>，在高延迟网络下体感非常明显。</p><h3 id="解决方案-2：流级别多路复用"><a href="#解决方案-2：流级别多路复用" class="headerlink" title="解决方案 2：流级别多路复用"></a>解决方案 2：流级别多路复用</h3><p>QUIC 在传输层原生支持多路复用，每个 HTTP 请求对应一个独立的 <strong>Stream</strong>，Stream 之间互不阻塞：</p><pre><code>QUIC 连接├── Stream 1（请求 A）：[1] [2] [丢失] [4] [5]  ← 只阻塞 Stream 1├── Stream 2（请求 B）：[6] [7] [8]              ← 正常接收！不受影响└── Stream 3（请求 C）：[9] [10]                 ← 正常接收！</code></pre><p>关键区别：TCP 的队头阻塞发生在<strong>连接</strong>级别，QUIC 的丢包只影响<strong>单个 Stream</strong>。其他 Stream 的数据可以立即交给应用层。</p><h3 id="解决方案-3：连接-ID-迁移"><a href="#解决方案-3：连接-ID-迁移" class="headerlink" title="解决方案 3：连接 ID 迁移"></a>解决方案 3：连接 ID 迁移</h3><p>QUIC 不用四元组标识连接，而是用一个 <strong>Connection ID</strong>：</p><pre><code>【Wi-Fi → 4G 切换】TCP：  Wi-Fi: 192.168.1.100:12345 → 1.2.3.4:443  ← 连接 A  4G:    10.0.0.50:23456 → 1.2.3.4:443       ← 连接 B（新连接！重新握手）QUIC：  Wi-Fi: 192.168.1.100:12345 → 1.2.3.4:443  Connection ID: abc123  4G:    10.0.0.50:23456 → 1.2.3.4:443       Connection ID: abc123  ← 同一连接！</code></pre><p>IP 和端口变了，但 Connection ID 没变，服务器认为是同一个连接，无缝继续传数据。用户在地铁里切换基站时，视频不会卡顿。</p><h2 id="QUIC-的协议栈对比"><a href="#QUIC-的协议栈对比" class="headerlink" title="QUIC 的协议栈对比"></a>QUIC 的协议栈对比</h2><pre><code>传统方案：                    QUIC 方案：┌─────────────┐              ┌─────────────┐│   HTTP/2    │              │   HTTP/3    │├─────────────┤              ├─────────────┤│   TLS 1.2   │              │   QUIC      │├─────────────┤              │ (含 TLS 1.3) ││    TCP      │              ├─────────────┤├─────────────┤              │    UDP      ││    IP       │              ├─────────────┤└─────────────┘              │    IP       │                             └─────────────┘</code></pre><p>QUIC 把 TCP 和 TLS 的功能合并到一层，减少了协议栈层次，也减少了不同层之间的沟通开销。</p><h2 id="实际验证：抓包看-QUIC"><a href="#实际验证：抓包看-QUIC" class="headerlink" title="实际验证：抓包看 QUIC"></a>实际验证：抓包看 QUIC</h2><p>用 Chrome 访问 <code>https://www.google.com</code>，打开 <code>chrome://net-internals/#quic</code> 可以看到 QUIC 连接信息。</p><p>或者用 <code>curl</code> 测试（需要 HTTP&#x2F;3 支持）：</p><pre><code class="language-bash"># 安装支持 HTTP/3 的 curl（macOS）brew install curl# 测试 QUIC 连接curl --http3 -I https://www.cloudflare.com# 如果响应头包含 alt-svc: h3=&quot;...&quot; 说明支持 QUIC</code></pre><p>用 Wireshark 抓包可以看到：QUIC 的数据包跑在 UDP 443 端口上，包内容是加密的（TLS 1.3），只有 Initial 包的头部是明文。</p><h2 id="QUIC-的代价"><a href="#QUIC-的代价" class="headerlink" title="QUIC 的代价"></a>QUIC 的代价</h2><p>QUIC 不是万能的，它也有一些取舍：</p><p><strong>1. CPU 开销更高</strong></p><p>QUIC 在用户态实现（不像 TCP 在内核态），加解密、拥塞控制都需要 CPU 处理。对于高吞吐服务器，CPU 消耗比 TCP 高 10-20%。</p><p><strong>2. UDP 可能被运营商限速</strong></p><p>部分网络设备对 UDP 流量有限速策略，QUIC 可能被误伤。不过随着 QUIC 普及，这个问题在逐步改善。</p><p><strong>3. 生态还在成熟</strong></p><p>TCP 经过几十年优化，各操作系统内核都有高度优化的实现。QUIC 的实现库（如 quiche、msquic）还在快速迭代中。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table><thead><tr><th>特性</th><th>TCP + TLS 1.2</th><th>QUIC</th></tr></thead><tbody><tr><td>首次握手</td><td>3 RTT</td><td>1 RTT</td></tr><tr><td>重连握手</td><td>1-2 RTT</td><td>0 RTT</td></tr><tr><td>队头阻塞</td><td>连接级别</td><td>Stream 级别</td></tr><tr><td>网络切换</td><td>连接断开</td><td>无缝迁移</td></tr><tr><td>加密</td><td>可选</td><td>强制（TLS 1.3）</td></tr><tr><td>协议层</td><td>内核态</td><td>用户态</td></tr></tbody></table><p>QUIC 已经是 HTTP&#x2F;3 的底层传输协议，Google、Cloudflare、Facebook 等大厂已经大规模部署。了解 QUIC 的原理，有助于你做出更好的网络架构决策。</p><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="/posts/aaf32453/">为什么 TCP 协议有性能问题</a> — 深入理解 TCP 的设计局限</li><li><a href="/posts/df78044c/">从零编写基于 UDP 的通信程序</a> — 动手理解 UDP 编程</li></ul><hr><blockquote><p>本文首发于 <a href="https://www.jrrm.top/">一个技术宅</a>，欢迎关注获取更多网络协议和技术实战内容。</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> QUIC </tag>
+            
+            <tag> 网络协议 </tag>
+            
+            <tag> TCP </tag>
+            
+            <tag> HTTP3 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>【每日早报】-2026-03-25 - 星期三</title>
+      <link href="/posts/1c109f3b.html"/>
+      <url>/posts/1c109f3b.html</url>
+      
+        <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603251774380601.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】……基于聪明的设想出现的创新数量极大，哪怕成功的百分比比较小，仍然成为开辟新行业、提供新职业、给经济增添新的活动面的相当巨大的源泉。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-25_380222430712194.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、气象台：预计未来三天南方阴雨天气持续，北方多地最高气温可达20℃以上，部分地区超25°C；</li><li>2、2025年地区“财富榜”：北京人均存款35.6万元，上海29万元，‌远超全国人均11.89万元的水平；</li><li>3、2025年我国化妆品市场规模突破1.1万亿元，同比增长2.8%，其中国货占比近六成；</li><li>4、全国多地驾校因油价上涨上调报名费，C1车型涨价200至500元不等，交通部门回应：市场行为不会干预；</li><li>5、人民日报谈“雪山救狐狸”刷屏：创新的社会，欢迎“脑洞大开”；</li><li>6、国家数据局定调：Token官方中文名正式确认为“词元”；</li><li>7、我国第一所“空天信息大学”拟在山东设立，为公办本科，正在公示；</li><li>8、知名教育博主张雪峰因心源性猝死抢救无效去世，终年41岁；</li><li>9、一女子在八达岭长城刻字，留下“张某霞二姐妹留念”字样，延庆警方：已被行拘；</li><li>10、一名日本自卫队人员闯入驻中国使馆，已被逮捕，中方回应：要求日方立即彻查；</li><li>11、日方拟将中日关系从最重要双边关系之一降级，中方回应：根源在于日本首相高市早苗发表了错误言论；</li><li>12、韩媒：韩国将实施公务车限行措施，韩总统呼吁全民节约能源；菲律宾宣布进入国家能源紧急状态；</li><li>13、外媒：哥伦比亚一载有128人的军机起飞后坠毁，已致66人遇难、4人失踪，事故原因调查中；</li><li>14、美媒：美国得州一炼油厂发生爆炸起火，每日产能38万桶，事故疑似由工业加热器引发，目前无人员伤亡报告；</li><li>15、美媒：美军第31海军陆战队远征队27日抵达中东；以媒称美国计划于4月9日结束对伊朗战争；巴基斯坦总理称已准备好主持美伊会谈；</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 每日早报 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 每日早报 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>【每日早报】-2026-03-23 - 星期一</title>
       <link href="/posts/c529f842.html"/>
       <url>/posts/c529f842.html</url>
@@ -47,9 +103,9 @@
             
             <tag> AI编程 </tag>
             
-            <tag> 开发工具 </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> 开发工具 </tag>
             
             <tag> Cursor </tag>
             
@@ -130,9 +186,9 @@
             
             <tag> win10 </tag>
             
-            <tag> 效率提高 </tag>
-            
             <tag> wsl </tag>
+            
+            <tag> 效率提高 </tag>
             
         </tags>
       
@@ -174,9 +230,9 @@
             
             <tag> win10 </tag>
             
-            <tag> 效率提高 </tag>
-            
             <tag> wsl </tag>
+            
+            <tag> 效率提高 </tag>
             
         </tags>
       
@@ -197,9 +253,9 @@
             
             <tag> win10 </tag>
             
-            <tag> 快捷键 </tag>
-            
             <tag> 效率提高 </tag>
+            
+            <tag> 快捷键 </tag>
             
         </tags>
       
@@ -382,20 +438,9 @@
     
     
     <entry>
-      <title>about</title>
-      <link href="/about/index.html"/>
-      <url>/about/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>留言板</title>
-      <link href="/messageboard/index.html"/>
-      <url>/messageboard/index.html</url>
+      <title>分类</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -415,28 +460,6 @@
     
     
     <entry>
-      <title>photo</title>
-      <link href="/photo/index.html"/>
-      <url>/photo/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>分类</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>说说</title>
       <link href="/shuoshuo/index.html"/>
       <url>/shuoshuo/index.html</url>
@@ -448,9 +471,20 @@
     
     
     <entry>
-      <title>日志</title>
-      <link href="/timeline/index.html"/>
-      <url>/timeline/index.html</url>
+      <title>photo</title>
+      <link href="/photo/index.html"/>
+      <url>/photo/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>about</title>
+      <link href="/about/index.html"/>
+      <url>/about/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -462,6 +496,28 @@
       <title>标签</title>
       <link href="/tags/index.html"/>
       <url>/tags/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>留言板</title>
+      <link href="/messageboard/index.html"/>
+      <url>/messageboard/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>日志</title>
+      <link href="/timeline/index.html"/>
+      <url>/timeline/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
