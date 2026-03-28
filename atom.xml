@@ -6,7 +6,7 @@
   <link href="https://www.jrrm.top/atom.xml" rel="self"/>
   <link href="https://pubsubhubbub.appspot.com/" rel="hub"/>
   <link href="https://www.jrrm.top/"/>
-  <updated>2026-03-25T00:47:51.402Z</updated>
+  <updated>2026-03-28T13:29:19.735Z</updated>
   <id>https://www.jrrm.top/</id>
   
   <author>
@@ -22,6 +22,60 @@
  <webfeeds:accentColor>0abab5</webfeeds:accentColor>
  <webfeeds:related layout="card" target="browser"/>
 
+  
+  <entry>
+    <title>2026 年最值得关注的 10 个 AI 开源项目：从编程助手到本地部署全覆盖</title>
+    <link href="https://www.jrrm.top/posts/21c9a31c.html"/>
+    <id>https://www.jrrm.top/posts/21c9a31c.html</id>
+    <published>2026-03-28T13:30:00.000Z</published>
+    <updated>2026-03-28T13:29:19.735Z</updated>
+    
+    <content type="html"><![CDATA[<p>2026 年，AI 开源生态迎来了真正的「爆发期」。和去年相比，开发者的关注点已经从「模型能力有多强」转向了「怎么让 AI 真正干活」。AI Agent、编程助手、本地部署、工作流自动化成为四大热门方向。</p><p>本文从 GitHub 趋势、社区活跃度和实际体验出发，精选了 <strong>10 个最值得关注的 AI 开源项目</strong>，每个都附上核心亮点、适用场景和上手建议。</p><h2 id="🤖-AI-编程助手：让-AI-帮你写代码"><a href="#🤖-AI-编程助手：让-AI-帮你写代码" class="headerlink" title="🤖 AI 编程助手：让 AI 帮你写代码"></a>🤖 AI 编程助手：让 AI 帮你写代码</h2><h3 id="1-Claude-Code-—-终端里的-AI-编程搭档"><a href="#1-Claude-Code-—-终端里的-AI-编程搭档" class="headerlink" title="1. Claude Code — 终端里的 AI 编程搭档"></a>1. Claude Code — 终端里的 AI 编程搭档</h3><p><strong>⭐ 57k+ Stars | 语言：TypeScript | 作者：Anthropic</strong></p><p>Claude Code 是 Anthropic 官方推出的终端编程工具，直接在命令行中理解你的代码库，帮你完成日常编码、代码审查和 Git 工作流。</p><p><strong>核心亮点：</strong></p><ul><li>🔍 深度理解整个代码库上下文，不是简单的代码补全</li><li>🛠️ 直接执行文件编辑、运行测试、提交代码</li><li>🔄 支持多 Agent 协作，子任务自动拆分</li><li>💻 纯终端操作，和现有开发流程无缝集成</li></ul><p><strong>适用场景：</strong> 日常编码、代码重构、自动化测试、Git 工作流</p><p><strong>上手建议：</strong> 如果你还没体验过 AI 编程助手，Claude Code 是目前最值得尝试的选择。安装简单，<code>npm install -g @anthropic-ai/claude-code</code> 即可开始。</p><blockquote><p>📖 想深入了解？可以看我之前写的 <a href="/posts/b0b9e052.html">Claude Code 入门指南：用 AI 助手提升编程效率的完整教程</a></p></blockquote><h3 id="2-OpenCode-—-终端-AI-编码的开源平替"><a href="#2-OpenCode-—-终端-AI-编码的开源平替" class="headerlink" title="2. OpenCode — 终端 AI 编码的开源平替"></a>2. OpenCode — 终端 AI 编码的开源平替</h3><p><strong>⭐ 76k+ Stars | 语言：TypeScript | 作者：SST</strong></p><p>OpenCode 是 2026 年 GitHub 上增长最快的项目之一，定位是专为终端打造的 AI 编码代理。短短几个月就从零飙升到 76k Stars，火爆程度可见一斑。</p><p><strong>核心亮点：</strong></p><ul><li>🆓 完全开源，支持接入多种 LLM（OpenAI、Anthropic、本地模型等）</li><li>⚡ 终端原生体验，启动快、资源占用低</li><li>🔌 灵活的模型切换和配置</li><li>👥 活跃的社区和频繁的更新</li></ul><p><strong>适用场景：</strong> 希望用开源方案替代商业 AI 编程工具的开发者</p><h3 id="3-Superpowers-—-让-AI-编程更靠谱的工作流框架"><a href="#3-Superpowers-—-让-AI-编程更靠谱的工作流框架" class="headerlink" title="3. Superpowers — 让 AI 编程更靠谱的工作流框架"></a>3. Superpowers — 让 AI 编程更靠谱的工作流框架</h3><p><strong>⭐ 28k+ Stars | 语言：Shell | 作者：obra</strong></p><p>Superpowers 不是又一个编码工具，而是一套<strong>编程工作流框架</strong>。它的核心理念是：AI 不应该上来就写代码，而是先理解需求、制定计划、再动手。</p><p><strong>核心亮点：</strong></p><ul><li>🧠 编码前的头脑风暴（brainstorming）</li><li>📝 自动拆分任务计划（writing-plans）</li><li>✅ 强制 TDD 开发流程</li><li>🤖 子 Agent 驱动开发</li></ul><p><strong>适用场景：</strong> 配合 Claude Code、Cursor 等工具使用，让 AI 编程输出质量更稳定</p><blockquote><p>💡 如果你正在用 AI 编程但总觉得输出质量不够稳定，强烈建议试试 Superpowers。和我之前介绍的 <a href="/posts/2222efb2.html">5 个 AI 编程神器</a> 搭配使用效果更佳。</p></blockquote><hr><h2 id="🏠-本地-AI：在自己的设备上跑大模型"><a href="#🏠-本地-AI：在自己的设备上跑大模型" class="headerlink" title="🏠 本地 AI：在自己的设备上跑大模型"></a>🏠 本地 AI：在自己的设备上跑大模型</h2><h3 id="4-Ollama-—-一行命令跑本地大模型"><a href="#4-Ollama-—-一行命令跑本地大模型" class="headerlink" title="4. Ollama — 一行命令跑本地大模型"></a>4. Ollama — 一行命令跑本地大模型</h3><p><strong>⭐ 130k+ Stars | 语言：Go | 作者：Ollama</strong></p><p>Ollama 可能是 2026 年最重要的 AI 基础设施项目。它让在本地运行大语言模型变得和安装一个 App 一样简单。</p><p><strong>核心亮点：</strong></p><ul><li>📦 一行命令安装和运行：<code>ollama run llama3</code></li><li>🔒 完全本地运行，数据不出设备</li><li>🎯 支持数百种开源模型（Llama 3、Mistral、Qwen、DeepSeek 等）</li><li>🖥️ 支持 macOS、Linux、Windows 全平台</li></ul><p><strong>适用场景：</strong> 隐私敏感场景、离线使用、个人 AI 助手、开发调试</p><p><strong>上手建议：</strong> 如果你有一台 M 系列 Mac 或带独显的 PC，现在就可以 <code>brew install ollama</code> 开始体验。8GB 内存可以流畅运行 7B 参数模型，16GB 可以跑 13B。</p><h3 id="5-Open-WebUI-—-给本地模型加个好看的界面"><a href="#5-Open-WebUI-—-给本地模型加个好看的界面" class="headerlink" title="5. Open WebUI — 给本地模型加个好看的界面"></a>5. Open WebUI — 给本地模型加个好看的界面</h3><p><strong>⭐ 127k+ Stars | 语言：TypeScript | 作者：Open WebUI</strong></p><p>有了 Ollama 跑模型，还需要一个好用的界面。Open WebUI 就是目前最好的选择——它提供了类似 ChatGPT 的 Web 界面，但连接的是你本地的模型。</p><p><strong>核心亮点：</strong></p><ul><li>🎨 精美的 Chat 界面，支持多模型切换</li><li>📄 内置 RAG 功能，可以上传文档进行问答</li><li>👥 支持多用户和权限管理</li><li>🐳 Docker 一键部署</li></ul><p><strong>适用场景：</strong> 团队 AI 门户、私有文档问答、多模型对比测试</p><blockquote><p>🏡 如果你对自建服务感兴趣，之前写的 <a href="/posts/4200a223.html">NAS 上安装 Emby</a> 和 <a href="/posts/1161209.html">软路由搭建指南</a> 也值得一看，HomeLab 玩家的必经之路。</p></blockquote><hr><h2 id="🤖-AI-Agent：让-AI-自己完成复杂任务"><a href="#🤖-AI-Agent：让-AI-自己完成复杂任务" class="headerlink" title="🤖 AI Agent：让 AI 自己完成复杂任务"></a>🤖 AI Agent：让 AI 自己完成复杂任务</h2><h3 id="6-OpenClaw-—-住在你设备上的私人-AI-Agent"><a href="#6-OpenClaw-—-住在你设备上的私人-AI-Agent" class="headerlink" title="6. OpenClaw — 住在你设备上的私人 AI Agent"></a>6. OpenClaw — 住在你设备上的私人 AI Agent</h3><p><strong>⭐ 150k+ Stars | 语言：TypeScript | 作者：OpenClaw</strong></p><p>2026 年的「顶流」项目，没有之一。OpenClaw 是一个个人 AI Agent 系统，直接运行在你的设备上，可以连接各种通讯渠道（Telegram、WhatsApp、Discord 等），帮你自动化处理日常任务。</p><p><strong>核心亮点：</strong></p><ul><li>📱 跨平台连接：一个 Agent 同时接入多个聊天工具</li><li>🧩 插件生态丰富：技能（Skills）系统让 Agent 能力可扩展</li><li>🔐 完全本地运行，数据自主可控</li><li>🤖 支持多 Agent 协作</li></ul><p><strong>适用场景：</strong> 个人自动化助手、多平台消息管理、定制化 AI 工作流</p><h3 id="7-Browser-Use-—-让-AI-像人一样操作浏览器"><a href="#7-Browser-Use-—-让-AI-像人一样操作浏览器" class="headerlink" title="7. Browser-Use — 让 AI 像人一样操作浏览器"></a>7. Browser-Use — 让 AI 像人一样操作浏览器</h3><p><strong>⭐ 76k+ Stars | 语言：Python</strong></p><p>如果你需要自动化填表单、抓取动态页面、模拟用户登录，Browser-Use 是目前最好的开源方案。它让 LLM 直接操作浏览器，像人一样点击、输入、导航。</p><p><strong>核心亮点：</strong></p><ul><li>🌐 AI 驱动的浏览器自动化</li><li>🔄 自动处理动态页面渲染</li><li>🛡️ 内置反检测策略</li><li>📊 支持复杂的多步骤任务</li></ul><p><strong>适用场景：</strong> 数据采集、表单自动填写、网页测试自动化</p><h3 id="8-Mem0-—-给-AI-装上「长期记忆」"><a href="#8-Mem0-—-给-AI-装上「长期记忆」" class="headerlink" title="8. Mem0 — 给 AI 装上「长期记忆」"></a>8. Mem0 — 给 AI 装上「长期记忆」</h3><p><strong>⭐ 45.8k Stars | 语言：Python | YC S24 孵化</strong></p><p>大模型的「失忆」问题，做过 AI 产品的人都遇到过。Mem0 给 Agent 加了一层持久化记忆层，能跨会话记住用户的偏好、历史信息和重要事实。</p><p><strong>核心亮点：</strong></p><ul><li>🧠 自动提取「值得记住的信息」，不是简单存对话</li><li>⚡ 集成后回答准确率提升 26%，响应速度快 91%</li><li>🔌 即插即用，兼容主流 Agent 框架</li><li>🏠 支持本地部署，保护数据隐私</li></ul><p><strong>适用场景：</strong> 需要跨会话记忆的 AI 助手、个性化推荐、多轮对话复杂任务</p><hr><h2 id="⚙️-工作流与平台：把-AI-用到生产环境"><a href="#⚙️-工作流与平台：把-AI-用到生产环境" class="headerlink" title="⚙️ 工作流与平台：把 AI 用到生产环境"></a>⚙️ 工作流与平台：把 AI 用到生产环境</h2><h3 id="9-n8n-—-带原生-AI-能力的工作流自动化"><a href="#9-n8n-—-带原生-AI-能力的工作流自动化" class="headerlink" title="9. n8n — 带原生 AI 能力的工作流自动化"></a>9. n8n — 带原生 AI 能力的工作流自动化</h3><p><strong>⭐ 170k+ Stars | 语言：TypeScript | 作者：n8n-io</strong></p><p>n8n 是老牌工作流自动化平台，2026 年全面拥抱 AI 后迎来第二春。400+ 集成、可视化编排、自托管——适合把 AI 能力嵌入到实际业务流程中。</p><p><strong>核心亮点：</strong></p><ul><li>🎨 可视化工作流编辑器</li><li>🤖 原生 AI Agent 节点</li><li>🔗 400+ 第三方集成</li><li>🏢 支持自托管，企业友好</li></ul><p><strong>适用场景：</strong> 业务流程自动化、AI 驱动的数据处理管道、跨系统集成</p><h3 id="10-Dify-—-开箱即用的-AI-应用开发平台"><a href="#10-Dify-—-开箱即用的-AI-应用开发平台" class="headerlink" title="10. Dify — 开箱即用的 AI 应用开发平台"></a>10. Dify — 开箱即用的 AI 应用开发平台</h3><p><strong>⭐ 132k+ Stars | 语言：TypeScript&#x2F;Python | 作者：Dify</strong></p><p>Dify 是一个围绕 Agent 工作流构建的 AI 应用平台，从 Prompt 编排到 RAG、再到 Agent 编排，一站式搞定。特别适合需要快速搭建 AI 应用的团队。</p><p><strong>核心亮点：</strong></p><ul><li>📊 可视化 Prompt 编排和调试</li><li>📚 内置 RAG 管道</li><li>🤖 Agent 工作流编排</li><li>🌐 一键发布为 API 或 Web 应用</li></ul><p><strong>适用场景：</strong> 企业 AI 应用开发、知识库问答系统、AI 原型快速验证</p><hr><h2 id="📊-2026-年-AI-开源趋势总结"><a href="#📊-2026-年-AI-开源趋势总结" class="headerlink" title="📊 2026 年 AI 开源趋势总结"></a>📊 2026 年 AI 开源趋势总结</h2><p>从这 10 个项目可以看出几个明显趋势：</p><p><strong>① AI Agent 生态爆发</strong><br>不再是单纯的聊天机器人，而是能自主完成任务的智能体。OpenClaw、Browser-Use、Superpowers 代表了这个方向。</p><p><strong>② 本地化 AI 成为刚需</strong><br>隐私、成本、定制化三重驱动，Ollama + Open WebUI 的本地 AI 栈已经成为开发者标配。</p><p><strong>③ AI 编程工具全面开花</strong><br>从 Claude Code 到 OpenCode，AI 编程已经从「尝鲜」变成「日常」。2026 年不用 AI 编程的程序员可能反而是少数。</p><p><strong>④ 工作流编排走向成熟</strong><br>n8n、Dify 代表了「把 AI 用到生产环境」的趋势，AI 不再只是玩具。</p><hr><h2 id="🚀-下一步行动建议"><a href="#🚀-下一步行动建议" class="headerlink" title="🚀 下一步行动建议"></a>🚀 下一步行动建议</h2><p>如果你是<strong>个人开发者</strong>：</p><ol><li>先装 Ollama + Open WebUI，体验本地 AI</li><li>试试 Claude Code 或 OpenCode，感受 AI 编程</li><li>玩玩 OpenClaw，搭建个人自动化助手</li></ol><p>如果你是<strong>团队负责人</strong>：</p><ol><li>评估 n8n 或 Dify 用于业务流程自动化</li><li>用 Mem0 解决 AI 产品的记忆问题</li><li>用 Browser-Use 处理自动化测试和数据采集</li></ol><p>觉得有帮助的话，欢迎收藏和分享！后续我会针对每个项目写更详细的实战教程。</p><hr><p><strong>延伸阅读：</strong></p><ul><li><a href="/posts/b0b9e052.html">Claude Code 入门指南：用 AI 助手提升编程效率的完整教程</a></li><li><a href="/posts/2222efb2.html">2026 年程序员必备的 5 个 AI 编程神器</a></li><li><a href="/posts/a5eb7b2b.html">图解 QUIC 协议：为什么它比 TCP 快</a></li></ul>]]></content>
+    
+    
+    <summary type="html">盘点 2026 年 GitHub 上最火的 10 个 AI 开源项目，涵盖 AI 编程助手、本地大模型、AI Agent 框架、工作流编排等方向，附 Star 数据、适用场景和上手建议。</summary>
+    
+    
+    
+    <category term="行业洞察" scheme="https://www.jrrm.top/categories/%E8%A1%8C%E4%B8%9A%E6%B4%9E%E5%AF%9F/"/>
+    
+    
+    <category term="AI开源项目" scheme="https://www.jrrm.top/tags/AI%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/"/>
+    
+    <category term="GitHub" scheme="https://www.jrrm.top/tags/GitHub/"/>
+    
+    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
+    
+    <category term="开源推荐" scheme="https://www.jrrm.top/tags/%E5%BC%80%E6%BA%90%E6%8E%A8%E8%8D%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>【每日早报】-2026-03-28 - 星期六</title>
+    <link href="https://www.jrrm.top/posts/c15391d.html"/>
+    <id>https://www.jrrm.top/posts/c15391d.html</id>
+    <published>2026-03-28T13:29:45.224Z</published>
+    <updated>2026-03-28T13:29:45.224Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603281774639801.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】青年是革命的柱石。青年是革命果实的保卫者，是使历史加速向更美好的世界前进的力量。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-28_381272897458595.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、北京入春时间为3月22日，比常年偏早4天；广州深圳东莞等广东多地宣布已入夏，时间普遍较常年偏早；</li><li>2、教育部发布20条负面清单，包括严禁对教师进行排名奖惩、严禁宣传炒作中高考状元、名校率、升学率等；</li><li>3、湖南发布通知：义务教育阶段推行春秋假制度，鼓励幼儿园、高中结合实际试行；</li><li>4、桂林漓江20元人民币背景观景台被指乱收费，当地通报：个人自发行为，已全部清理取缔；</li><li>5、统计局：前2月全国规上工业企业利润增长15.2%；商务部：2025年居民数字消费规模达25.3万亿元；</li><li>6、“沪七条”出台满月，一二手房成交面积较去年同期增加11%；经济学家贾康：年轻人买房子要积极考虑了；</li><li>7、全国猪价跌破5元每斤，创近七年新低，养殖户每头猪要亏500多元，专家称：下半年行情有望好转；</li><li>8、北京无人机新规5月1日实施：全域管控，禁止运输、携带无人机进入，全市无人机所有者4月底前实名登记；</li><li>9、我国芯片研发重要成果“香山”“如意”系统发布，为国内RISC-V自主研发高端芯片提供支撑；</li><li>10、中国博士后在遭美方约谈盘问后自杀，外交部回应：敦促美方彻查；</li><li>11、联大通过历史性决议，宣布“奴隶制”为最严重危害人类罪，123票赞成，美国、以色列和阿根廷投反对票；</li><li>12、美媒：美财政部称美元纸币将印上特朗普签名，系美历史上在任总统首例；</li><li>13、美媒：美国一20岁女生社交平台成瘾，称加剧了其抑郁焦虑，Meta、谷歌被判赔600万美元；</li><li>14、外媒：美国防部称考虑向中东增派1万人地面部队；伊朗称已动员超过100万名作战人员，以应对美军地面战；</li><li>15、外媒：以美袭击伊朗核洪达卜核设施，无放射性物质泄漏；伊朗称霍尔木兹海峡已经关闭，违者将遭打击；</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://file.alapi.cn/60s/202603281774639801.png&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;今日寄语&quot;&gt;&lt;a href=&quot;#今日寄语&quot; class=&quot;headerlink&quot; title=&quot;今日寄语&quot;&gt;&lt;/a&gt;今日寄语&lt;/</summary>
+      
+    
+    
+    
+    <category term="每日早报" scheme="https://www.jrrm.top/categories/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    
+    
+    <category term="每日早报" scheme="https://www.jrrm.top/tags/%E6%AF%8F%E6%97%A5%E6%97%A9%E6%8A%A5/"/>
+    
+  </entry>
   
   <entry>
     <title>图解 QUIC 协议：为什么它比 TCP 快</title>
@@ -55,7 +109,7 @@
     <link href="https://www.jrrm.top/posts/1c109f3b.html"/>
     <id>https://www.jrrm.top/posts/1c109f3b.html</id>
     <published>2026-03-25T00:48:19.094Z</published>
-    <updated>2026-03-25T00:48:19.094Z</updated>
+    <updated>2026-03-25T00:48:20.624Z</updated>
     
     <content type="html"><![CDATA[<p><img src="https://file.alapi.cn/60s/202603251774380601.png"></p><h1 id="今日寄语"><a href="#今日寄语" class="headerlink" title="今日寄语"></a>今日寄语</h1><p>【微语】……基于聪明的设想出现的创新数量极大，哪怕成功的百分比比较小，仍然成为开辟新行业、提供新职业、给经济增添新的活动面的相当巨大的源泉。</p><p><audio src="https://file.alapi.cn/60s/audio/2026-03-25_380222430712194.mp3" controls></audio></p><h1 id="今日新闻"><a href="#今日新闻" class="headerlink" title="今日新闻"></a>今日新闻</h1><ul><li>1、气象台：预计未来三天南方阴雨天气持续，北方多地最高气温可达20℃以上，部分地区超25°C；</li><li>2、2025年地区“财富榜”：北京人均存款35.6万元，上海29万元，‌远超全国人均11.89万元的水平；</li><li>3、2025年我国化妆品市场规模突破1.1万亿元，同比增长2.8%，其中国货占比近六成；</li><li>4、全国多地驾校因油价上涨上调报名费，C1车型涨价200至500元不等，交通部门回应：市场行为不会干预；</li><li>5、人民日报谈“雪山救狐狸”刷屏：创新的社会，欢迎“脑洞大开”；</li><li>6、国家数据局定调：Token官方中文名正式确认为“词元”；</li><li>7、我国第一所“空天信息大学”拟在山东设立，为公办本科，正在公示；</li><li>8、知名教育博主张雪峰因心源性猝死抢救无效去世，终年41岁；</li><li>9、一女子在八达岭长城刻字，留下“张某霞二姐妹留念”字样，延庆警方：已被行拘；</li><li>10、一名日本自卫队人员闯入驻中国使馆，已被逮捕，中方回应：要求日方立即彻查；</li><li>11、日方拟将中日关系从最重要双边关系之一降级，中方回应：根源在于日本首相高市早苗发表了错误言论；</li><li>12、韩媒：韩国将实施公务车限行措施，韩总统呼吁全民节约能源；菲律宾宣布进入国家能源紧急状态；</li><li>13、外媒：哥伦比亚一载有128人的军机起飞后坠毁，已致66人遇难、4人失踪，事故原因调查中；</li><li>14、美媒：美国得州一炼油厂发生爆炸起火，每日产能38万桶，事故疑似由工业加热器引发，目前无人员伤亡报告；</li><li>15、美媒：美军第31海军陆战队远征队27日抵达中东；以媒称美国计划于4月9日结束对伊朗战争；巴基斯坦总理称已准备好主持美伊会谈；</li></ul>]]></content>
     
@@ -119,9 +173,9 @@
     
     <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
-    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
-    
     <category term="开发工具" scheme="https://www.jrrm.top/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/"/>
+    
+    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
     
     <category term="Cursor" scheme="https://www.jrrm.top/tags/Cursor/"/>
     
