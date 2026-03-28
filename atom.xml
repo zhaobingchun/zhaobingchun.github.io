@@ -40,11 +40,11 @@
     <category term="行业洞察" scheme="https://www.jrrm.top/categories/%E8%A1%8C%E4%B8%9A%E6%B4%9E%E5%AF%9F/"/>
     
     
+    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
+    
     <category term="AI开源项目" scheme="https://www.jrrm.top/tags/AI%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/"/>
     
     <category term="GitHub" scheme="https://www.jrrm.top/tags/GitHub/"/>
-    
-    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
     <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
     
@@ -98,9 +98,9 @@
     
     <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
-    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
-    
     <category term="开发工具" scheme="https://www.jrrm.top/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/"/>
+    
+    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
     
     <category term="Cursor" scheme="https://www.jrrm.top/tags/Cursor/"/>
     

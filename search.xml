@@ -20,11 +20,11 @@
       
         <tags>
             
+            <tag> AI编程 </tag>
+            
             <tag> AI开源项目 </tag>
             
             <tag> GitHub </tag>
-            
-            <tag> AI编程 </tag>
             
             <tag> AI Agent </tag>
             
@@ -86,9 +86,9 @@
             
             <tag> AI编程 </tag>
             
-            <tag> Claude Code </tag>
-            
             <tag> 开发工具 </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Cursor </tag>
             
@@ -443,9 +443,9 @@
     
     
     <entry>
-      <title>about</title>
-      <link href="/about/index.html"/>
-      <url>/about/index.html</url>
+      <title>留言板</title>
+      <link href="/messageboard/index.html"/>
+      <url>/messageboard/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -454,9 +454,9 @@
     
     
     <entry>
-      <title>photo</title>
-      <link href="/photo/index.html"/>
-      <url>/photo/index.html</url>
+      <title>about</title>
+      <link href="/about/index.html"/>
+      <url>/about/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -476,9 +476,9 @@
     
     
     <entry>
-      <title>说说</title>
-      <link href="/shuoshuo/index.html"/>
-      <url>/shuoshuo/index.html</url>
+      <title>photo</title>
+      <link href="/photo/index.html"/>
+      <url>/photo/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -487,9 +487,9 @@
     
     
     <entry>
-      <title>留言板</title>
-      <link href="/messageboard/index.html"/>
-      <url>/messageboard/index.html</url>
+      <title>说说</title>
+      <link href="/shuoshuo/index.html"/>
+      <url>/shuoshuo/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
