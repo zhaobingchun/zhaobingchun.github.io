@@ -1,0 +1,59 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="90" y1="60" x2="1110" y2="570" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1020"/>
+      <stop offset="0.5" stop-color="#101A33"/>
+      <stop offset="1" stop-color="#0A7C86"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="228" y1="138" x2="930" y2="486" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5EEAD4"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="pill" x1="120" y1="96" x2="310" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#67E8F9"/>
+    </linearGradient>
+    <filter id="glow" x="741" y="99" width="300" height="300" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="28" fill="url(#bg)"/>
+  <circle cx="1038" cy="76" r="188" fill="#0EA5A420"/>
+  <circle cx="148" cy="604" r="220" fill="#22D3EE14"/>
+  <path d="M0 510C154 452 250 442 397 476C580 518 654 585 1200 462V630H0V510Z" fill="#06101E" fill-opacity="0.38"/>
+
+  <rect x="120" y="76" width="188" height="40" rx="20" fill="url(#pill)" fill-opacity="0.18" stroke="#67E8F9" stroke-opacity="0.45"/>
+  <text x="146" y="102" fill="#CFFAFE" font-size="22" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" letter-spacing="1.5">AI 实战 · Prompt</text>
+
+  <text x="120" y="205" fill="#E2E8F0" font-size="66" font-weight="700" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif">AI 提示词工程</text>
+  <text x="120" y="286" fill="url(#accent)" font-size="66" font-weight="700" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif">最佳实践</text>
+  <text x="120" y="350" fill="#B6C2D9" font-size="30" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif">从零散提问到稳定产出</text>
+  <text x="120" y="394" fill="#8FA3BF" font-size="24" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif">目标清晰 / 上下文充分 / 约束明确 / 结果可验证</text>
+
+  <rect x="120" y="448" width="354" height="74" rx="18" fill="#0F172A" fill-opacity="0.52" stroke="#67E8F9" stroke-opacity="0.28"/>
+  <text x="152" y="494" fill="#E6FFFB" font-size="26" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif">Blog Cover · 2026</text>
+
+  <g opacity="0.95">
+    <rect x="754" y="128" width="326" height="272" rx="28" fill="#0B1223" fill-opacity="0.78" stroke="#66E3FF" stroke-opacity="0.24"/>
+    <rect x="786" y="168" width="188" height="24" rx="12" fill="#16314D"/>
+    <rect x="786" y="212" width="252" height="14" rx="7" fill="#295D8C"/>
+    <rect x="786" y="244" width="214" height="14" rx="7" fill="#2D6EA3"/>
+    <rect x="786" y="276" width="170" height="14" rx="7" fill="#3B82F6"/>
+    <rect x="786" y="320" width="122" height="34" rx="17" fill="#14B8A6" fill-opacity="0.22" stroke="#5EEAD4" stroke-opacity="0.45"/>
+    <text x="819" y="343" fill="#CCFBF1" font-size="18" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif">结构化 Prompt</text>
+  </g>
+
+  <g filter="url(#glow)">
+    <circle cx="903" cy="249" r="24" fill="#5EEAD4" fill-opacity="0.95"/>
+    <path d="M903 207L913 240L947 240L919 259L929 292L903 272L877 292L887 259L859 240L893 240L903 207Z" fill="#A5F3FC" fill-opacity="0.78"/>
+  </g>
+
+  <g opacity="0.72">
+    <path d="M864 444C900 426 948 426 986 444" stroke="#67E8F9" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="847" cy="444" r="10" fill="#22D3EE"/>
+    <circle cx="1003" cy="444" r="10" fill="#38BDF8"/>
+    <circle cx="925" cy="444" r="10" fill="#5EEAD4"/>
+  </g>
+</svg>
