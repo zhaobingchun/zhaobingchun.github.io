@@ -6,7 +6,7 @@
   <link href="https://www.jrrm.top/atom.xml" rel="self"/>
   <link href="https://pubsubhubbub.appspot.com/" rel="hub"/>
   <link href="https://www.jrrm.top/"/>
-  <updated>2026-03-31T16:17:36.934Z</updated>
+  <updated>2026-04-02T13:17:29.964Z</updated>
   <id>https://www.jrrm.top/</id>
   
   <author>
@@ -22,6 +22,64 @@
  <webfeeds:accentColor>0abab5</webfeeds:accentColor>
  <webfeeds:related layout="card" target="browser"/>
 
+  
+  <entry>
+    <title>Claude Code 完整使用指南：从入门到自动化工作流</title>
+    <link href="https://www.jrrm.top/posts/3337c530.html"/>
+    <id>https://www.jrrm.top/posts/3337c530.html</id>
+    <published>2026-04-02T02:00:00.000Z</published>
+    <updated>2026-04-02T13:17:29.964Z</updated>
+    
+    <content type="html"><![CDATA[<p>AI 编程工具已经进入”第二阶段”——不再是单纯的代码补全，而是可以理解上下文、执行多步任务、甚至自主管理文件和运行测试的 <strong>Agent 级别助手</strong>。Claude Code 就是这个阶段最具代表性的工具之一。</p><p>本文不是功能罗列，而是一份<strong>可以直接上手的实战指南</strong>，覆盖安装配置、核心工作流、自动化钩子，以及与 Cursor 等同类工具的横向对比。</p><span id="more"></span><h2 id="一、什么是-Claude-Code，它和其他工具有什么不同"><a href="#一、什么是-Claude-Code，它和其他工具有什么不同" class="headerlink" title="一、什么是 Claude Code，它和其他工具有什么不同"></a>一、什么是 Claude Code，它和其他工具有什么不同</h2><p>Claude Code 是 Anthropic 推出的<strong>终端原生 AI 编程助手</strong>，以 CLI 形式运行，核心定位是”在你的代码库里工作的 Agent”，而不是编辑器插件。</p><h3 id="与-Cursor-的核心差异"><a href="#与-Cursor-的核心差异" class="headerlink" title="与 Cursor 的核心差异"></a>与 Cursor 的核心差异</h3><table><thead><tr><th>维度</th><th>Claude Code</th><th>Cursor</th></tr></thead><tbody><tr><td>运行方式</td><td>终端 CLI &#x2F; IDE 扩展</td><td>独立编辑器</td></tr><tr><td>上下文管理</td><td>全局 <code>CLAUDE.md</code> + 项目级配置</td><td>规则文件（<code>.cursorrules</code>）</td></tr><tr><td>任务执行</td><td>可直接运行 shell 命令、测试、git</td><td>主要聚焦编辑操作</td></tr><tr><td>自动化支持</td><td>Hooks 机制，事件驱动</td><td>有限</td></tr><tr><td>适用场景</td><td>多步骤 Agent 任务、CI 集成</td><td>编辑器内快速迭代</td></tr></tbody></table><p><strong>一句话总结</strong>：Cursor 是”更智能的编辑器”，Claude Code 是”会写代码的队友”。如果你需要让 AI 帮你跑测试、提交 PR、修复 CI 流水线，Claude Code 更合适。</p><hr><h2 id="二、安装与初始配置"><a href="#二、安装与初始配置" class="headerlink" title="二、安装与初始配置"></a>二、安装与初始配置</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><pre><code class="language-bash"># 通过 npm 全局安装npm install -g @anthropic-ai/claude-code# 验证安装claude --version# 首次登录（OAuth 认证，无需手动配置 API Key）claude</code></pre><h3 id="项目级配置：CLAUDE-md"><a href="#项目级配置：CLAUDE-md" class="headerlink" title="项目级配置：CLAUDE.md"></a>项目级配置：CLAUDE.md</h3><p>在项目根目录创建 <code>CLAUDE.md</code>，Claude Code 每次启动时会自动读取，作为”项目说明书”：</p><pre><code class="language-markdown"># 项目说明## 技术栈- Node.js 20 + TypeScript 5- PostgreSQL 16，ORM 使用 Prisma- 测试框架：Vitest## 开发规范- 所有新增函数必须有 JSDoc 注释- 提交信息遵循 Conventional Commits- 禁止直接修改 `dist/` 目录下的文件## 常用命令- `npm run dev`：启动开发服务器- `npm run test`：运行单元测试- `npm run lint`：代码风格检查</code></pre><p>这份文件直接决定了 Claude Code 对项目的”理解深度”，<strong>越详细，输出质量越高</strong>。</p><hr><h2 id="三、核心使用场景"><a href="#三、核心使用场景" class="headerlink" title="三、核心使用场景"></a>三、核心使用场景</h2><h3 id="场景一：理解陌生代码库"><a href="#场景一：理解陌生代码库" class="headerlink" title="场景一：理解陌生代码库"></a>场景一：理解陌生代码库</h3><p>接手一个新项目，先让 Claude Code 帮你建立地图：</p><pre><code class="language-bash">claude &quot;分析这个项目的整体架构，重点说明数据流向和核心模块之间的依赖关系&quot;</code></pre><p>它会自动读取文件树、关键源码、<code>package.json</code>，然后给出结构性分析——这比手动翻代码快 10 倍。</p><h3 id="场景二：实现一个完整功能"><a href="#场景二：实现一个完整功能" class="headerlink" title="场景二：实现一个完整功能"></a>场景二：实现一个完整功能</h3><pre><code class="language-bash">claude &quot;在 src/api/ 下新增一个用户积分查询接口，需要：1. GET /users/:id/points2. 从 PostgreSQL 的 user_points 表查询3. 加上请求频率限制（每分钟最多 60 次）4. 编写对应的单元测试&quot;</code></pre><p>Claude Code 会依次创建路由文件、编写测试、甚至检查现有代码风格来保持一致性。</p><h3 id="场景三：代码审查与重构"><a href="#场景三：代码审查与重构" class="headerlink" title="场景三：代码审查与重构"></a>场景三：代码审查与重构</h3><pre><code class="language-bash"># 审查最近的改动claude &quot;review 一下我刚才修改的文件，重点关注潜在的安全漏洞和性能问题&quot;# 针对特定文件重构claude &quot;重构 src/utils/auth.ts，把重复的 JWT 验证逻辑抽取成独立函数，保持对外 API 不变&quot;</code></pre><h3 id="场景四：调试难以复现的-Bug"><a href="#场景四：调试难以复现的-Bug" class="headerlink" title="场景四：调试难以复现的 Bug"></a>场景四：调试难以复现的 Bug</h3><pre><code class="language-bash">claude &quot;线上报了一个 UnhandledPromiseRejection 错误，堆栈如下：[粘贴错误日志]帮我定位根因，并给出修复方案&quot;</code></pre><hr><h2 id="四、自动化工作流：Hooks-机制"><a href="#四、自动化工作流：Hooks-机制" class="headerlink" title="四、自动化工作流：Hooks 机制"></a>四、自动化工作流：Hooks 机制</h2><p>这是 Claude Code 区别于其他工具的<strong>核心能力</strong>。通过 <code>settings.json</code> 配置 Hooks，可以在特定事件触发时自动执行 shell 命令。</p><h3 id="配置文件位置"><a href="#配置文件位置" class="headerlink" title="配置文件位置"></a>配置文件位置</h3><pre><code>~/.claude/settings.json          # 全局配置.claude/settings.json            # 项目级配置（优先级更高）</code></pre><h3 id="典型配置示例"><a href="#典型配置示例" class="headerlink" title="典型配置示例"></a>典型配置示例</h3><pre><code class="language-json">&#123;  &quot;hooks&quot;: &#123;    &quot;PostToolUse&quot;: [      &#123;        &quot;matcher&quot;: &quot;Edit|Write&quot;,        &quot;hooks&quot;: [          &#123;            &quot;type&quot;: &quot;command&quot;,            &quot;command&quot;: &quot;npm run lint --fix 2&gt;&amp;1 | head -50&quot;          &#125;        ]      &#125;    ],    &quot;PreToolUse&quot;: [      &#123;        &quot;matcher&quot;: &quot;Bash&quot;,        &quot;hooks&quot;: [          &#123;            &quot;type&quot;: &quot;command&quot;,            &quot;command&quot;: &quot;echo &#39;[Hook] 即将执行 shell 命令，请注意风险&#39;&quot;          &#125;        ]      &#125;    ]  &#125;&#125;</code></pre><p><strong>这个配置的效果</strong>：每次 Claude Code 修改文件后，自动运行 lint 修复——无需你手动干预，代码风格始终保持整洁。</p><h3 id="进阶：自动代码审查-Hook"><a href="#进阶：自动代码审查-Hook" class="headerlink" title="进阶：自动代码审查 Hook"></a>进阶：自动代码审查 Hook</h3><pre><code class="language-json">&#123;  &quot;hooks&quot;: &#123;    &quot;Stop&quot;: [      &#123;        &quot;hooks&quot;: [          &#123;            &quot;type&quot;: &quot;command&quot;,            &quot;command&quot;: &quot;git diff --staged | head -200&quot;          &#125;        ]      &#125;    ]  &#125;&#125;</code></pre><p>在 Claude Code 完成一轮任务后，自动输出 diff 供你确认，防止意外改动漏网。</p><hr><h2 id="五、上下文管理技巧"><a href="#五、上下文管理技巧" class="headerlink" title="五、上下文管理技巧"></a>五、上下文管理技巧</h2><h3 id="使用-clear-控制上下文窗口"><a href="#使用-clear-控制上下文窗口" class="headerlink" title="使用 /clear 控制上下文窗口"></a>使用 <code>/clear</code> 控制上下文窗口</h3><p>长会话中，历史对话会消耗大量 token 并引入噪声：</p><pre><code>/clear          # 清空当前会话历史，保留 CLAUDE.md 配置</code></pre><p>在切换到新任务时养成 <code>/clear</code> 的习惯，<strong>响应质量会明显提升</strong>。</p><h3 id="精准引用文件"><a href="#精准引用文件" class="headerlink" title="精准引用文件"></a>精准引用文件</h3><pre><code class="language-bash"># 直接指向具体文件，避免 Claude 自行猜测claude &quot;解释一下 @src/core/scheduler.ts 的调度逻辑&quot;# 多文件关联分析claude &quot;对比 @src/v1/parser.ts 和 @src/v2/parser.ts 的差异，说明 v2 的改进点&quot;</code></pre><h3 id="使用-compact-压缩上下文"><a href="#使用-compact-压缩上下文" class="headerlink" title="使用 /compact 压缩上下文"></a>使用 <code>/compact</code> 压缩上下文</h3><pre><code>/compact        # 保留关键信息，压缩对话历史，节省 token</code></pre><p>适合进行长时间、多步骤的重构任务时使用。</p><hr><h2 id="六、与-CI-CD-集成"><a href="#六、与-CI-CD-集成" class="headerlink" title="六、与 CI&#x2F;CD 集成"></a>六、与 CI&#x2F;CD 集成</h2><p>Claude Code 可以在无人值守模式下运行，适合集成到 GitHub Actions：</p><pre><code class="language-yaml"># .github/workflows/claude-review.ymlname: AI Code Reviewon:  pull_request:    types: [opened, synchronize]jobs:  review:    runs-on: ubuntu-latest    steps:      - uses: actions/checkout@v4        with:          fetch-depth: 0      - name: Install Claude Code        run: npm install -g @anthropic-ai/claude-code      - name: Run AI Review        env:          ANTHROPIC_API_KEY: $&#123;&#123; secrets.ANTHROPIC_API_KEY &#125;&#125;        run: |          git diff origin/main...HEAD &gt; changes.diff          claude --print &quot;请审查以下代码变更，输出结构化的审查报告，重点关注安全性、性能和可维护性：$(cat changes.diff)&quot;</code></pre><blockquote><p><strong>注意</strong>：在 CI 环境中使用 <code>--print</code> 参数让 Claude Code 以非交互模式运行，直接输出结果到 stdout。</p></blockquote><hr><h2 id="七、常见问题与最佳实践"><a href="#七、常见问题与最佳实践" class="headerlink" title="七、常见问题与最佳实践"></a>七、常见问题与最佳实践</h2><p><strong>Q：Claude Code 会不会乱改代码？</strong><br>通过 <code>CLAUDE.md</code> 明确禁止修改的目录&#x2F;文件，配合 Hooks 在每次修改后自动 diff 确认，风险可控。</p><p><strong>Q：如何让输出更稳定、更符合项目风格？</strong><br><code>CLAUDE.md</code> 写得越具体越好。把编码规范、禁止事项、常用命令都写进去，比在对话里反复提醒有效得多。</p><p><strong>Q：token 消耗太快怎么办？</strong></p><ul><li>用 <code>/compact</code> 压缩上下文</li><li>任务切换时用 <code>/clear</code></li><li>指向具体文件而不是让 Claude 自行扫描整个代码库</li></ul><hr><h2 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a>八、总结</h2><p>Claude Code 的价值不在于”它能写代码”——大多数 AI 工具都能做到。它真正的差异化在于：</p><ol><li><strong>Agent 级别的任务执行</strong>：不只是生成代码片段，而是完成端到端的开发任务</li><li><strong>可编程的自动化</strong>：Hooks 机制让它真正融入工程流程，而不是孤立的对话工具</li><li><strong>上下文持久化</strong>：<code>CLAUDE.md</code> 让每次会话都有项目背景，无需反复解释</li></ol><p>对于个人开发者，Claude Code 能让你以”一个人的效率干两个人的活”；对于技术团队，它可以标准化代码审查、自动化重复性工程任务，让工程师专注在更有创造力的工作上。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code 官方文档</a> — Hooks 配置的完整字段参考</li><li><a href="https://github.com/anthropics/claude-code/discussions">CLAUDE.md 最佳实践社区讨论</a> — 看看其他团队怎么写项目说明书</li><li><a href="https://github.com/anthropics/claude-code-action">Claude Code + GitHub Actions 深度集成</a> — 官方 Action 的源码和用法</li><li>本站相关文章：《AI 辅助代码审查：让 PR Review 不再是团队瓶颈》</li></ul>]]></content>
+    
+    
+    <summary type="html">深度解析 Claude Code 的核心能力、配置技巧与自动化工作流搭建，帮助开发者真正把 AI 编程助手融入日常开发流程，而不只是偶尔用用的玩具。</summary>
+    
+    
+    
+    <category term="工具效率" scheme="https://www.jrrm.top/categories/%E5%B7%A5%E5%85%B7%E6%95%88%E7%8E%87/"/>
+    
+    
+    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
+    
+    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
+    
+    <category term="AI 编程" scheme="https://www.jrrm.top/tags/AI-%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="自动化工作流" scheme="https://www.jrrm.top/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81/"/>
+    
+    <category term="Anthropic" scheme="https://www.jrrm.top/tags/Anthropic/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用 Docker Compose 一键部署 10 个实用自托管服务</title>
+    <link href="https://www.jrrm.top/posts/a48f0682.html"/>
+    <id>https://www.jrrm.top/posts/a48f0682.html</id>
+    <published>2026-04-02T02:00:00.000Z</published>
+    <updated>2026-04-02T13:07:59.847Z</updated>
+    
+    <content type="html"><![CDATA[<p>云服务越来越贵，隐私问题越来越严峻——2026 年，越来越多的开发者和技术爱好者开始把数据”搬回家”。只需一台闲置的 x86 主机或树莓派，加上 Docker，你就能拥有媲美商业 SaaS 的完整服务栈。</p><p>本文精选 10 个实战价值最高的自托管服务，给出开箱即用的 Docker Compose 配置，帮你快速搭建属于自己的私有云生态。</p><span id="more"></span><h2 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h2><p>在开始之前，确认环境满足以下要求：</p><pre><code class="language-bash"># 安装 Docker Engine 和 Docker Compose Plugincurl -fsSL https://get.docker.com | sh# 验证版本docker --version          # &gt;= 24.xdocker compose version    # &gt;= 2.x</code></pre><p>所有服务统一使用同一个 Docker 网络，方便容器间通信：</p><pre><code class="language-bash">docker network create homelab</code></pre><p>建议目录结构：</p><pre><code>~/homelab/├── nextcloud/├── homeassistant/├── adguard/├── gitea/├── vaultwarden/├── jellyfin/├── portainer/├── npm/├── stirling-pdf/└── changedetection/</code></pre><hr><h2 id="10-个服务全解析"><a href="#10-个服务全解析" class="headerlink" title="10 个服务全解析"></a>10 个服务全解析</h2><h3 id="1-Nextcloud-—-私有云盘"><a href="#1-Nextcloud-—-私有云盘" class="headerlink" title="1. Nextcloud — 私有云盘"></a>1. Nextcloud — 私有云盘</h3><p>替代 Google Drive &#x2F; iCloud，支持文件同步、相册、Office 协同编辑。</p><pre><code class="language-yaml"># ~/homelab/nextcloud/docker-compose.ymlservices:  nextcloud-db:    image: mariadb:11    restart: unless-stopped    environment:      MYSQL_ROOT_PASSWORD: changeme      MYSQL_DATABASE: nextcloud      MYSQL_USER: nextcloud      MYSQL_PASSWORD: changeme    volumes:      - ./db:/var/lib/mysql    networks:      - homelab  nextcloud:    image: nextcloud:29    restart: unless-stopped    ports:      - &quot;8080:80&quot;    environment:      MYSQL_HOST: nextcloud-db      MYSQL_DATABASE: nextcloud      MYSQL_USER: nextcloud      MYSQL_PASSWORD: changeme    volumes:      - ./data:/var/www/html    depends_on:      - nextcloud-db    networks:      - homelabnetworks:  homelab:    external: true</code></pre><p><strong>亮点</strong>：100+ 官方应用，Nextcloud Talk 可替代 Zoom，Memories 应用媲美 Google Photos。</p><hr><h3 id="2-Home-Assistant-—-智能家居中枢"><a href="#2-Home-Assistant-—-智能家居中枢" class="headerlink" title="2. Home Assistant — 智能家居中枢"></a>2. Home Assistant — 智能家居中枢</h3><p>接管小米、涂鸦、HomeKit 等生态，本地自动化，断网照跑。</p><pre><code class="language-yaml"># ~/homelab/homeassistant/docker-compose.ymlservices:  homeassistant:    image: ghcr.io/home-assistant/home-assistant:stable    restart: unless-stopped    network_mode: host       # 需要广播局域网设备发现    privileged: true    environment:      - TZ=Asia/Shanghai    volumes:      - ./config:/config</code></pre><blockquote><p><strong>注意</strong>：使用 <code>network_mode: host</code> 才能正确发现局域网 IoT 设备，这是 HA 的推荐部署方式。</p></blockquote><hr><h3 id="3-AdGuard-Home-—-全网去广告-DNS"><a href="#3-AdGuard-Home-—-全网去广告-DNS" class="headerlink" title="3. AdGuard Home — 全网去广告 DNS"></a>3. AdGuard Home — 全网去广告 DNS</h3><p>将路由器 DNS 指向它，全家设备自动屏蔽广告和追踪器，无需客户端。</p><pre><code class="language-yaml"># ~/homelab/adguard/docker-compose.ymlservices:  adguardhome:    image: adguard/adguardhome:latest    restart: unless-stopped    ports:      - &quot;53:53/tcp&quot;      - &quot;53:53/udp&quot;      - &quot;3000:3000/tcp&quot;    # 初始配置 Web UI      - &quot;8083:80/tcp&quot;      # 配置完成后的 Web UI    volumes:      - ./workdir:/opt/adguardhome/work      - ./confdir:/opt/adguardhome/conf    networks:      - homelabnetworks:  homelab:    external: true</code></pre><p>初次访问 <code>http://&lt;IP&gt;:3000</code> 完成向导，之后管理界面迁移到端口 <code>8083</code>。</p><hr><h3 id="4-Gitea-—-轻量私有-Git"><a href="#4-Gitea-—-轻量私有-Git" class="headerlink" title="4. Gitea — 轻量私有 Git"></a>4. Gitea — 轻量私有 Git</h3><p>自托管代码仓库，配合 Forgejo Actions 可实现完整 CI&#x2F;CD，内存占用仅约 100MB。</p><pre><code class="language-yaml"># ~/homelab/gitea/docker-compose.ymlservices:  gitea:    image: gitea/gitea:1.22    restart: unless-stopped    environment:      - USER_UID=1000      - USER_GID=1000      - GITEA__database__DB_TYPE=sqlite3      - TZ=Asia/Shanghai    ports:      - &quot;3001:3000&quot;      - &quot;2222:22&quot;    volumes:      - ./data:/data    networks:      - homelabnetworks:  homelab:    external: true</code></pre><p>SSH 推送映射到宿主机 <code>2222</code> 端口，避免与系统 SSH 冲突：</p><pre><code class="language-bash"># ~/.ssh/configHost gitea.home  HostName 192.168.1.100  Port 2222</code></pre><hr><h3 id="5-Vaultwarden-—-密码管理器"><a href="#5-Vaultwarden-—-密码管理器" class="headerlink" title="5. Vaultwarden — 密码管理器"></a>5. Vaultwarden — 密码管理器</h3><p>Bitwarden 协议的轻量实现，官方客户端完全兼容，资源占用仅官方版的 1&#x2F;10。</p><pre><code class="language-yaml"># ~/homelab/vaultwarden/docker-compose.ymlservices:  vaultwarden:    image: vaultwarden/server:latest    restart: unless-stopped    ports:      - &quot;8082:80&quot;    environment:      - WEBSOCKET_ENABLED=true      - SIGNUPS_ALLOWED=false   # 初始注册完成后设为 false      - TZ=Asia/Shanghai    volumes:      - ./data:/data    networks:      - homelabnetworks:  homelab:    external: true</code></pre><blockquote><p><strong>安全要点</strong>：Vaultwarden <strong>必须</strong>配合 HTTPS 使用（后文 Nginx Proxy Manager 负责），否则浏览器扩展会拒绝连接。</p></blockquote><hr><h3 id="6-Jellyfin-—-媒体服务器"><a href="#6-Jellyfin-—-媒体服务器" class="headerlink" title="6. Jellyfin — 媒体服务器"></a>6. Jellyfin — 媒体服务器</h3><p>替代 Plex，完全免费无订阅，支持硬件转码，自动刮削海报和字幕。</p><pre><code class="language-yaml"># ~/homelab/jellyfin/docker-compose.ymlservices:  jellyfin:    image: jellyfin/jellyfin:latest    restart: unless-stopped    ports:      - &quot;8096:8096&quot;    environment:      - TZ=Asia/Shanghai    volumes:      - ./config:/config      - ./cache:/cache      - /mnt/media:/media:ro    # 挂载媒体库（只读）    # 启用 Intel 核显硬件转码（可选）    devices:      - /dev/dri:/dev/dri    networks:      - homelabnetworks:  homelab:    external: true</code></pre><p>在管理后台「控制台 → 播放 → 转码」中开启 VAAPI 硬件加速，4K 转码 CPU 占用从 300% 降到 15%。</p><hr><h3 id="7-Portainer-—-容器可视化管理"><a href="#7-Portainer-—-容器可视化管理" class="headerlink" title="7. Portainer — 容器可视化管理"></a>7. Portainer — 容器可视化管理</h3><p>Web UI 管理所有容器，查看日志、资源监控、一键启停，新手必备。</p><pre><code class="language-yaml"># ~/homelab/portainer/docker-compose.ymlservices:  portainer:    image: portainer/portainer-ce:latest    restart: unless-stopped    ports:      - &quot;9000:9000&quot;    volumes:      - /var/run/docker.sock:/var/run/docker.sock      - ./data:/data    networks:      - homelabnetworks:  homelab:    external: true</code></pre><hr><h3 id="8-Nginx-Proxy-Manager-—-反向代理-SSL"><a href="#8-Nginx-Proxy-Manager-—-反向代理-SSL" class="headerlink" title="8. Nginx Proxy Manager — 反向代理 + SSL"></a>8. Nginx Proxy Manager — 反向代理 + SSL</h3><p>可视化管理反向代理规则，自动申请 Let’s Encrypt 证书，告别手写 Nginx 配置。</p><pre><code class="language-yaml"># ~/homelab/npm/docker-compose.ymlservices:  nginx-proxy-manager:    image: jc21/nginx-proxy-manager:latest    restart: unless-stopped    ports:      - &quot;80:80&quot;      - &quot;443:443&quot;      - &quot;81:81&quot;    # 管理 Web UI    volumes:      - ./data:/data      - ./letsencrypt:/etc/letsencrypt    networks:      - homelabnetworks:  homelab:    external: true</code></pre><p>配置完成后，通过 NPM 为 Vaultwarden、Nextcloud 等服务配置域名和 SSL，实现内网 HTTPS 访问。</p><hr><h3 id="9-Stirling-PDF-—-本地-PDF-全能工具箱"><a href="#9-Stirling-PDF-—-本地-PDF-全能工具箱" class="headerlink" title="9. Stirling-PDF — 本地 PDF 全能工具箱"></a>9. Stirling-PDF — 本地 PDF 全能工具箱</h3><p>替代 Smallpdf &#x2F; ILovePDF，所有操作在本地处理，敏感文档零泄露风险。支持合并、拆分、压缩、OCR、格式转换等 50+ 功能。</p><pre><code class="language-yaml"># ~/homelab/stirling-pdf/docker-compose.ymlservices:  stirling-pdf:    image: frooodle/s-pdf:latest    restart: unless-stopped    ports:      - &quot;8085:8080&quot;    environment:      - DOCKER_ENABLE_SECURITY=false      - LANGS=zh_CN    volumes:      - ./trainingData:/usr/share/tessdata   # OCR 语言包      - ./config:/configs    networks:      - homelabnetworks:  homelab:    external: true</code></pre><hr><h3 id="10-ChangeDetection-—-网页变更监控"><a href="#10-ChangeDetection-—-网页变更监控" class="headerlink" title="10. ChangeDetection — 网页变更监控"></a>10. ChangeDetection — 网页变更监控</h3><p>监控任意网页内容变化，价格波动、政策更新、商品库存——第一时间推送通知。</p><pre><code class="language-yaml"># ~/homelab/changedetection/docker-compose.ymlservices:  changedetection:    image: ghcr.io/dgtlmoon/changedetection.io:latest    restart: unless-stopped    ports:      - &quot;5000:5000&quot;    environment:      - TZ=Asia/Shanghai    volumes:      - ./datastore:/datastore    networks:      - homelab  # 可选：使用 Playwright 渲染 JS 动态页面  playwright-chrome:    image: browserless/chrome:latest    restart: unless-stopped    environment:      - SCREEN_WIDTH=1920      - SCREEN_HEIGHT=1024    networks:      - homelabnetworks:  homelab:    external: true</code></pre><p>配合 Bark、Telegram Bot 或 Apprise 可实现多渠道推送。</p><hr><h2 id="一键启动所有服务"><a href="#一键启动所有服务" class="headerlink" title="一键启动所有服务"></a>一键启动所有服务</h2><p>将以上所有 <code>docker-compose.yml</code> 按目录存放后，可用脚本批量启动：</p><pre><code class="language-bash">#!/bin/bash# ~/homelab/start-all.shSERVICES=(  nextcloud homeassistant adguard gitea  vaultwarden jellyfin portainer npm  stirling-pdf changedetection)for svc in &quot;$&#123;SERVICES[@]&#125;&quot;; do  echo &quot;▶ Starting $svc...&quot;  docker compose -f ~/$svc/docker-compose.yml up -ddoneecho &quot;✅ All services started.&quot;</code></pre><hr><h2 id="端口速查表"><a href="#端口速查表" class="headerlink" title="端口速查表"></a>端口速查表</h2><table><thead><tr><th>服务</th><th>端口</th><th>说明</th></tr></thead><tbody><tr><td>Nextcloud</td><td>8080</td><td>私有云盘</td></tr><tr><td>Home Assistant</td><td>8123</td><td>智能家居</td></tr><tr><td>AdGuard Home</td><td>8083</td><td>DNS 管理后台</td></tr><tr><td>Gitea</td><td>3001</td><td>代码仓库</td></tr><tr><td>Vaultwarden</td><td>8082</td><td>密码管理</td></tr><tr><td>Jellyfin</td><td>8096</td><td>媒体服务器</td></tr><tr><td>Portainer</td><td>9000</td><td>容器管理</td></tr><tr><td>Nginx Proxy Manager</td><td>81</td><td>反向代理管理</td></tr><tr><td>Stirling-PDF</td><td>8085</td><td>PDF 工具箱</td></tr><tr><td>ChangeDetection</td><td>5000</td><td>网页监控</td></tr></tbody></table><hr><h2 id="安全加固建议"><a href="#安全加固建议" class="headerlink" title="安全加固建议"></a>安全加固建议</h2><ol><li><strong>永远不要直接暴露到公网</strong>：使用 Cloudflare Tunnel 或 Tailscale 做内网穿透，比开放端口安全得多</li><li><strong>定期备份数据卷</strong>：推荐 Borgbackup + 异地存储，至少 3-2-1 备份策略</li><li><strong>关闭不用的注册功能</strong>：Vaultwarden 的 <code>SIGNUPS_ALLOWED=false</code>、Gitea 的注册限制</li><li><strong>保持镜像更新</strong>：<code>docker compose pull &amp;&amp; docker compose up -d</code> 定期执行</li></ol><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这 10 个服务覆盖了日常生活和开发中绝大多数场景：</p><ul><li><strong>存储与协作</strong>：Nextcloud + Gitea</li><li><strong>安全与隐私</strong>：Vaultwarden + AdGuard Home</li><li><strong>娱乐与效率</strong>：Jellyfin + Stirling-PDF + ChangeDetection</li><li><strong>基础设施</strong>：Portainer + Nginx Proxy Manager + Home Assistant</li></ul><p>整套栈在 4GB 内存的机器上完全可以运行（Home Assistant 单独 host 网络除外）。如果你手头有闲置的 NUC、旧笔记本或工控机，今天就可以开始搭建自己的 HomeLab。</p><p>数据在自己手里，才真正安心。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="https://github.com/awesome-selfhosted/awesome-selfhosted">Awesome-Selfhosted</a> — 最全自托管服务列表，按分类整理，定期更新</li><li><a href="https://www.reddit.com/r/selfhosted/">r&#x2F;selfhosted</a> — Reddit 社区，问题讨论和最新推荐</li><li><a href="https://www.linuxserver.io/">LinuxServer.io</a> — 维护了大量经过优化的 Docker 镜像，文档详尽</li><li><a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/">Cloudflare Tunnel 教程</a> — 无公网 IP 也能安全访问家庭服务器的最佳方案</li></ul>]]></content>
+    
+    
+    <summary type="html">精选 10 个高价值自托管服务，提供完整 Docker Compose 配置，从私有云、密码管理到媒体服务器，帮你用一台服务器掌控自己的数据。</summary>
+    
+    
+    
+    <category term="运维实战" scheme="https://www.jrrm.top/categories/%E8%BF%90%E7%BB%B4%E5%AE%9E%E6%88%98/"/>
+    
+    
+    <category term="Docker" scheme="https://www.jrrm.top/tags/Docker/"/>
+    
+    <category term="Docker Compose" scheme="https://www.jrrm.top/tags/Docker-Compose/"/>
+    
+    <category term="自托管" scheme="https://www.jrrm.top/tags/%E8%87%AA%E6%89%98%E7%AE%A1/"/>
+    
+    <category term="HomeLab" scheme="https://www.jrrm.top/tags/HomeLab/"/>
+    
+    <category term="家庭服务器" scheme="https://www.jrrm.top/tags/%E5%AE%B6%E5%BA%AD%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    
+  </entry>
   
   <entry>
     <title>Cursor vs Claude Code 深度对比评测：2026 年 AI 编程工具怎么选</title>
@@ -98,11 +156,11 @@
     <category term="行业洞察" scheme="https://www.jrrm.top/categories/%E8%A1%8C%E4%B8%9A%E6%B4%9E%E5%AF%9F/"/>
     
     
+    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
+    
     <category term="AI开源项目" scheme="https://www.jrrm.top/tags/AI%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/"/>
     
     <category term="GitHub" scheme="https://www.jrrm.top/tags/GitHub/"/>
-    
-    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
     <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
     
@@ -238,9 +296,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
-    
     <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
+    
+    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
     
   </entry>
   
@@ -290,9 +348,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
-    
     <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
+    
+    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
     
   </entry>
   
@@ -317,9 +375,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="快捷键" scheme="https://www.jrrm.top/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
-    
     <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
+    
+    <category term="快捷键" scheme="https://www.jrrm.top/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
     
   </entry>
   
