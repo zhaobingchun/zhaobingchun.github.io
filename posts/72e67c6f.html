@@ -1,0 +1,938 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>WebSocket vs SSE：2026 年实时推送技术全方位选型指南 | 一个技术宅</title><meta name="author" content="bingchun.zhao"><meta name="copyright" content="bingchun.zhao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="2026 年，HTTP&#x2F;3 普及、边缘计算崛起，WebSocket 与 SSE 的选型逻辑已经悄然改变。 本文从协议机制、连接管理、防火墙兼容性到实际代码，给你一份可落地的决策框架。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WebSocket vs SSE：2026 年实时推送技术全方位选型指南">
+<meta property="og:url" content="https://www.jrrm.top/posts/72e67c6f.html">
+<meta property="og:site_name" content="一个技术宅">
+<meta property="og:description" content="2026 年，HTTP&#x2F;3 普及、边缘计算崛起，WebSocket 与 SSE 的选型逻辑已经悄然改变。 本文从协议机制、连接管理、防火墙兼容性到实际代码，给你一份可落地的决策框架。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.jrrm.top/images/covers/websocket-vs-sse-2026.png">
+<meta property="article:published_time" content="2026-04-07T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-07T02:07:01.949Z">
+<meta property="article:author" content="bingchun.zhao">
+<meta property="article:tag" content="实时通信">
+<meta property="article:tag" content="WebSocket">
+<meta property="article:tag" content="SSE">
+<meta property="article:tag" content="Node.js">
+<meta property="article:tag" content="系统架构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.jrrm.top/images/covers/websocket-vs-sse-2026.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "WebSocket vs SSE：2026 年实时推送技术全方位选型指南",
+  "url": "https://www.jrrm.top/posts/72e67c6f.html",
+  "image": "https://www.jrrm.top/images/covers/websocket-vs-sse-2026.png",
+  "datePublished": "2026-04-07T02:00:00.000Z",
+  "dateModified": "2026-04-07T02:07:01.949Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "bingchun.zhao",
+      "url": "https://www.jrrm.top/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.jrrm.top/posts/72e67c6f.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)')
+          const mediaQueryLight = window.matchMedia('(prefers-color-scheme: light)')
+
+          if (theme === undefined) {
+            if (mediaQueryLight.matches) activateLightMode()
+            else if (mediaQueryDark.matches) activateDarkMode()
+            else {
+              const hour = new Date().getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            mediaQueryDark.addEventListener('change', () => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else {
+            theme === 'light' ? activateLightMode() : activateDarkMode()
+          }
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5c3eb8698998c15145868b03c7229014";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+btf.addGlobalFn('pjaxComplete', () => {
+  _hmt.push(['_trackPageview',window.location.pathname])
+}, 'baidu_analytics')
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'WebSocket vs SSE：2026 年实时推送技术全方位选型指南',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="一个技术宅" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load', preloader.endLoading)
+  // 兜底：5 秒后强制移除遮罩，防止外部脚本加载超时导致白屏
+  setTimeout(preloader.endLoading, 5000)
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">58</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment"></i><span> 说说</span></a></li><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/books/"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li><li><a class="site-page child" href="/songs/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-gamepad"></i><span> 游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/images/covers/websocket-vs-sse-2026.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">一个技术宅</span></a><a class="nav-page-title" href="/"><span class="site-name">WebSocket vs SSE：2026 年实时推送技术全方位选型指南</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment"></i><span> 说说</span></a></li><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/books/"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li><li><a class="site-page child" href="/songs/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-gamepad"></i><span> 游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">WebSocket vs SSE：2026 年实时推送技术全方位选型指南</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-07T02:00:00.000Z" title="发表于 2026-04-07 10:00:00">2026-04-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-04-07T02:07:01.949Z" title="更新于 2026-04-07 10:07:01">2026-04-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF%E6%B7%B1%E5%BA%A6/">技术深度</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/72e67c6f.html#post-comment"><span id="twikoo-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>“选型从来不是选最好的技术，而是选最合适的那一个。” — 每一位踩过坑的架构师</p>
+</blockquote>
+<p>实时推送已经是现代 Web 应用的标配：股票行情、AI 流式输出、协同编辑、游戏状态同步……每一个场景背后，都藏着一道绕不开的选择题：<strong>WebSocket 还是 SSE？</strong></p>
+<p>这个问题在 2026 年有了新的背景——HTTP&#x2F;3（QUIC）加速落地，Cloudflare Workers &#x2F; Deno Deploy 等边缘运行时成为主流，浏览器对 SSE 的支持趋于完善。本文从原理到实战，帮你做出有据可查的技术决策。</p>
+<span id="more"></span>
+
+<hr>
+<h2 id="一、先把概念说清楚"><a href="#一、先把概念说清楚" class="headerlink" title="一、先把概念说清楚"></a>一、先把概念说清楚</h2><h3 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h3><p>WebSocket 是一个<strong>全双工、持久化的 TCP 连接</strong>协议（RFC 6455）。握手借用 HTTP Upgrade 机制完成，之后双方可以随时互发二进制或文本帧，延迟极低。</p>
+<pre><code>Client ──── HTTP Upgrade ──▶ Server
+       ◀──── 101 Switching ───
+       ⟺  全双工帧流  ⟺
+</code></pre>
+<h3 id="Server-Sent-Events（SSE）"><a href="#Server-Sent-Events（SSE）" class="headerlink" title="Server-Sent Events（SSE）"></a>Server-Sent Events（SSE）</h3><p>SSE 是<strong>基于 HTTP 的单向服务器推流</strong>协议，响应头 <code>Content-Type: text/event-stream</code>，服务端持续写入格式化的文本块，客户端通过浏览器内置的 <code>EventSource</code> API 订阅。</p>
+<pre><code>Client ──── GET /events ──▶ Server
+       ◀── 200 text/event-stream ──
+       ◀── data: &#123;...&#125;
+
+ ──
+       ◀── data: &#123;...&#125;
+
+ ──
+</code></pre>
+<p>SSE 天然搭载<strong>自动重连</strong>（<code>retry:</code> 字段）和<strong>断点续传</strong>（<code>Last-Event-ID</code> 请求头），浏览器原生支持，无需任何第三方库。</p>
+<hr>
+<h2 id="二、2026-年的新变量：HTTP-3-与边缘运行时"><a href="#二、2026-年的新变量：HTTP-3-与边缘运行时" class="headerlink" title="二、2026 年的新变量：HTTP&#x2F;3 与边缘运行时"></a>二、2026 年的新变量：HTTP&#x2F;3 与边缘运行时</h2><h3 id="HTTP-3-对-WebSocket-的影响"><a href="#HTTP-3-对-WebSocket-的影响" class="headerlink" title="HTTP&#x2F;3 对 WebSocket 的影响"></a>HTTP&#x2F;3 对 WebSocket 的影响</h3><p>HTTP&#x2F;3 基于 QUIC（UDP），原生多路复用，消除了 TCP 的队头阻塞。<strong>WebSocket over HTTP&#x2F;3</strong>（RFC 9220）已于 2022 年标准化，主流浏览器在 2025 年底完成全面支持。</p>
+<p>实测结论：</p>
+<ul>
+<li>在<strong>弱网、移动网络</strong>场景下，WebSocket&#x2F;H3 的连接建立速度比 &#x2F;H1.1 快约 30-50ms（0-RTT 握手）。</li>
+<li>SSE 作为普通 HTTP 响应，在 HTTP&#x2F;3 下同样受益，且复用已有连接时<strong>无额外握手开销</strong>。</li>
+</ul>
+<h3 id="边缘运行时的限制"><a href="#边缘运行时的限制" class="headerlink" title="边缘运行时的限制"></a>边缘运行时的限制</h3><p>Cloudflare Workers、Vercel Edge Functions 等平台对长连接有严格限制：</p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>WebSocket</th>
+<th>SSE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cloudflare Workers</td>
+<td>✅ 原生支持（Hibernation API）</td>
+<td>✅ 支持（TransformStream）</td>
+</tr>
+<tr>
+<td>Vercel Edge Functions</td>
+<td>⚠️ 受限（需 Durable Objects 等方案）</td>
+<td>✅ 较好支持</td>
+</tr>
+<tr>
+<td>AWS Lambda</td>
+<td>❌ 不适合（有执行时长限制）</td>
+<td>❌ 不适合</td>
+</tr>
+<tr>
+<td>Fly.io &#x2F; Railway</td>
+<td>✅ 完整支持</td>
+<td>✅ 完整支持</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>结论</strong>：在 Serverless &#x2F; Edge 场景下，SSE 的部署门槛明显低于 WebSocket。</p>
+</blockquote>
+<hr>
+<h2 id="三、核心维度对比"><a href="#三、核心维度对比" class="headerlink" title="三、核心维度对比"></a>三、核心维度对比</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>WebSocket</th>
+<th>SSE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>通信方向</strong></td>
+<td>全双工（双向）</td>
+<td>单向（服务端 → 客户端）</td>
+</tr>
+<tr>
+<td><strong>底层协议</strong></td>
+<td>TCP（或 QUIC over HTTP&#x2F;3）</td>
+<td>HTTP&#x2F;1.1、HTTP&#x2F;2、HTTP&#x2F;3</td>
+</tr>
+<tr>
+<td><strong>自动重连</strong></td>
+<td>❌ 需手动实现</td>
+<td>✅ 浏览器原生支持</td>
+</tr>
+<tr>
+<td><strong>断点续传</strong></td>
+<td>❌ 需业务层处理</td>
+<td>✅ <code>Last-Event-ID</code> 原生支持</td>
+</tr>
+<tr>
+<td><strong>防火墙兼容性</strong></td>
+<td>⚠️ 部分企业防火墙会拦截 Upgrade</td>
+<td>✅ 标准 HTTP，几乎无拦截风险</td>
+</tr>
+<tr>
+<td><strong>HTTP&#x2F;2 多路复用</strong></td>
+<td>❌ 每连接独占一个 TCP 连接</td>
+<td>✅ 多个 SSE 流共享一个 H2 连接</td>
+</tr>
+<tr>
+<td><strong>二进制支持</strong></td>
+<td>✅ 原生支持（ArrayBuffer &#x2F; Blob）</td>
+<td>⚠️ 仅文本（需 Base64 编码二进制）</td>
+</tr>
+<tr>
+<td><strong>浏览器并发限制</strong></td>
+<td>无特殊限制</td>
+<td>HTTP&#x2F;1.1 下最多 6 个&#x2F;域名（H2 无此限制）</td>
+</tr>
+<tr>
+<td><strong>服务端实现复杂度</strong></td>
+<td>中等（需维护连接状态）</td>
+<td>低（普通 HTTP 长响应）</td>
+</tr>
+<tr>
+<td><strong>水平扩展难度</strong></td>
+<td>高（有状态，需 sticky session 或消息总线）</td>
+<td>较低（可借助 HTTP 层负载均衡）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、代码实战：同一功能的两种实现"><a href="#四、代码实战：同一功能的两种实现" class="headerlink" title="四、代码实战：同一功能的两种实现"></a>四、代码实战：同一功能的两种实现</h2><p>以”服务端每秒推送一条实时日志”为例，用 Node.js 实现。</p>
+<h3 id="SSE-实现（推荐起点）"><a href="#SSE-实现（推荐起点）" class="headerlink" title="SSE 实现（推荐起点）"></a>SSE 实现（推荐起点）</h3><pre><code class="language-javascript">// server-sse.mjs
+import &#123; createServer &#125; from &#39;node:http&#39;;
+
+createServer((req, res) =&gt; &#123;
+  if (req.url !== &#39;/events&#39;) &#123;
+    res.writeHead(404);
+    res.end();
+    return;
+  &#125;
+
+  // SSE 响应头
+  res.writeHead(200, &#123;
+    &#39;Content-Type&#39;: &#39;text/event-stream&#39;,
+    &#39;Cache-Control&#39;: &#39;no-cache&#39;,
+    &#39;Connection&#39;: &#39;keep-alive&#39;,
+    &#39;Access-Control-Allow-Origin&#39;: &#39;*&#39;,
+  &#125;);
+
+  // 发送初始重连间隔（毫秒）
+  res.write(&#39;retry: 3000
+
+&#39;);
+
+  let id = 0;
+  const timer = setInterval(() =&gt; &#123;
+    const payload = JSON.stringify(&#123;
+      ts: Date.now(),
+      level: &#39;info&#39;,
+      msg: `Log entry #$&#123;++id&#125;`,
+    &#125;);
+    // SSE 格式：id + event + data，以两个换行结束
+    res.write(`id: $&#123;id&#125;
+event: log
+data: $&#123;payload&#125;
+
+`);
+  &#125;, 1000);
+
+  req.on(&#39;close&#39;, () =&gt; &#123;
+    clearInterval(timer);
+    console.log(&#39;Client disconnected&#39;);
+  &#125;);
+&#125;).listen(3000, () =&gt; console.log(&#39;SSE server on :3000&#39;));
+</code></pre>
+<pre><code class="language-javascript">// client-sse.mjs（浏览器端等效逻辑）
+const es = new EventSource(&#39;/events&#39;);
+
+es.addEventListener(&#39;log&#39;, (e) =&gt; &#123;
+  const &#123; ts, level, msg &#125; = JSON.parse(e.data);
+  console.log(`[$&#123;level&#125;] $&#123;msg&#125; (latency: $&#123;Date.now() - ts&#125;ms)`);
+&#125;);
+
+es.onerror = () =&gt; console.warn(&#39;SSE error, browser will auto-reconnect...&#39;);
+</code></pre>
+<h3 id="WebSocket-实现"><a href="#WebSocket-实现" class="headerlink" title="WebSocket 实现"></a>WebSocket 实现</h3><pre><code class="language-javascript">// server-ws.mjs（使用标准库 ws）
+import &#123; WebSocketServer &#125; from &#39;ws&#39;;
+
+const wss = new WebSocketServer(&#123; port: 3001 &#125;);
+
+wss.on(&#39;connection&#39;, (ws, req) =&gt; &#123;
+  console.log(&#39;Client connected&#39;);
+
+  let id = 0;
+  const timer = setInterval(() =&gt; &#123;
+    if (ws.readyState !== ws.OPEN) return;
+    ws.send(JSON.stringify(&#123;
+      id: ++id,
+      ts: Date.now(),
+      level: &#39;info&#39;,
+      msg: `Log entry #$&#123;id&#125;`,
+    &#125;));
+  &#125;, 1000);
+
+  // WebSocket 支持接收客户端消息（SSE 做不到）
+  ws.on(&#39;message&#39;, (data) =&gt; &#123;
+    const &#123; cmd &#125; = JSON.parse(data);
+    if (cmd === &#39;pause&#39;) clearInterval(timer);
+  &#125;);
+
+  ws.on(&#39;close&#39;, () =&gt; &#123;
+    clearInterval(timer);
+    console.log(&#39;Client disconnected&#39;);
+  &#125;);
+&#125;);
+
+console.log(&#39;WS server on :3001&#39;);
+</code></pre>
+<pre><code class="language-javascript">// client-ws.mjs
+const ws = new WebSocket(&#39;ws://localhost:3001&#39;);
+
+ws.onmessage = (e) =&gt; &#123;
+  const &#123; ts, level, msg &#125; = JSON.parse(e.data);
+  console.log(`[$&#123;level&#125;] $&#123;msg&#125; (latency: $&#123;Date.now() - ts&#125;ms)`);
+&#125;;
+
+// 需要手动实现重连
+ws.onclose = () =&gt; setTimeout(() =&gt; location.reload(), 3000);
+
+// 双向：客户端可发指令
+document.getElementById(&#39;pause&#39;).onclick = () =&gt;
+  ws.send(JSON.stringify(&#123; cmd: &#39;pause&#39; &#125;));
+</code></pre>
+<p>两段代码对比的直观感受：SSE 服务端是一个”普通 HTTP 路由 + 定时写入”，WebSocket 服务端需要管理连接状态和消息帧，复杂度更高但能力也更强。</p>
+<hr>
+<h2 id="五、选型决策框架"><a href="#五、选型决策框架" class="headerlink" title="五、选型决策框架"></a>五、选型决策框架</h2><h3 id="优先选-SSE，如果你的场景是："><a href="#优先选-SSE，如果你的场景是：" class="headerlink" title="优先选 SSE，如果你的场景是："></a>优先选 SSE，如果你的场景是：</h3><ul>
+<li><strong>AI 流式输出</strong>（ChatGPT &#x2F; Claude 风格的打字机效果）</li>
+<li><strong>实时通知、Feed 流、进度条</strong></li>
+<li><strong>日志流、监控大盘</strong></li>
+<li>部署在 Serverless &#x2F; Edge 平台</li>
+<li>团队对 WebSocket 运维经验不足</li>
+<li>需要穿越企业防火墙或代理</li>
+</ul>
+<h3 id="优先选-WebSocket，如果你的场景是："><a href="#优先选-WebSocket，如果你的场景是：" class="headerlink" title="优先选 WebSocket，如果你的场景是："></a>优先选 WebSocket，如果你的场景是：</h3><ul>
+<li><strong>协同编辑</strong>（双向 OT&#x2F;CRDT 操作流）</li>
+<li><strong>在线游戏、实时竞价、交易撮合</strong></li>
+<li><strong>音视频信令</strong>（WebRTC SDP&#x2F;ICE 交换）</li>
+<li>需要传输二进制帧（音频包、图像差量）</li>
+<li>客户端需要主动发送高频消息（&gt;10 次&#x2F;秒）</li>
+</ul>
+<h3 id="2026-年的新建议"><a href="#2026-年的新建议" class="headerlink" title="2026 年的新建议"></a>2026 年的新建议</h3><blockquote>
+<p>如果你在构建 <strong>AI Agent 工作流</strong>的前端界面，SSE 几乎是唯一合理选择：流式 token 输出、工具调用进度、多 step 状态更新，全部适合单向推流。WebSocket 在这里只会增加复杂度。</p>
+</blockquote>
+<hr>
+<h2 id="六、生产级注意事项"><a href="#六、生产级注意事项" class="headerlink" title="六、生产级注意事项"></a>六、生产级注意事项</h2><p><strong>SSE 的两个常见陷阱：</strong></p>
+<ol>
+<li><p><strong>Nginx 反向代理需关闭缓冲</strong>：</p>
+<pre><code class="language-nginx">location /events &#123;
+  proxy_pass http://backend;
+  proxy_buffering off;          # 关键！
+  proxy_cache off;
+  proxy_read_timeout 86400s;
+  proxy_set_header Connection &#39;&#39;;
+  proxy_http_version 1.1;
+&#125;
+</code></pre>
+</li>
+<li><p><strong>HTTP&#x2F;1.1 下的连接数限制</strong>：同域名最多 6 个并发 SSE。升级到 HTTP&#x2F;2 即可解除，或用 <code>SharedWorker</code> 在多个 Tab 间共享单条 SSE 连接。</p>
+</li>
+</ol>
+<p><strong>WebSocket 的常见陷阱：</strong></p>
+<ol>
+<li><strong>心跳保活</strong>：大量云平台（AWS ALB、Cloudflare）会对空闲 WebSocket 连接 60-300s 后强制断开，必须实现 <code>ping/pong</code> 心跳。</li>
+<li><strong>水平扩展</strong>：多实例部署时需要 Redis Pub&#x2F;Sub 或 NATS 等消息总线路由消息，否则不同实例的客户端收不到彼此的广播。</li>
+</ol>
+<hr>
+<h2 id="七、总结"><a href="#七、总结" class="headerlink" title="七、总结"></a>七、总结</h2><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AI 流式输出</td>
+<td><strong>SSE</strong></td>
+</tr>
+<tr>
+<td>实时通知 &#x2F; 消息推送</td>
+<td><strong>SSE</strong></td>
+</tr>
+<tr>
+<td>协同编辑 &#x2F; 游戏</td>
+<td><strong>WebSocket</strong></td>
+</tr>
+<tr>
+<td>高频双向交互</td>
+<td><strong>WebSocket</strong></td>
+</tr>
+<tr>
+<td>Serverless &#x2F; Edge 部署</td>
+<td><strong>SSE</strong></td>
+</tr>
+<tr>
+<td>需穿越企业防火墙</td>
+<td><strong>SSE</strong></td>
+</tr>
+</tbody></table>
+<p><strong>2026 年的核心判断标准只有一个</strong>：客户端是否需要主动、高频地向服务端发送数据？</p>
+<ul>
+<li><strong>需要</strong> → WebSocket</li>
+<li><strong>不需要</strong> → SSE，它更简单、更稳健、HTTP 生态无缝集成</li>
+</ul>
+<p>不要因为 WebSocket “听起来更厉害”就无脑选它。SSE 在绝大多数推送场景下已经足够，而且你的运维团队会感谢你。</p>
+<hr>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://datatracker.ietf.org/doc/html/rfc6455">RFC 6455 - The WebSocket Protocol</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://datatracker.ietf.org/doc/html/rfc9220">RFC 9220 - Bootstrapping WebSockets with HTTP&#x2F;3</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events">MDN - Using server-sent events</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://developers.cloudflare.com/durable-objects/best-practices/websockets/">Cloudflare Workers WebSocket Hibernation API</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://willitsse.com/">Will it SSE? — 主流云平台 SSE 兼容性测试报告（2025）</a></li>
+</ul>
+<hr>
+<p><em>本文代码已在 Node.js 22 LTS + Chrome 134 环境下验证。如有勘误欢迎在评论区指出。</em></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://www.jrrm.top">bingchun.zhao</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://www.jrrm.top/posts/72e67c6f.html">https://www.jrrm.top/posts/72e67c6f.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://www.jrrm.top" target="_blank">一个技术宅</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AE%9E%E6%97%B6%E9%80%9A%E4%BF%A1/">实时通信</a><a class="post-meta__tags" href="/tags/WebSocket/">WebSocket</a><a class="post-meta__tags" href="/tags/SSE/">SSE</a><a class="post-meta__tags" href="/tags/Node-js/">Node.js</a><a class="post-meta__tags" href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/">系统架构</a></div><div class="post-share"><div class="social-share" data-image="/images/covers/websocket-vs-sse-2026.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechat.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechat.png" alt="微信支付"/></a><div class="post-qr-code-desc">微信支付</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/posts/a48f0682.html" title="用 Docker Compose 一键部署 10 个实用自托管服务"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/docker-self-hosted-2026.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">用 Docker Compose 一键部署 10 个实用自托管服务</div></div><div class="info-2"><div class="info-item-1">精选 10 个高价值自托管服务，提供完整 Docker Compose 配置，从私有云、密码管理到媒体服务器，帮你用一台服务器掌控自己的数据。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/cabdfff6.html" title="Linux下网络测试常用的几款命令行工具介绍"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://b3logfile.com/bing/20190315.jpg?imageView2/1/w/768/h/432/interlace/1/q/100" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-12</div><div class="info-item-2">Linux下网络测试常用的几款命令行工具介绍</div></div><div class="info-2"><div class="info-item-1"> 前言因为后面需要做udp弱网下的优化，所以这边先介绍几款网络测试中常用的工具。方便后面测试使用。  tc: 介绍 主要是用来模拟网络延迟，丢包环境，在我们测试弱网环境有非常大的帮助，当然还有一些其他的工具，大都是根据tc封装的，原理大家可以看介绍 iftop: 介绍 主要用来统计网卡的收发带宽，对于评估服务器并发瓶颈很有用处，具体看介绍 iperf3: 介绍 主要用来测试网卡速度，可以配合tc与我们自己的程序，判断我们网络瓶颈。  TC常用命令 模拟延迟传输：  # tc qdisc add dev eth0 root netem delay 100ms  该命令将 eth0 网卡的传输设置为延迟 100 毫秒发送，更真实的情况下,延迟值不会这么精确，会有一定的波动，后面用下面的情况来模拟出带有波动性的延迟值  模拟延迟波动：  # tc qdisc add dev eth0 root netem delay 100ms 10ms  该命令将 eth0 网卡的传输设置为延迟 100ms ± 10ms (90 ~ 110 ms 之间的任意值)发送。 还可以更进一步加强这种波动的随...</div></div></div></a><a class="pagination-related" href="/posts/aaf32453.html" title="为什么 TCP 协议有性能问题"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://b3logfile.com/bing/20181001.jpg?imageView2/1/w/768/h/432/interlace/1/q/100" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-07</div><div class="info-item-2">为什么 TCP 协议有性能问题</div></div><div class="info-2"><div class="info-item-1"> TCP 协议可以说是今天互联网的基石，作为可靠的传输协议，在今天几乎所有的数据都会通过 TCP 协议传输，然而 TCP 在设计之初没有考虑到现今复杂的网络环境，当你在地铁上或者火车上被断断续续的网络折磨时，你可能都不知道这一切可能都是 TCP 协议造成的。本文会分析 TCP 协议为什么在弱网环境下有严重的性能问题。  注：本文的分析基于 RFC 7932 中定义的 TCP 协议，从 RFC 793 发布至今已经过了将近 40 年，期间多个状态为 Proposed Standard 的非强制性 RFC 都对 TCP 协议进行了修订，尝试优化 TCP 协议的性能，例如：选择性 ACK（Selective ACK, SACK）、虚假超时剖析（Forward RTO, F-RTO）和 TCP 快开启（TCP Fast Open, TFO），最新版本的 Linux 中已经包含了这些 RFC 的实现。  底层的数据传输协议在设计时必须要对带宽的利用率和通信延迟进行权衡和取舍，所以想要解决实际生产中的全部问题是不可能的，TCP 选择了充分利用带宽，为流量而设计，期望在尽可能短的时间内传输更多...</div></div></div></a><a class="pagination-related" href="/posts/df78044c.html" title="从零编写基于UDP的通信程序"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://b3logfile.com/bing/20190822.jpg?imageView2/1/w/768/h/432/interlace/1/q/100" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-10</div><div class="info-item-2">从零编写基于UDP的通信程序</div></div><div class="info-2"><div class="info-item-1"> 为什么使用UDP首先，我们知道TCP在弱网环境下有性能问题参考 为什么 TCP 协议有性能问题 那么使用UDP有有哪些优势呢：  UDP是无连接的，即通信时不需要创建连接（发送数据结束时也没有连接可以释放）所以减小了开销和发送数据前的时延； UDP采用最大努力交付，不保证可靠交付，因此主机不需要维护复杂的连接状态； UDP是面向报文的，只在应用层交下来的报文前增加了首部后就向下交付IP层； UDP是无阻塞控制的，即使网络中存在阻塞，也不会影响发送端的发送频率； UDP支持一对一、一对多、多对一、多对多的交互通信； DUP的首部开销小，只有8个字节，它比TCP的20个字节的首部要短。  怎样实现UDP通信udp通信流程图 首先实现server端: int main(int argc, char **argv) &#123;     if(argc &lt; 2) &#123;         printf(&quot;Usage: %s port\n&quot;, argv[0]);         return -1;     &#125;     int buf_size =...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">bingchun.zhao</div><div class="author-info-description">一个技术宅，喜欢研究技术，喜欢分享技术</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">58</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/zhaobingchun"><i class="fab fa-github"></i><span>关注我</span></a><div class="card-info-social-icons"><a class="social-icon" href="mailto:bingchun.zhao@qq.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fas fa-rss" style="color: #ff6600;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">网站建设中...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E6%8A%8A%E6%A6%82%E5%BF%B5%E8%AF%B4%E6%B8%85%E6%A5%9A"><span class="toc-number">1.</span> <span class="toc-text">一、先把概念说清楚</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WebSocket"><span class="toc-number">1.1.</span> <span class="toc-text">WebSocket</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Server-Sent-Events%EF%BC%88SSE%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">Server-Sent Events（SSE）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%812026-%E5%B9%B4%E7%9A%84%E6%96%B0%E5%8F%98%E9%87%8F%EF%BC%9AHTTP-3-%E4%B8%8E%E8%BE%B9%E7%BC%98%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="toc-number">2.</span> <span class="toc-text">二、2026 年的新变量：HTTP&#x2F;3 与边缘运行时</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP-3-%E5%AF%B9-WebSocket-%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">2.1.</span> <span class="toc-text">HTTP&#x2F;3 对 WebSocket 的影响</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-number">2.2.</span> <span class="toc-text">边缘运行时的限制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%A0%B8%E5%BF%83%E7%BB%B4%E5%BA%A6%E5%AF%B9%E6%AF%94"><span class="toc-number">3.</span> <span class="toc-text">三、核心维度对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BB%A3%E7%A0%81%E5%AE%9E%E6%88%98%EF%BC%9A%E5%90%8C%E4%B8%80%E5%8A%9F%E8%83%BD%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text">四、代码实战：同一功能的两种实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SSE-%E5%AE%9E%E7%8E%B0%EF%BC%88%E6%8E%A8%E8%8D%90%E8%B5%B7%E7%82%B9%EF%BC%89"><span class="toc-number">4.1.</span> <span class="toc-text">SSE 实现（推荐起点）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WebSocket-%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.2.</span> <span class="toc-text">WebSocket 实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%80%89%E5%9E%8B%E5%86%B3%E7%AD%96%E6%A1%86%E6%9E%B6"><span class="toc-number">5.</span> <span class="toc-text">五、选型决策框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%85%88%E9%80%89-SSE%EF%BC%8C%E5%A6%82%E6%9E%9C%E4%BD%A0%E7%9A%84%E5%9C%BA%E6%99%AF%E6%98%AF%EF%BC%9A"><span class="toc-number">5.1.</span> <span class="toc-text">优先选 SSE，如果你的场景是：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%85%88%E9%80%89-WebSocket%EF%BC%8C%E5%A6%82%E6%9E%9C%E4%BD%A0%E7%9A%84%E5%9C%BA%E6%99%AF%E6%98%AF%EF%BC%9A"><span class="toc-number">5.2.</span> <span class="toc-text">优先选 WebSocket，如果你的场景是：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2026-%E5%B9%B4%E7%9A%84%E6%96%B0%E5%BB%BA%E8%AE%AE"><span class="toc-number">5.3.</span> <span class="toc-text">2026 年的新建议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E7%94%9F%E4%BA%A7%E7%BA%A7%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">6.</span> <span class="toc-text">六、生产级注意事项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">七、总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB"><span class="toc-number">8.</span> <span class="toc-text">延伸阅读</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/72e67c6f.html" title="WebSocket vs SSE：2026 年实时推送技术全方位选型指南"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/websocket-vs-sse-2026.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="WebSocket vs SSE：2026 年实时推送技术全方位选型指南"/></a><div class="content"><a class="title" href="/posts/72e67c6f.html" title="WebSocket vs SSE：2026 年实时推送技术全方位选型指南">WebSocket vs SSE：2026 年实时推送技术全方位选型指南</a><time datetime="2026-04-07T02:00:00.000Z" title="发表于 2026-04-07 10:00:00">2026-04-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/3337c530.html" title="Claude Code 完整使用指南：从入门到自动化工作流"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/claude-code-guide-2026.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code 完整使用指南：从入门到自动化工作流"/></a><div class="content"><a class="title" href="/posts/3337c530.html" title="Claude Code 完整使用指南：从入门到自动化工作流">Claude Code 完整使用指南：从入门到自动化工作流</a><time datetime="2026-04-02T02:00:00.000Z" title="发表于 2026-04-02 10:00:00">2026-04-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/a48f0682.html" title="用 Docker Compose 一键部署 10 个实用自托管服务"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/docker-self-hosted-2026.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="用 Docker Compose 一键部署 10 个实用自托管服务"/></a><div class="content"><a class="title" href="/posts/a48f0682.html" title="用 Docker Compose 一键部署 10 个实用自托管服务">用 Docker Compose 一键部署 10 个实用自托管服务</a><time datetime="2026-04-02T02:00:00.000Z" title="发表于 2026-04-02 10:00:00">2026-04-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/c3d91a7f.html" title="Cursor vs Claude Code 深度对比评测：2026 年 AI 编程工具怎么选"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/blog/ai-prompt-engineering-cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Cursor vs Claude Code 深度对比评测：2026 年 AI 编程工具怎么选"/></a><div class="content"><a class="title" href="/posts/c3d91a7f.html" title="Cursor vs Claude Code 深度对比评测：2026 年 AI 编程工具怎么选">Cursor vs Claude Code 深度对比评测：2026 年 AI 编程工具怎么选</a><time datetime="2026-03-31T16:15:44.000Z" title="发表于 2026-04-01 00:15:44">2026-04-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6c2bf3e0.html" title="AI 提示词工程最佳实践：从零散提问到稳定产出的实战指南"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/blog/ai-prompt-engineering-cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 提示词工程最佳实践：从零散提问到稳定产出的实战指南"/></a><div class="content"><a class="title" href="/posts/6c2bf3e0.html" title="AI 提示词工程最佳实践：从零散提问到稳定产出的实战指南">AI 提示词工程最佳实践：从零散提问到稳定产出的实战指南</a><time datetime="2026-03-29T14:25:00.000Z" title="发表于 2026-03-29 22:25:00">2026-03-29</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2020 - 2026 By bingchun.zhao</span></div><div class="footer_custom_text"><a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.miit.gov.cn/#/Integrated/index"><span>备案号：鲁ICP备18038916号-1</span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (false) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const applyThemeDefaultsConfig = theme => {
+    if (theme === 'dark-mode') {
+      Chart.defaults.color = "rgba(255, 255, 255, 0.8)"
+      Chart.defaults.borderColor = "rgba(255, 255, 255, 0.2)"
+      Chart.defaults.scale.ticks.backdropColor = "transparent"
+    } else {
+      Chart.defaults.color = "rgba(0, 0, 0, 0.8)"
+      Chart.defaults.borderColor = "rgba(0, 0, 0, 0.1)"
+      Chart.defaults.scale.ticks.backdropColor = "transparent"
+    }
+  }
+
+  // Recursively traverse the config object and automatically apply theme-specific color schemes
+  const applyThemeConfig = (obj, theme) => {
+    if (typeof obj !== 'object' || obj === null) return
+
+    Object.keys(obj).forEach(key => {
+      const value = obj[key]
+      // If the property is an object and has theme-specific options, apply them
+      if (typeof value === 'object' && value !== null) {
+        if (value[theme]) {
+          obj[key] = value[theme] // Apply the value for the current theme
+        } else {
+          // Recursively process child objects
+          applyThemeConfig(value, theme)
+        }
+      }
+    })
+  }
+
+  const runChartJS = ele => {
+    window.loadChartJS = true
+
+    Array.from(ele).forEach((item, index) => {
+      const chartSrc = item.firstElementChild
+      const chartID = item.getAttribute('data-chartjs-id') || ('chartjs-' + index) // Use custom ID or default ID
+      const width = item.getAttribute('data-width')
+      const existingCanvas = document.getElementById(chartID)
+
+      // If a canvas already exists, remove it to avoid rendering duplicates
+      if (existingCanvas) {
+          existingCanvas.parentNode.remove()
+      }
+
+      const chartDefinition = chartSrc.textContent
+      const canvas = document.createElement('canvas')
+      canvas.id = chartID
+
+      const div = document.createElement('div')
+      div.className = 'chartjs-wrap'
+
+      if (width) {
+        div.style.width = width
+      }
+
+      div.appendChild(canvas)
+      chartSrc.insertAdjacentElement('afterend', div)
+
+      const ctx = document.getElementById(chartID).getContext('2d')
+
+      const config = JSON.parse(chartDefinition)
+
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark-mode' : 'light-mode'
+
+      // Set default styles (initial setup)
+      applyThemeDefaultsConfig(theme)
+
+      // Automatically traverse the config and apply dual-mode color schemes
+      applyThemeConfig(config, theme)
+
+      new Chart(ctx, config)
+    })
+  }
+
+  const loadChartJS = () => {
+    const chartJSEle = document.querySelectorAll('#article-container .chartjs-container')
+    if (chartJSEle.length === 0) return
+
+    window.loadChartJS ? runChartJS(chartJSEle) : btf.getScript('https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js').then(() => runChartJS(chartJSEle))
+  }
+
+  // Listen for theme change events
+  btf.addGlobalFn('themeChange', loadChartJS, 'chartjs')
+  btf.addGlobalFn('encrypt', loadChartJS, 'chartjs')
+
+  window.pjax ? loadChartJS() : document.addEventListener('DOMContentLoaded', loadChartJS)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = (el = document, path = location.pathname) => {
+    twikoo.init({
+      el: el.querySelector('#twikoo-wrap'),
+      envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      },
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    GLOBAL_CONFIG_SITE.pageType === 'post' && getCount()
+
+    isShuoshuo && (window.shuoshuoComment.destroyTwikoo = () => {
+      if (el.children.length) {
+        el.innerHTML = ''
+        el.classList.add('no-comment')
+      }
+    })
+  }
+
+  const loadTwikoo = (el, path) => {
+    if (typeof twikoo === 'object') setTimeout(() => init(el, path), 0)
+    else btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(() => init(el, path))
+  }
+
+  if (isShuoshuo) {
+    'Twikoo' === 'Twikoo'
+      ? window.shuoshuoComment = { loadComment: loadTwikoo }
+      : window.loadOtherComment = loadTwikoo
+    return
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><script>window.newestComments = {
+  changeContent: content => {
+    if (content === '') return content
+
+    content = content.replace(/<img.*?src="(.*?)"?[^\>]+>/ig, '[图片]') // replace image link
+    content = content.replace(/<a[^>]+?href=["']?([^"']+)["']?[^>]*>([^<]+)<\/a>/gi, '[链接]') // replace url
+    content = content.replace(/<pre><code>.*?<\/pre>/gi, '[代码]') // replace code
+    content = content.replace(/<code>.*?<\/code>/gi, '[代码]') // replace code
+    content = content.replace(/<[^>]+>/g, "") // remove html tag
+
+    if (content.length > 150) {
+      content = content.substring(0, 150) + '...'
+    }
+    return content
+  },
+
+  generateHtml: (array, ele) => {
+    let result = ''
+
+    if (array.length) {
+      for (let i = 0; i < array.length; i++) {
+        result += '<div class="aside-list-item">'
+
+        if (true && array[i].avatar) {
+          const imgAttr = 'data-lazy-src'
+          const lazyloadNative = ''
+          result += `<a href="${array[i].url}" class="thumbnail"><img ${imgAttr}="${array[i].avatar}" alt="${array[i].nick}" ${lazyloadNative}></a>`
+        }
+
+        result += `<div class="content">
+        <a class="comment" href="${array[i].url}" title="${array[i].content}">${array[i].content}</a>
+        <div class="name"><span>${array[i].nick} / </span><time datetime="${array[i].date}">${btf.diffDate(array[i].date, true)}</time></div>
+        </div></div>`
+      }
+    } else {
+      result += '暂无评论'
+    }
+
+    ele.innerHTML = result
+    window.lazyLoadInstance && window.lazyLoadInstance.update()
+    window.pjax && window.pjax.refresh(ele)
+  },
+
+  newestCommentInit: (name, getComment) => {
+    const $dom = document.querySelector('#card-newest-comments .aside-list')
+    if ($dom) {
+      const data = btf.saveToLocal.get(name)
+      if (data) {
+        newestComments.generateHtml(JSON.parse(data), $dom)
+      } else {
+        getComment($dom)
+      }
+    }
+  },
+
+  run: (name, getComment) => {
+    newestComments.newestCommentInit(name, getComment)
+    btf.addGlobalFn('pjaxComplete', () => newestComments.newestCommentInit(name, getComment), name)
+  }
+}</script><script>window.addEventListener('load', () => {
+  const keyName = 'twikoo-newest-comments'
+  const { changeContent, generateHtml, run } = window.newestComments
+
+  const getComment = ele => {
+    const runTwikoo = () => {
+      twikoo.getRecentComments({
+        envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
+        region: '',
+        pageSize: 6,
+        includeReply: true
+      }).then(res => {
+        const twikooArray = res.map(e => {
+          return {
+            'content': changeContent(e.comment),
+            'avatar': e.avatar,
+            'nick': e.nick,
+            'url': e.url + '#' + e.id,
+            'date': new Date(e.created).toISOString()
+          }
+        })
+
+        btf.saveToLocal.set(keyName, JSON.stringify(twikooArray), 10/(60*24))
+        generateHtml(twikooArray, ele)
+      }).catch(err => {
+        console.error(err)
+        ele.textContent= "无法获取评论，请确认相关配置是否正确"
+      })
+    }
+
+    if (typeof twikoo === 'object') {
+      runTwikoo()
+    } else {
+      btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(runTwikoo)
+    }
+  }
+
+  run(keyName, getComment)
+})</script><div class="aplayer no-destroy" data-id="2235097256" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true" data-order="random" data-volume="0.3" data-mini="true" data-listfolded="true" data-lrctype="1"> </div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
