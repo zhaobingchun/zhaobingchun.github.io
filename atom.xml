@@ -6,7 +6,7 @@
   <link href="https://www.jrrm.top/atom.xml" rel="self"/>
   <link href="https://pubsubhubbub.appspot.com/" rel="hub"/>
   <link href="https://www.jrrm.top/"/>
-  <updated>2026-04-07T02:07:01.949Z</updated>
+  <updated>2026-04-10T02:14:28.057Z</updated>
   <id>https://www.jrrm.top/</id>
   
   <author>
@@ -24,11 +24,36 @@
 
   
   <entry>
+    <title>用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</title>
+    <link href="https://www.jrrm.top/posts/735773a7.html"/>
+    <id>https://www.jrrm.top/posts/735773a7.html</id>
+    <published>2026-04-10T02:10:00.000Z</published>
+    <updated>2026-04-10T02:14:28.057Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="用-AI-写单元测试的正确方法：从提升覆盖率到保证业务逻辑"><a href="#用-AI-写单元测试的正确方法：从提升覆盖率到保证业务逻辑" class="headerlink" title="用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑"></a>用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</h1><p>很多团队引入 AI 写单元测试的第一个动作是：把函数贴给 AI，让它”补全测试”。结果覆盖率从 40% 飙到 85%，但下次上线还是出了 Bug。</p><p><strong>覆盖率高不等于业务逻辑被覆盖。</strong> 这篇文章要解决的，正是这个核心矛盾。</p><hr><h2 id="为什么-AI-生成的单元测试容易”虚高”"><a href="#为什么-AI-生成的单元测试容易”虚高”" class="headerlink" title="为什么 AI 生成的单元测试容易”虚高”"></a>为什么 AI 生成的单元测试容易”虚高”</h2><p>AI 在没有上下文的情况下生成测试，会倾向于：</p><ul><li>只测试 <strong>happy path</strong>，忽略边界条件</li><li>用 <code>expect(fn()).toBeDefined()</code> 这类断言”凑数”</li><li>对复杂业务逻辑做出<strong>错误假设</strong>，测试本身就是错的</li><li>Mock 过度，把真正需要集成验证的路径全部绕开</li></ul><p>根本原因在于：AI 不了解你的业务规则，它只能从代码结构推断”什么是合理的输入输出”。</p><hr><h2 id="正确姿势：先喂业务规则，再让-AI-写测试"><a href="#正确姿势：先喂业务规则，再让-AI-写测试" class="headerlink" title="正确姿势：先喂业务规则，再让 AI 写测试"></a>正确姿势：先喂业务规则，再让 AI 写测试</h2><h3 id="提示词工程：三段式结构"><a href="#提示词工程：三段式结构" class="headerlink" title="提示词工程：三段式结构"></a>提示词工程：三段式结构</h3><p>与其把函数直接扔给 AI，不如用结构化 Prompt 给出足够的上下文：</p><pre><code>## 角色你是一位熟悉 [业务领域] 的高级前端工程师，擅长用 Vitest 编写高质量单元测试。## 被测函数[粘贴函数代码]## 业务规则（重要）1. [规则一，例如：折扣最大不能超过原价的 50%]2. [规则二，例如：VIP 用户享受额外 9 折]3. [规则三，例如：优惠券与折扣不可叠加]## 要求- 使用 Vitest，describe/it 结构- 覆盖：正常流程、边界值、异常输入、业务规则冲突场景- 每个 it 的描述用中文，清晰说明测试意图- 不要使用 toBeDefined()，断言要具体到返回值</code></pre><p><strong>这三段中，”业务规则”是关键。</strong> 没有它，AI 只能猜。</p><hr><h3 id="完整示例：价格计算函数的测试"><a href="#完整示例：价格计算函数的测试" class="headerlink" title="完整示例：价格计算函数的测试"></a>完整示例：价格计算函数的测试</h3><p>被测函数：</p><pre><code class="language-typescript">// utils/pricing.tsexport interface PricingInput &#123;  originalPrice: number;  discountRate: number; // 0~1  isVip: boolean;  couponAmount: number;&#125;export function calculateFinalPrice(input: PricingInput): number &#123;  const &#123; originalPrice, discountRate, isVip, couponAmount &#125; = input;  if (originalPrice &lt;= 0) throw new Error(&#39;原价必须大于 0&#39;);  if (discountRate &lt; 0 || discountRate &gt; 1) throw new Error(&#39;折扣率必须在 0~1 之间&#39;);  // 业务规则：折扣最大不超过原价 50%  const effectiveRate = Math.max(discountRate, 0.5);  let price = originalPrice * effectiveRate;  // 业务规则：VIP 额外 9 折，但优惠券与折扣不可叠加  if (isVip &amp;&amp; couponAmount === 0) &#123;    price = price * 0.9;  &#125; else if (couponAmount &gt; 0) &#123;    price = price - couponAmount;  &#125;  return Math.max(price, 0);&#125;</code></pre><p>AI 根据业务规则生成的测试（使用 Vitest）：</p><pre><code class="language-typescript">// utils/pricing.test.tsimport &#123; describe, it, expect &#125; from &#39;vitest&#39;;import &#123; calculateFinalPrice &#125; from &#39;./pricing&#39;;describe(&#39;calculateFinalPrice 价格计算&#39;, () =&gt; &#123;  describe(&#39;正常流程&#39;, () =&gt; &#123;    it(&#39;普通用户无优惠券：按折扣率计算&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.8,        isVip: false,        couponAmount: 0,      &#125;);      expect(result).toBe(80);    &#125;);    it(&#39;VIP 用户无优惠券：折扣后再享 9 折&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.8,        isVip: true,        couponAmount: 0,      &#125;);      expect(result).toBe(72); // 100 * 0.8 * 0.9    &#125;);  &#125;);  describe(&#39;业务规则：折扣上限 50%&#39;, () =&gt; &#123;    it(&#39;折扣率低于 0.5 时，强制使用 0.5&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.2,        isVip: false,        couponAmount: 0,      &#125;);      expect(result).toBe(50); // 不能低于原价 50%    &#125;);  &#125;);  describe(&#39;业务规则：优惠券与折扣不可叠加&#39;, () =&gt; &#123;    it(&#39;有优惠券时，VIP 折扣不生效&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.8,        isVip: true,        couponAmount: 10,      &#125;);      expect(result).toBe(70); // 80 - 10，VIP 9 折不叠加    &#125;);  &#125;);  describe(&#39;边界值与异常&#39;, () =&gt; &#123;    it(&#39;优惠券金额超过折后价时，最终价格为 0（不为负）&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 10,        discountRate: 0.8,        isVip: false,        couponAmount: 100,      &#125;);      expect(result).toBe(0);    &#125;);    it(&#39;原价为 0 时抛出异常&#39;, () =&gt; &#123;      expect(() =&gt;        calculateFinalPrice(&#123; originalPrice: 0, discountRate: 0.8, isVip: false, couponAmount: 0 &#125;)      ).toThrow(&#39;原价必须大于 0&#39;);    &#125;);    it(&#39;折扣率超出范围时抛出异常&#39;, () =&gt; &#123;      expect(() =&gt;        calculateFinalPrice(&#123; originalPrice: 100, discountRate: 1.5, isVip: false, couponAmount: 0 &#125;)      ).toThrow(&#39;折扣率必须在 0~1 之间&#39;);    &#125;);  &#125;);&#125;);</code></pre><hr><h2 id="AI-生成代码的审查清单"><a href="#AI-生成代码的审查清单" class="headerlink" title="AI 生成代码的审查清单"></a>AI 生成代码的审查清单</h2><p>拿到 AI 的测试后，不要直接合入，过一遍这个清单：</p><h3 id="断言质量检查"><a href="#断言质量检查" class="headerlink" title="断言质量检查"></a>断言质量检查</h3><ul><li><input disabled="" type="checkbox"> 所有断言都有<strong>具体预期值</strong>，没有 <code>toBeDefined()</code> &#x2F; <code>toBeTruthy()</code> 凑数</li><li><input disabled="" type="checkbox"> 异常测试用 <code>toThrow()</code> 而不是 <code>try/catch</code> 包裹后空断言</li><li><input disabled="" type="checkbox"> 浮点数比较使用 <code>toBeCloseTo()</code> 而非严格相等</li></ul><h3 id="业务覆盖检查"><a href="#业务覆盖检查" class="headerlink" title="业务覆盖检查"></a>业务覆盖检查</h3><ul><li><input disabled="" type="checkbox"> 每条业务规则至少有一个对应的 <code>it</code> 测试</li><li><input disabled="" type="checkbox"> 规则冲突场景（如本例中优惠券与 VIP 折扣）有专项测试</li><li><input disabled="" type="checkbox"> 边界值：最小值、最大值、零值、负值都已覆盖</li></ul><h3 id="Mock-合理性检查"><a href="#Mock-合理性检查" class="headerlink" title="Mock 合理性检查"></a>Mock 合理性检查</h3><ul><li><input disabled="" type="checkbox"> 外部依赖（API、数据库）才 Mock，纯函数不应该有 Mock</li><li><input disabled="" type="checkbox"> Mock 的返回值符合真实数据结构，不是随意构造的 <code>&#123;&#125;</code></li></ul><h3 id="测试描述可读性"><a href="#测试描述可读性" class="headerlink" title="测试描述可读性"></a>测试描述可读性</h3><ul><li><input disabled="" type="checkbox"> <code>describe</code> 和 <code>it</code> 的文字组合起来，能读成一句完整的业务陈述</li><li><input disabled="" type="checkbox"> 失败时的报错信息能快速定位是哪条业务规则被违反</li></ul><hr><h2 id="进阶：让-AI-帮你发现测试盲区"><a href="#进阶：让-AI-帮你发现测试盲区" class="headerlink" title="进阶：让 AI 帮你发现测试盲区"></a>进阶：让 AI 帮你发现测试盲区</h2><p>在已有测试的基础上，用这个 Prompt 让 AI 做覆盖率分析：</p><pre><code>以下是我的函数和现有测试，请分析：1. 哪些代码分支没有被测试到（结合代码逻辑，不只是行覆盖）2. 哪些业务场景可能在现实中出现，但测试中没有体现3. 给出补充测试的建议（只列场景描述，不需要写代码）[函数代码][现有测试代码]</code></pre><p>这比直接看 Istanbul&#x2F;V8 覆盖率报告更有价值——AI 能识别<strong>语义盲区</strong>，而不只是行未覆盖。</p><hr><h2 id="工具链推荐"><a href="#工具链推荐" class="headerlink" title="工具链推荐"></a>工具链推荐</h2><table><thead><tr><th>场景</th><th>推荐工具</th></tr></thead><tbody><tr><td>现代前端项目</td><td>Vitest（与 Vite 生态无缝集成，速度快）</td></tr><tr><td>Node.js &#x2F; 旧项目</td><td>Jest</td></tr><tr><td>AI 辅助编写</td><td>Claude Code、GitHub Copilot</td></tr><tr><td>覆盖率可视化</td><td><code>@vitest/coverage-v8</code> + <code>lcov</code></td></tr></tbody></table><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>用 AI 写单元测试的正确工作流：</p><ol><li><strong>整理业务规则</strong>，写成清单（这步不能省）</li><li><strong>构造结构化 Prompt</strong>，把业务规则作为核心上下文</li><li><strong>审查 AI 输出</strong>，对照清单逐项确认</li><li><strong>让 AI 做盲区分析</strong>，补充语义层面的遗漏场景</li><li>把有效的 Prompt 模板沉淀为<strong>团队规范</strong></li></ol><p>覆盖率是结果，不是目标。真正的目标是：每一条业务规则，都有对应的测试在守护它。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="./Claude-Code-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97-%E7%94%A8AI%E5%8A%A9%E6%89%8B%E6%8F%90%E5%8D%87%E7%BC%96%E7%A8%8B%E6%95%88%E7%8E%87%E7%9A%84%E5%AE%8C%E6%95%B4%E6%95%99%E7%A8%8B.md">Claude Code 入门指南：用 AI 助手提升编程效率的完整教程</a></li><li><a href="https://vitest.dev/">Vitest 官方文档</a></li><li><a href="https://jestjs.io/">Jest 官方文档</a></li></ul>]]></content>
+    
+    
+    <summary type="html">本文系统讲解如何借助 AI 工具高效编写单元测试，涵盖提示词工程最佳实践、Vitest/Jest 代码示例、AI 生成代码的审查要点，帮助开发者在提升测试覆盖率的同时真正保障业务逻辑正确性，避免&quot;覆盖率虚高&quot;的常见陷阱。</summary>
+    
+    
+    
+    <category term="AI实战" scheme="https://www.jrrm.top/categories/AI%E5%AE%9E%E6%88%98/"/>
+    
+    
+    <category term="AI实战" scheme="https://www.jrrm.top/tags/AI%E5%AE%9E%E6%88%98/"/>
+    
+    <category term="单元测试" scheme="https://www.jrrm.top/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/"/>
+    
+    <category term="自动化" scheme="https://www.jrrm.top/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
+    
+  </entry>
+  
+  <entry>
     <title>WebSocket vs SSE：2026 年实时推送技术全方位选型指南</title>
     <link href="https://www.jrrm.top/posts/72e67c6f.html"/>
     <id>https://www.jrrm.top/posts/72e67c6f.html</id>
     <published>2026-04-07T02:00:00.000Z</published>
-    <updated>2026-04-07T02:07:01.949Z</updated>
+    <updated>2026-04-07T02:08:22.101Z</updated>
     
     <content type="html"><![CDATA[<blockquote><p>“选型从来不是选最好的技术，而是选最合适的那一个。” — 每一位踩过坑的架构师</p></blockquote><p>实时推送已经是现代 Web 应用的标配：股票行情、AI 流式输出、协同编辑、游戏状态同步……每一个场景背后，都藏着一道绕不开的选择题：<strong>WebSocket 还是 SSE？</strong></p><p>这个问题在 2026 年有了新的背景——HTTP&#x2F;3（QUIC）加速落地，Cloudflare Workers &#x2F; Deno Deploy 等边缘运行时成为主流，浏览器对 SSE 的支持趋于完善。本文从原理到实战，帮你做出有据可查的技术决策。</p><span id="more"></span><hr><h2 id="一、先把概念说清楚"><a href="#一、先把概念说清楚" class="headerlink" title="一、先把概念说清楚"></a>一、先把概念说清楚</h2><h3 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h3><p>WebSocket 是一个<strong>全双工、持久化的 TCP 连接</strong>协议（RFC 6455）。握手借用 HTTP Upgrade 机制完成，之后双方可以随时互发二进制或文本帧，延迟极低。</p><pre><code>Client ──── HTTP Upgrade ──▶ Server       ◀──── 101 Switching ───       ⟺  全双工帧流  ⟺</code></pre><h3 id="Server-Sent-Events（SSE）"><a href="#Server-Sent-Events（SSE）" class="headerlink" title="Server-Sent Events（SSE）"></a>Server-Sent Events（SSE）</h3><p>SSE 是<strong>基于 HTTP 的单向服务器推流</strong>协议，响应头 <code>Content-Type: text/event-stream</code>，服务端持续写入格式化的文本块，客户端通过浏览器内置的 <code>EventSource</code> API 订阅。</p><pre><code>Client ──── GET /events ──▶ Server       ◀── 200 text/event-stream ──       ◀── data: &#123;...&#125; ──       ◀── data: &#123;...&#125; ──</code></pre><p>SSE 天然搭载<strong>自动重连</strong>（<code>retry:</code> 字段）和<strong>断点续传</strong>（<code>Last-Event-ID</code> 请求头），浏览器原生支持，无需任何第三方库。</p><hr><h2 id="二、2026-年的新变量：HTTP-3-与边缘运行时"><a href="#二、2026-年的新变量：HTTP-3-与边缘运行时" class="headerlink" title="二、2026 年的新变量：HTTP&#x2F;3 与边缘运行时"></a>二、2026 年的新变量：HTTP&#x2F;3 与边缘运行时</h2><h3 id="HTTP-3-对-WebSocket-的影响"><a href="#HTTP-3-对-WebSocket-的影响" class="headerlink" title="HTTP&#x2F;3 对 WebSocket 的影响"></a>HTTP&#x2F;3 对 WebSocket 的影响</h3><p>HTTP&#x2F;3 基于 QUIC（UDP），原生多路复用，消除了 TCP 的队头阻塞。<strong>WebSocket over HTTP&#x2F;3</strong>（RFC 9220）已于 2022 年标准化，主流浏览器在 2025 年底完成全面支持。</p><p>实测结论：</p><ul><li>在<strong>弱网、移动网络</strong>场景下，WebSocket&#x2F;H3 的连接建立速度比 &#x2F;H1.1 快约 30-50ms（0-RTT 握手）。</li><li>SSE 作为普通 HTTP 响应，在 HTTP&#x2F;3 下同样受益，且复用已有连接时<strong>无额外握手开销</strong>。</li></ul><h3 id="边缘运行时的限制"><a href="#边缘运行时的限制" class="headerlink" title="边缘运行时的限制"></a>边缘运行时的限制</h3><p>Cloudflare Workers、Vercel Edge Functions 等平台对长连接有严格限制：</p><table><thead><tr><th>平台</th><th>WebSocket</th><th>SSE</th></tr></thead><tbody><tr><td>Cloudflare Workers</td><td>✅ 原生支持（Hibernation API）</td><td>✅ 支持（TransformStream）</td></tr><tr><td>Vercel Edge Functions</td><td>⚠️ 受限（需 Durable Objects 等方案）</td><td>✅ 较好支持</td></tr><tr><td>AWS Lambda</td><td>❌ 不适合（有执行时长限制）</td><td>❌ 不适合</td></tr><tr><td>Fly.io &#x2F; Railway</td><td>✅ 完整支持</td><td>✅ 完整支持</td></tr></tbody></table><blockquote><p><strong>结论</strong>：在 Serverless &#x2F; Edge 场景下，SSE 的部署门槛明显低于 WebSocket。</p></blockquote><hr><h2 id="三、核心维度对比"><a href="#三、核心维度对比" class="headerlink" title="三、核心维度对比"></a>三、核心维度对比</h2><table><thead><tr><th>维度</th><th>WebSocket</th><th>SSE</th></tr></thead><tbody><tr><td><strong>通信方向</strong></td><td>全双工（双向）</td><td>单向（服务端 → 客户端）</td></tr><tr><td><strong>底层协议</strong></td><td>TCP（或 QUIC over HTTP&#x2F;3）</td><td>HTTP&#x2F;1.1、HTTP&#x2F;2、HTTP&#x2F;3</td></tr><tr><td><strong>自动重连</strong></td><td>❌ 需手动实现</td><td>✅ 浏览器原生支持</td></tr><tr><td><strong>断点续传</strong></td><td>❌ 需业务层处理</td><td>✅ <code>Last-Event-ID</code> 原生支持</td></tr><tr><td><strong>防火墙兼容性</strong></td><td>⚠️ 部分企业防火墙会拦截 Upgrade</td><td>✅ 标准 HTTP，几乎无拦截风险</td></tr><tr><td><strong>HTTP&#x2F;2 多路复用</strong></td><td>❌ 每连接独占一个 TCP 连接</td><td>✅ 多个 SSE 流共享一个 H2 连接</td></tr><tr><td><strong>二进制支持</strong></td><td>✅ 原生支持（ArrayBuffer &#x2F; Blob）</td><td>⚠️ 仅文本（需 Base64 编码二进制）</td></tr><tr><td><strong>浏览器并发限制</strong></td><td>无特殊限制</td><td>HTTP&#x2F;1.1 下最多 6 个&#x2F;域名（H2 无此限制）</td></tr><tr><td><strong>服务端实现复杂度</strong></td><td>中等（需维护连接状态）</td><td>低（普通 HTTP 长响应）</td></tr><tr><td><strong>水平扩展难度</strong></td><td>高（有状态，需 sticky session 或消息总线）</td><td>较低（可借助 HTTP 层负载均衡）</td></tr></tbody></table><hr><h2 id="四、代码实战：同一功能的两种实现"><a href="#四、代码实战：同一功能的两种实现" class="headerlink" title="四、代码实战：同一功能的两种实现"></a>四、代码实战：同一功能的两种实现</h2><p>以”服务端每秒推送一条实时日志”为例，用 Node.js 实现。</p><h3 id="SSE-实现（推荐起点）"><a href="#SSE-实现（推荐起点）" class="headerlink" title="SSE 实现（推荐起点）"></a>SSE 实现（推荐起点）</h3><pre><code class="language-javascript">// server-sse.mjsimport &#123; createServer &#125; from &#39;node:http&#39;;createServer((req, res) =&gt; &#123;  if (req.url !== &#39;/events&#39;) &#123;    res.writeHead(404);    res.end();    return;  &#125;  // SSE 响应头  res.writeHead(200, &#123;    &#39;Content-Type&#39;: &#39;text/event-stream&#39;,    &#39;Cache-Control&#39;: &#39;no-cache&#39;,    &#39;Connection&#39;: &#39;keep-alive&#39;,    &#39;Access-Control-Allow-Origin&#39;: &#39;*&#39;,  &#125;);  // 发送初始重连间隔（毫秒）  res.write(&#39;retry: 3000&#39;);  let id = 0;  const timer = setInterval(() =&gt; &#123;    const payload = JSON.stringify(&#123;      ts: Date.now(),      level: &#39;info&#39;,      msg: `Log entry #$&#123;++id&#125;`,    &#125;);    // SSE 格式：id + event + data，以两个换行结束    res.write(`id: $&#123;id&#125;event: logdata: $&#123;payload&#125;`);  &#125;, 1000);  req.on(&#39;close&#39;, () =&gt; &#123;    clearInterval(timer);    console.log(&#39;Client disconnected&#39;);  &#125;);&#125;).listen(3000, () =&gt; console.log(&#39;SSE server on :3000&#39;));</code></pre><pre><code class="language-javascript">// client-sse.mjs（浏览器端等效逻辑）const es = new EventSource(&#39;/events&#39;);es.addEventListener(&#39;log&#39;, (e) =&gt; &#123;  const &#123; ts, level, msg &#125; = JSON.parse(e.data);  console.log(`[$&#123;level&#125;] $&#123;msg&#125; (latency: $&#123;Date.now() - ts&#125;ms)`);&#125;);es.onerror = () =&gt; console.warn(&#39;SSE error, browser will auto-reconnect...&#39;);</code></pre><h3 id="WebSocket-实现"><a href="#WebSocket-实现" class="headerlink" title="WebSocket 实现"></a>WebSocket 实现</h3><pre><code class="language-javascript">// server-ws.mjs（使用标准库 ws）import &#123; WebSocketServer &#125; from &#39;ws&#39;;const wss = new WebSocketServer(&#123; port: 3001 &#125;);wss.on(&#39;connection&#39;, (ws, req) =&gt; &#123;  console.log(&#39;Client connected&#39;);  let id = 0;  const timer = setInterval(() =&gt; &#123;    if (ws.readyState !== ws.OPEN) return;    ws.send(JSON.stringify(&#123;      id: ++id,      ts: Date.now(),      level: &#39;info&#39;,      msg: `Log entry #$&#123;id&#125;`,    &#125;));  &#125;, 1000);  // WebSocket 支持接收客户端消息（SSE 做不到）  ws.on(&#39;message&#39;, (data) =&gt; &#123;    const &#123; cmd &#125; = JSON.parse(data);    if (cmd === &#39;pause&#39;) clearInterval(timer);  &#125;);  ws.on(&#39;close&#39;, () =&gt; &#123;    clearInterval(timer);    console.log(&#39;Client disconnected&#39;);  &#125;);&#125;);console.log(&#39;WS server on :3001&#39;);</code></pre><pre><code class="language-javascript">// client-ws.mjsconst ws = new WebSocket(&#39;ws://localhost:3001&#39;);ws.onmessage = (e) =&gt; &#123;  const &#123; ts, level, msg &#125; = JSON.parse(e.data);  console.log(`[$&#123;level&#125;] $&#123;msg&#125; (latency: $&#123;Date.now() - ts&#125;ms)`);&#125;;// 需要手动实现重连ws.onclose = () =&gt; setTimeout(() =&gt; location.reload(), 3000);// 双向：客户端可发指令document.getElementById(&#39;pause&#39;).onclick = () =&gt;  ws.send(JSON.stringify(&#123; cmd: &#39;pause&#39; &#125;));</code></pre><p>两段代码对比的直观感受：SSE 服务端是一个”普通 HTTP 路由 + 定时写入”，WebSocket 服务端需要管理连接状态和消息帧，复杂度更高但能力也更强。</p><hr><h2 id="五、选型决策框架"><a href="#五、选型决策框架" class="headerlink" title="五、选型决策框架"></a>五、选型决策框架</h2><h3 id="优先选-SSE，如果你的场景是："><a href="#优先选-SSE，如果你的场景是：" class="headerlink" title="优先选 SSE，如果你的场景是："></a>优先选 SSE，如果你的场景是：</h3><ul><li><strong>AI 流式输出</strong>（ChatGPT &#x2F; Claude 风格的打字机效果）</li><li><strong>实时通知、Feed 流、进度条</strong></li><li><strong>日志流、监控大盘</strong></li><li>部署在 Serverless &#x2F; Edge 平台</li><li>团队对 WebSocket 运维经验不足</li><li>需要穿越企业防火墙或代理</li></ul><h3 id="优先选-WebSocket，如果你的场景是："><a href="#优先选-WebSocket，如果你的场景是：" class="headerlink" title="优先选 WebSocket，如果你的场景是："></a>优先选 WebSocket，如果你的场景是：</h3><ul><li><strong>协同编辑</strong>（双向 OT&#x2F;CRDT 操作流）</li><li><strong>在线游戏、实时竞价、交易撮合</strong></li><li><strong>音视频信令</strong>（WebRTC SDP&#x2F;ICE 交换）</li><li>需要传输二进制帧（音频包、图像差量）</li><li>客户端需要主动发送高频消息（&gt;10 次&#x2F;秒）</li></ul><h3 id="2026-年的新建议"><a href="#2026-年的新建议" class="headerlink" title="2026 年的新建议"></a>2026 年的新建议</h3><blockquote><p>如果你在构建 <strong>AI Agent 工作流</strong>的前端界面，SSE 几乎是唯一合理选择：流式 token 输出、工具调用进度、多 step 状态更新，全部适合单向推流。WebSocket 在这里只会增加复杂度。</p></blockquote><hr><h2 id="六、生产级注意事项"><a href="#六、生产级注意事项" class="headerlink" title="六、生产级注意事项"></a>六、生产级注意事项</h2><p><strong>SSE 的两个常见陷阱：</strong></p><ol><li><p><strong>Nginx 反向代理需关闭缓冲</strong>：</p><pre><code class="language-nginx">location /events &#123;  proxy_pass http://backend;  proxy_buffering off;          # 关键！  proxy_cache off;  proxy_read_timeout 86400s;  proxy_set_header Connection &#39;&#39;;  proxy_http_version 1.1;&#125;</code></pre></li><li><p><strong>HTTP&#x2F;1.1 下的连接数限制</strong>：同域名最多 6 个并发 SSE。升级到 HTTP&#x2F;2 即可解除，或用 <code>SharedWorker</code> 在多个 Tab 间共享单条 SSE 连接。</p></li></ol><p><strong>WebSocket 的常见陷阱：</strong></p><ol><li><strong>心跳保活</strong>：大量云平台（AWS ALB、Cloudflare）会对空闲 WebSocket 连接 60-300s 后强制断开，必须实现 <code>ping/pong</code> 心跳。</li><li><strong>水平扩展</strong>：多实例部署时需要 Redis Pub&#x2F;Sub 或 NATS 等消息总线路由消息，否则不同实例的客户端收不到彼此的广播。</li></ol><hr><h2 id="七、总结"><a href="#七、总结" class="headerlink" title="七、总结"></a>七、总结</h2><table><thead><tr><th>场景</th><th>推荐方案</th></tr></thead><tbody><tr><td>AI 流式输出</td><td><strong>SSE</strong></td></tr><tr><td>实时通知 &#x2F; 消息推送</td><td><strong>SSE</strong></td></tr><tr><td>协同编辑 &#x2F; 游戏</td><td><strong>WebSocket</strong></td></tr><tr><td>高频双向交互</td><td><strong>WebSocket</strong></td></tr><tr><td>Serverless &#x2F; Edge 部署</td><td><strong>SSE</strong></td></tr><tr><td>需穿越企业防火墙</td><td><strong>SSE</strong></td></tr></tbody></table><p><strong>2026 年的核心判断标准只有一个</strong>：客户端是否需要主动、高频地向服务端发送数据？</p><ul><li><strong>需要</strong> → WebSocket</li><li><strong>不需要</strong> → SSE，它更简单、更稳健、HTTP 生态无缝集成</li></ul><p>不要因为 WebSocket “听起来更厉害”就无脑选它。SSE 在绝大多数推送场景下已经足够，而且你的运维团队会感谢你。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="https://datatracker.ietf.org/doc/html/rfc6455">RFC 6455 - The WebSocket Protocol</a></li><li><a href="https://datatracker.ietf.org/doc/html/rfc9220">RFC 9220 - Bootstrapping WebSockets with HTTP&#x2F;3</a></li><li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events">MDN - Using server-sent events</a></li><li><a href="https://developers.cloudflare.com/durable-objects/best-practices/websockets/">Cloudflare Workers WebSocket Hibernation API</a></li><li><a href="https://willitsse.com/">Will it SSE? — 主流云平台 SSE 兼容性测试报告（2025）</a></li></ul><hr><p><em>本文代码已在 Node.js 22 LTS + Chrome 134 环境下验证。如有勘误欢迎在评论区指出。</em></p>]]></content>
     
@@ -70,9 +95,9 @@
     <category term="工具效率" scheme="https://www.jrrm.top/categories/%E5%B7%A5%E5%85%B7%E6%95%88%E7%8E%87/"/>
     
     
-    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
-    
     <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
+    
+    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
     
     <category term="AI 编程" scheme="https://www.jrrm.top/tags/AI-%E7%BC%96%E7%A8%8B/"/>
     
@@ -132,9 +157,9 @@
     
     <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
     
-    <category term="开发效率" scheme="https://www.jrrm.top/tags/%E5%BC%80%E5%8F%91%E6%95%88%E7%8E%87/"/>
-    
     <category term="Cursor" scheme="https://www.jrrm.top/tags/Cursor/"/>
+    
+    <category term="开发效率" scheme="https://www.jrrm.top/tags/%E5%BC%80%E5%8F%91%E6%95%88%E7%8E%87/"/>
     
     <category term="AI工具对比" scheme="https://www.jrrm.top/tags/AI%E5%B7%A5%E5%85%B7%E5%AF%B9%E6%AF%94/"/>
     
@@ -186,11 +211,11 @@
     <category term="行业洞察" scheme="https://www.jrrm.top/categories/%E8%A1%8C%E4%B8%9A%E6%B4%9E%E5%AF%9F/"/>
     
     
+    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
+    
     <category term="AI开源项目" scheme="https://www.jrrm.top/tags/AI%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/"/>
     
     <category term="GitHub" scheme="https://www.jrrm.top/tags/GitHub/"/>
-    
-    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
     <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
     
@@ -244,9 +269,9 @@
     
     <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
-    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
-    
     <category term="开发工具" scheme="https://www.jrrm.top/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/"/>
+    
+    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
     
     <category term="Cursor" scheme="https://www.jrrm.top/tags/Cursor/"/>
     
@@ -551,33 +576,6 @@
     
     
     <category term="软路由" scheme="https://www.jrrm.top/tags/%E8%BD%AF%E8%B7%AF%E7%94%B1/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>NAS上安装emby，打造家庭媒体中心</title>
-    <link href="https://www.jrrm.top/posts/4200a223.html"/>
-    <id>https://www.jrrm.top/posts/4200a223.html</id>
-    <published>2020-06-26T10:57:24.000Z</published>
-    <updated>2020-10-08T03:57:15.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20190902.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>本文介绍在nas上安装emby，打造家庭媒体中心，先上个最终效果图</p><p><img src="https://b3logfile.com/file/2020/06/image-ba5b82f5.png" alt="image.png"></p><h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>本文安装依然使用群晖系统介绍，关于群晖的介绍可以看这篇文章：</p><p><a href="https://www.jrrm.top/blogs/zhaobingchun/articles/2020/06/12/1591970565782">使用nas挂载Google Drive，扩展你的NAS空间</a></p><p>打开NAS的套件中心，正常套件中心是没有emby套件的，我们需要加入emby的源</p><p>打开设置-&gt;套件来源-&gt;新增 名称填写emby，地址填写</p><p><code>https://synology.emby.media/?package_repository=360efc6e-de72-4073-b603-2bfbd7001586</code></p><p>点击确定</p><p>在搜索中，搜索emby</p><p><img src="https://b3logfile.com/file/2020/06/image-6b8505c0.png" alt="image.png"></p><p>因为我已经按照过，所以这边已经按照了，你选择按照，然后需要等一段时间，就安装好了。</p><p>然后点击打开</p><p><img src="https://b3logfile.com/file/2020/06/image-d8e73a08.png" alt="image.png"></p><p>选择中文，Next，</p><p><img src="https://b3logfile.com/file/2020/06/image-44cd2245.png" alt="image.png"></p><p>创建用户名，Next</p><p><img src="https://b3logfile.com/file/2020/06/image-3548eb66.png" alt="image.png"></p><p>这一步设置媒体库，先跳过，直接点Next</p><p><img src="https://b3logfile.com/file/2020/06/image-7aa1949e.png" alt="image.png"></p><p>这里语言选中文，国家选中国，Next</p><p><img src="https://b3logfile.com/file/2020/06/image-ff03433f.png" alt="image.png"></p><p>这里直接Next</p><p><img src="https://b3logfile.com/file/2020/06/image-2d6503cb.png" alt="image.png"></p><p>这里勾选accept，Next</p><p><img src="https://b3logfile.com/file/2020/06/image-d7ea924d.png" alt="image.png"></p><p>Finish</p><p><img src="https://b3logfile.com/file/2020/06/image-2ad75156.png" alt="image.png"></p><p>点这边，登录你的账号</p><p>点设置，控制台，选择媒体库，添加媒体库</p><p><img src="https://b3logfile.com/file/2020/06/image-84212536.png" alt="image.png"></p><p>首先添加电影，内容类型选电影，显示名称自己输入，文件夹，选择你存放电影的文件夹，当然可以选上篇文章我们挂载的google drive 盘。源数据下载器，可以选择默认，或者安装豆瓣插件使用豆瓣下载。保存，等待刮削就可以了。</p><p>有的选择视频文件夹时，会不显示存放媒体的文件夹，这是文件夹权限问题，打开控制面板，选择共享文件夹，编辑，权限，讲embysrv用户读写权限勾选，如图：</p><p><img src="https://b3logfile.com/file/2020/06/image-08e0bf87.png" alt="image.png"></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20190902.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;heade</summary>
-      
-    
-    
-    
-    
-    <category term="NAS" scheme="https://www.jrrm.top/tags/NAS/"/>
-    
-    <category term="emby" scheme="https://www.jrrm.top/tags/emby/"/>
-    
-    <category term="家庭媒体中心" scheme="https://www.jrrm.top/tags/%E5%AE%B6%E5%BA%AD%E5%AA%92%E4%BD%93%E4%B8%AD%E5%BF%83/"/>
     
   </entry>
   

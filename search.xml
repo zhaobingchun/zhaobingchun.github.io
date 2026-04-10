@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</title>
+      <link href="/posts/735773a7.html"/>
+      <url>/posts/735773a7.html</url>
+      
+        <content type="html"><![CDATA[<h1 id="用-AI-写单元测试的正确方法：从提升覆盖率到保证业务逻辑"><a href="#用-AI-写单元测试的正确方法：从提升覆盖率到保证业务逻辑" class="headerlink" title="用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑"></a>用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</h1><p>很多团队引入 AI 写单元测试的第一个动作是：把函数贴给 AI，让它”补全测试”。结果覆盖率从 40% 飙到 85%，但下次上线还是出了 Bug。</p><p><strong>覆盖率高不等于业务逻辑被覆盖。</strong> 这篇文章要解决的，正是这个核心矛盾。</p><hr><h2 id="为什么-AI-生成的单元测试容易”虚高”"><a href="#为什么-AI-生成的单元测试容易”虚高”" class="headerlink" title="为什么 AI 生成的单元测试容易”虚高”"></a>为什么 AI 生成的单元测试容易”虚高”</h2><p>AI 在没有上下文的情况下生成测试，会倾向于：</p><ul><li>只测试 <strong>happy path</strong>，忽略边界条件</li><li>用 <code>expect(fn()).toBeDefined()</code> 这类断言”凑数”</li><li>对复杂业务逻辑做出<strong>错误假设</strong>，测试本身就是错的</li><li>Mock 过度，把真正需要集成验证的路径全部绕开</li></ul><p>根本原因在于：AI 不了解你的业务规则，它只能从代码结构推断”什么是合理的输入输出”。</p><hr><h2 id="正确姿势：先喂业务规则，再让-AI-写测试"><a href="#正确姿势：先喂业务规则，再让-AI-写测试" class="headerlink" title="正确姿势：先喂业务规则，再让 AI 写测试"></a>正确姿势：先喂业务规则，再让 AI 写测试</h2><h3 id="提示词工程：三段式结构"><a href="#提示词工程：三段式结构" class="headerlink" title="提示词工程：三段式结构"></a>提示词工程：三段式结构</h3><p>与其把函数直接扔给 AI，不如用结构化 Prompt 给出足够的上下文：</p><pre><code>## 角色你是一位熟悉 [业务领域] 的高级前端工程师，擅长用 Vitest 编写高质量单元测试。## 被测函数[粘贴函数代码]## 业务规则（重要）1. [规则一，例如：折扣最大不能超过原价的 50%]2. [规则二，例如：VIP 用户享受额外 9 折]3. [规则三，例如：优惠券与折扣不可叠加]## 要求- 使用 Vitest，describe/it 结构- 覆盖：正常流程、边界值、异常输入、业务规则冲突场景- 每个 it 的描述用中文，清晰说明测试意图- 不要使用 toBeDefined()，断言要具体到返回值</code></pre><p><strong>这三段中，”业务规则”是关键。</strong> 没有它，AI 只能猜。</p><hr><h3 id="完整示例：价格计算函数的测试"><a href="#完整示例：价格计算函数的测试" class="headerlink" title="完整示例：价格计算函数的测试"></a>完整示例：价格计算函数的测试</h3><p>被测函数：</p><pre><code class="language-typescript">// utils/pricing.tsexport interface PricingInput &#123;  originalPrice: number;  discountRate: number; // 0~1  isVip: boolean;  couponAmount: number;&#125;export function calculateFinalPrice(input: PricingInput): number &#123;  const &#123; originalPrice, discountRate, isVip, couponAmount &#125; = input;  if (originalPrice &lt;= 0) throw new Error(&#39;原价必须大于 0&#39;);  if (discountRate &lt; 0 || discountRate &gt; 1) throw new Error(&#39;折扣率必须在 0~1 之间&#39;);  // 业务规则：折扣最大不超过原价 50%  const effectiveRate = Math.max(discountRate, 0.5);  let price = originalPrice * effectiveRate;  // 业务规则：VIP 额外 9 折，但优惠券与折扣不可叠加  if (isVip &amp;&amp; couponAmount === 0) &#123;    price = price * 0.9;  &#125; else if (couponAmount &gt; 0) &#123;    price = price - couponAmount;  &#125;  return Math.max(price, 0);&#125;</code></pre><p>AI 根据业务规则生成的测试（使用 Vitest）：</p><pre><code class="language-typescript">// utils/pricing.test.tsimport &#123; describe, it, expect &#125; from &#39;vitest&#39;;import &#123; calculateFinalPrice &#125; from &#39;./pricing&#39;;describe(&#39;calculateFinalPrice 价格计算&#39;, () =&gt; &#123;  describe(&#39;正常流程&#39;, () =&gt; &#123;    it(&#39;普通用户无优惠券：按折扣率计算&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.8,        isVip: false,        couponAmount: 0,      &#125;);      expect(result).toBe(80);    &#125;);    it(&#39;VIP 用户无优惠券：折扣后再享 9 折&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.8,        isVip: true,        couponAmount: 0,      &#125;);      expect(result).toBe(72); // 100 * 0.8 * 0.9    &#125;);  &#125;);  describe(&#39;业务规则：折扣上限 50%&#39;, () =&gt; &#123;    it(&#39;折扣率低于 0.5 时，强制使用 0.5&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.2,        isVip: false,        couponAmount: 0,      &#125;);      expect(result).toBe(50); // 不能低于原价 50%    &#125;);  &#125;);  describe(&#39;业务规则：优惠券与折扣不可叠加&#39;, () =&gt; &#123;    it(&#39;有优惠券时，VIP 折扣不生效&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.8,        isVip: true,        couponAmount: 10,      &#125;);      expect(result).toBe(70); // 80 - 10，VIP 9 折不叠加    &#125;);  &#125;);  describe(&#39;边界值与异常&#39;, () =&gt; &#123;    it(&#39;优惠券金额超过折后价时，最终价格为 0（不为负）&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 10,        discountRate: 0.8,        isVip: false,        couponAmount: 100,      &#125;);      expect(result).toBe(0);    &#125;);    it(&#39;原价为 0 时抛出异常&#39;, () =&gt; &#123;      expect(() =&gt;        calculateFinalPrice(&#123; originalPrice: 0, discountRate: 0.8, isVip: false, couponAmount: 0 &#125;)      ).toThrow(&#39;原价必须大于 0&#39;);    &#125;);    it(&#39;折扣率超出范围时抛出异常&#39;, () =&gt; &#123;      expect(() =&gt;        calculateFinalPrice(&#123; originalPrice: 100, discountRate: 1.5, isVip: false, couponAmount: 0 &#125;)      ).toThrow(&#39;折扣率必须在 0~1 之间&#39;);    &#125;);  &#125;);&#125;);</code></pre><hr><h2 id="AI-生成代码的审查清单"><a href="#AI-生成代码的审查清单" class="headerlink" title="AI 生成代码的审查清单"></a>AI 生成代码的审查清单</h2><p>拿到 AI 的测试后，不要直接合入，过一遍这个清单：</p><h3 id="断言质量检查"><a href="#断言质量检查" class="headerlink" title="断言质量检查"></a>断言质量检查</h3><ul><li><input disabled="" type="checkbox"> 所有断言都有<strong>具体预期值</strong>，没有 <code>toBeDefined()</code> &#x2F; <code>toBeTruthy()</code> 凑数</li><li><input disabled="" type="checkbox"> 异常测试用 <code>toThrow()</code> 而不是 <code>try/catch</code> 包裹后空断言</li><li><input disabled="" type="checkbox"> 浮点数比较使用 <code>toBeCloseTo()</code> 而非严格相等</li></ul><h3 id="业务覆盖检查"><a href="#业务覆盖检查" class="headerlink" title="业务覆盖检查"></a>业务覆盖检查</h3><ul><li><input disabled="" type="checkbox"> 每条业务规则至少有一个对应的 <code>it</code> 测试</li><li><input disabled="" type="checkbox"> 规则冲突场景（如本例中优惠券与 VIP 折扣）有专项测试</li><li><input disabled="" type="checkbox"> 边界值：最小值、最大值、零值、负值都已覆盖</li></ul><h3 id="Mock-合理性检查"><a href="#Mock-合理性检查" class="headerlink" title="Mock 合理性检查"></a>Mock 合理性检查</h3><ul><li><input disabled="" type="checkbox"> 外部依赖（API、数据库）才 Mock，纯函数不应该有 Mock</li><li><input disabled="" type="checkbox"> Mock 的返回值符合真实数据结构，不是随意构造的 <code>&#123;&#125;</code></li></ul><h3 id="测试描述可读性"><a href="#测试描述可读性" class="headerlink" title="测试描述可读性"></a>测试描述可读性</h3><ul><li><input disabled="" type="checkbox"> <code>describe</code> 和 <code>it</code> 的文字组合起来，能读成一句完整的业务陈述</li><li><input disabled="" type="checkbox"> 失败时的报错信息能快速定位是哪条业务规则被违反</li></ul><hr><h2 id="进阶：让-AI-帮你发现测试盲区"><a href="#进阶：让-AI-帮你发现测试盲区" class="headerlink" title="进阶：让 AI 帮你发现测试盲区"></a>进阶：让 AI 帮你发现测试盲区</h2><p>在已有测试的基础上，用这个 Prompt 让 AI 做覆盖率分析：</p><pre><code>以下是我的函数和现有测试，请分析：1. 哪些代码分支没有被测试到（结合代码逻辑，不只是行覆盖）2. 哪些业务场景可能在现实中出现，但测试中没有体现3. 给出补充测试的建议（只列场景描述，不需要写代码）[函数代码][现有测试代码]</code></pre><p>这比直接看 Istanbul&#x2F;V8 覆盖率报告更有价值——AI 能识别<strong>语义盲区</strong>，而不只是行未覆盖。</p><hr><h2 id="工具链推荐"><a href="#工具链推荐" class="headerlink" title="工具链推荐"></a>工具链推荐</h2><table><thead><tr><th>场景</th><th>推荐工具</th></tr></thead><tbody><tr><td>现代前端项目</td><td>Vitest（与 Vite 生态无缝集成，速度快）</td></tr><tr><td>Node.js &#x2F; 旧项目</td><td>Jest</td></tr><tr><td>AI 辅助编写</td><td>Claude Code、GitHub Copilot</td></tr><tr><td>覆盖率可视化</td><td><code>@vitest/coverage-v8</code> + <code>lcov</code></td></tr></tbody></table><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>用 AI 写单元测试的正确工作流：</p><ol><li><strong>整理业务规则</strong>，写成清单（这步不能省）</li><li><strong>构造结构化 Prompt</strong>，把业务规则作为核心上下文</li><li><strong>审查 AI 输出</strong>，对照清单逐项确认</li><li><strong>让 AI 做盲区分析</strong>，补充语义层面的遗漏场景</li><li>把有效的 Prompt 模板沉淀为<strong>团队规范</strong></li></ol><p>覆盖率是结果，不是目标。真正的目标是：每一条业务规则，都有对应的测试在守护它。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="./Claude-Code-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97-%E7%94%A8AI%E5%8A%A9%E6%89%8B%E6%8F%90%E5%8D%87%E7%BC%96%E7%A8%8B%E6%95%88%E7%8E%87%E7%9A%84%E5%AE%8C%E6%95%B4%E6%95%99%E7%A8%8B.md">Claude Code 入门指南：用 AI 助手提升编程效率的完整教程</a></li><li><a href="https://vitest.dev/">Vitest 官方文档</a></li><li><a href="https://jestjs.io/">Jest 官方文档</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI实战 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI实战 </tag>
+            
+            <tag> 单元测试 </tag>
+            
+            <tag> 自动化 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>WebSocket vs SSE：2026 年实时推送技术全方位选型指南</title>
       <link href="/posts/72e67c6f.html"/>
       <url>/posts/72e67c6f.html</url>
@@ -53,9 +82,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> AI 编程 </tag>
             
@@ -123,9 +152,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 开发效率 </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> 开发效率 </tag>
             
             <tag> AI工具对比 </tag>
             
@@ -185,11 +214,11 @@
       
         <tags>
             
+            <tag> AI编程 </tag>
+            
             <tag> AI开源项目 </tag>
             
             <tag> GitHub </tag>
-            
-            <tag> AI编程 </tag>
             
             <tag> AI Agent </tag>
             
@@ -251,9 +280,9 @@
             
             <tag> AI编程 </tag>
             
-            <tag> Claude Code </tag>
-            
             <tag> 开发工具 </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Cursor </tag>
             
@@ -608,17 +637,6 @@
     
     
     <entry>
-      <title>友链</title>
-      <link href="/link/index.html"/>
-      <url>/link/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>photo</title>
       <link href="/photo/index.html"/>
       <url>/photo/index.html</url>
@@ -630,31 +648,9 @@
     
     
     <entry>
-      <title>留言板</title>
-      <link href="/messageboard/index.html"/>
-      <url>/messageboard/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>说说</title>
-      <link href="/shuoshuo/index.html"/>
-      <url>/shuoshuo/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>日志</title>
-      <link href="/timeline/index.html"/>
-      <url>/timeline/index.html</url>
+      <title>友链</title>
+      <link href="/link/index.html"/>
+      <url>/link/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -674,11 +670,44 @@
     
     
     <entry>
+      <title>留言板</title>
+      <link href="/messageboard/index.html"/>
+      <url>/messageboard/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>日志</title>
+      <link href="/timeline/index.html"/>
+      <url>/timeline/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>说说</title>
+      <link href="/shuoshuo/index.html"/>
+      <url>/shuoshuo/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>语师AI — 隐私政策</title>
       <link href="/privacy/index.html"/>
       <url>/privacy/index.html</url>
       
-        <content type="html"><![CDATA[<h1 id="语师AI-隐私政策"><a href="#语师AI-隐私政策" class="headerlink" title="语师AI 隐私政策"></a>语师AI 隐私政策</h1><p><strong>更新日期：2026年3月31日</strong><br><strong>生效日期：2026年3月31日</strong></p><h2 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h2><p>欢迎使用「语师AI」小程序（以下简称”本产品”）。我们深知个人信息对您的重要性，将严格遵守相关法律法规，保护您的个人信息及隐私安全。请您仔细阅读本隐私政策。</p><h2 id="二、我们收集的信息"><a href="#二、我们收集的信息" class="headerlink" title="二、我们收集的信息"></a>二、我们收集的信息</h2><h3 id="2-1-您主动提供的信息"><a href="#2-1-您主动提供的信息" class="headerlink" title="2.1 您主动提供的信息"></a>2.1 您主动提供的信息</h3><ul><li><strong>作文内容</strong>：您提交的作文文本或拍照上传的作文图片，用于 AI 批改服务</li><li><strong>微信授权信息</strong>：微信昵称、头像（仅在您授权后获取）</li></ul><h3 id="2-2-自动收集的信息"><a href="#2-2-自动收集的信息" class="headerlink" title="2.2 自动收集的信息"></a>2.2 自动收集的信息</h3><ul><li><strong>设备信息</strong>：设备型号、操作系统版本（用于适配和问题排查）</li><li><strong>使用记录</strong>：批改次数、功能使用频率（用于服务优化）</li></ul><h3 id="2-3-我们不收集的信息"><a href="#2-3-我们不收集的信息" class="headerlink" title="2.3 我们不收集的信息"></a>2.3 我们不收集的信息</h3><ul><li>❌ 手机号码、身份证号等身份证件信息</li><li>❌ 通讯录、短信等通信信息</li><li>❌ 精确地理位置信息</li><li>❌ 学生真实姓名（由老师自行管理，我们不做身份核验）</li></ul><h2 id="三、信息的使用目的"><a href="#三、信息的使用目的" class="headerlink" title="三、信息的使用目的"></a>三、信息的使用目的</h2><p>我们收集的信息仅用于以下目的：</p><ol><li><strong>提供批改服务</strong>：将作文内容发送至 AI 模型进行分析和批改</li><li><strong>服务改进</strong>：分析使用数据以优化产品体验</li><li><strong>安全保障</strong>：防止恶意使用、保障服务稳定运行</li></ol><h2 id="四、信息的存储与保护"><a href="#四、信息的存储与保护" class="headerlink" title="四、信息的存储与保护"></a>四、信息的存储与保护</h2><ul><li>作文内容及批改结果存储在腾讯云（微信云开发）服务器，位于中国境内</li><li>采用传输加密（HTTPS）和存储加密措施保护数据安全</li><li>仅授权人员可访问用户数据，且受严格的访问控制</li></ul><h2 id="五、信息的共享"><a href="#五、信息的共享" class="headerlink" title="五、信息的共享"></a>五、信息的共享</h2><p>我们<strong>不会</strong>将您的个人信息出售、出租或共享给第三方，但以下情况除外：</p><ul><li>经您明确同意</li><li>为提供核心服务所必需（如将作文文本发送至 AI 大模型服务商进行批改）</li><li>法律法规要求</li></ul><h3 id="AI-服务说明"><a href="#AI-服务说明" class="headerlink" title="AI 服务说明"></a>AI 服务说明</h3><p>本产品使用腾讯云 CloudBase AI 大模型服务（DeepSeek）进行作文批改。作文内容将传输至该服务进行分析处理，处理完成后不会被 AI 服务商额外存储或用于其他目的。</p><h2 id="六、您的权利"><a href="#六、您的权利" class="headerlink" title="六、您的权利"></a>六、您的权利</h2><p>您享有以下权利：</p><ul><li><strong>查看</strong>：随时查看您的批改历史和个人信息</li><li><strong>删除</strong>：可联系我们删除您的账号和相关数据</li><li><strong>撤回授权</strong>：可在微信设置中撤回对本小程序的授权</li></ul><h2 id="七、未成年人保护"><a href="#七、未成年人保护" class="headerlink" title="七、未成年人保护"></a>七、未成年人保护</h2><p>本产品的直接使用者为教师。若教师代学生提交作文进行批改，教师应确保已获得学生监护人的适当授权。</p><h2 id="八、隐私政策的更新"><a href="#八、隐私政策的更新" class="headerlink" title="八、隐私政策的更新"></a>八、隐私政策的更新</h2><p>我们可能适时修订本隐私政策。更新后的政策将在本页面发布，重大变更将通过小程序内通知告知。</p><h2 id="九、联系我们"><a href="#九、联系我们" class="headerlink" title="九、联系我们"></a>九、联系我们</h2><p>如对本隐私政策有任何疑问或建议，请通过以下方式联系：</p><ul><li><strong>邮箱</strong>：<a href="mailto:&#98;&#x69;&#x6e;&#x67;&#99;&#x68;&#x75;&#110;&#x2e;&#x7a;&#104;&#x61;&#x6f;&#x40;&#x71;&#x71;&#46;&#x63;&#111;&#109;">bingchun.zhao@qq.com</a></li></ul><hr><p><em>本隐私政策适用于「语师AI」微信小程序。</em></p>]]></content>
+        <content type="html"><![CDATA[<h1 id="语师AI-隐私政策"><a href="#语师AI-隐私政策" class="headerlink" title="语师AI 隐私政策"></a>语师AI 隐私政策</h1><p><strong>更新日期：2026年3月31日</strong><br><strong>生效日期：2026年3月31日</strong></p><h2 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h2><p>欢迎使用「语师AI」小程序（以下简称”本产品”）。我们深知个人信息对您的重要性，将严格遵守相关法律法规，保护您的个人信息及隐私安全。请您仔细阅读本隐私政策。</p><h2 id="二、我们收集的信息"><a href="#二、我们收集的信息" class="headerlink" title="二、我们收集的信息"></a>二、我们收集的信息</h2><h3 id="2-1-您主动提供的信息"><a href="#2-1-您主动提供的信息" class="headerlink" title="2.1 您主动提供的信息"></a>2.1 您主动提供的信息</h3><ul><li><strong>作文内容</strong>：您提交的作文文本或拍照上传的作文图片，用于 AI 批改服务</li><li><strong>微信授权信息</strong>：微信昵称、头像（仅在您授权后获取）</li></ul><h3 id="2-2-自动收集的信息"><a href="#2-2-自动收集的信息" class="headerlink" title="2.2 自动收集的信息"></a>2.2 自动收集的信息</h3><ul><li><strong>设备信息</strong>：设备型号、操作系统版本（用于适配和问题排查）</li><li><strong>使用记录</strong>：批改次数、功能使用频率（用于服务优化）</li></ul><h3 id="2-3-我们不收集的信息"><a href="#2-3-我们不收集的信息" class="headerlink" title="2.3 我们不收集的信息"></a>2.3 我们不收集的信息</h3><ul><li>❌ 手机号码、身份证号等身份证件信息</li><li>❌ 通讯录、短信等通信信息</li><li>❌ 精确地理位置信息</li><li>❌ 学生真实姓名（由老师自行管理，我们不做身份核验）</li></ul><h2 id="三、信息的使用目的"><a href="#三、信息的使用目的" class="headerlink" title="三、信息的使用目的"></a>三、信息的使用目的</h2><p>我们收集的信息仅用于以下目的：</p><ol><li><strong>提供批改服务</strong>：将作文内容发送至 AI 模型进行分析和批改</li><li><strong>服务改进</strong>：分析使用数据以优化产品体验</li><li><strong>安全保障</strong>：防止恶意使用、保障服务稳定运行</li></ol><h2 id="四、信息的存储与保护"><a href="#四、信息的存储与保护" class="headerlink" title="四、信息的存储与保护"></a>四、信息的存储与保护</h2><ul><li>作文内容及批改结果存储在腾讯云（微信云开发）服务器，位于中国境内</li><li>采用传输加密（HTTPS）和存储加密措施保护数据安全</li><li>仅授权人员可访问用户数据，且受严格的访问控制</li></ul><h2 id="五、信息的共享"><a href="#五、信息的共享" class="headerlink" title="五、信息的共享"></a>五、信息的共享</h2><p>我们<strong>不会</strong>将您的个人信息出售、出租或共享给第三方，但以下情况除外：</p><ul><li>经您明确同意</li><li>为提供核心服务所必需（如将作文文本发送至 AI 大模型服务商进行批改）</li><li>法律法规要求</li></ul><h3 id="AI-服务说明"><a href="#AI-服务说明" class="headerlink" title="AI 服务说明"></a>AI 服务说明</h3><p>本产品使用腾讯云 CloudBase AI 大模型服务（DeepSeek）进行作文批改。作文内容将传输至该服务进行分析处理，处理完成后不会被 AI 服务商额外存储或用于其他目的。</p><h2 id="六、您的权利"><a href="#六、您的权利" class="headerlink" title="六、您的权利"></a>六、您的权利</h2><p>您享有以下权利：</p><ul><li><strong>查看</strong>：随时查看您的批改历史和个人信息</li><li><strong>删除</strong>：可联系我们删除您的账号和相关数据</li><li><strong>撤回授权</strong>：可在微信设置中撤回对本小程序的授权</li></ul><h2 id="七、未成年人保护"><a href="#七、未成年人保护" class="headerlink" title="七、未成年人保护"></a>七、未成年人保护</h2><p>本产品的直接使用者为教师。若教师代学生提交作文进行批改，教师应确保已获得学生监护人的适当授权。</p><h2 id="八、隐私政策的更新"><a href="#八、隐私政策的更新" class="headerlink" title="八、隐私政策的更新"></a>八、隐私政策的更新</h2><p>我们可能适时修订本隐私政策。更新后的政策将在本页面发布，重大变更将通过小程序内通知告知。</p><h2 id="九、联系我们"><a href="#九、联系我们" class="headerlink" title="九、联系我们"></a>九、联系我们</h2><p>如对本隐私政策有任何疑问或建议，请通过以下方式联系：</p><ul><li><strong>邮箱</strong>：<a href="mailto:&#x62;&#105;&#x6e;&#x67;&#x63;&#104;&#117;&#110;&#x2e;&#122;&#x68;&#x61;&#111;&#x40;&#x71;&#x71;&#46;&#99;&#x6f;&#109;">bingchun.zhao@qq.com</a></li></ul><hr><p><em>本隐私政策适用于「语师AI」微信小程序。</em></p>]]></content>
       
     </entry>
     
