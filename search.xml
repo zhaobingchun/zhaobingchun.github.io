@@ -4,6 +4,39 @@
   
     
     <entry>
+      <title>DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南</title>
+      <link href="/posts/8541121a.html"/>
+      <url>/posts/8541121a.html</url>
+      
+        <content type="html"><![CDATA[<h1 id="DeepSeek-vs-Claude-4-6：2026-年-AI-编程模型的「黄金组合」与避坑指南"><a href="#DeepSeek-vs-Claude-4-6：2026-年-AI-编程模型的「黄金组合」与避坑指南" class="headerlink" title="DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南"></a>DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南</h1><blockquote><p>你还在为”用哪个模型”纠结吗？2026 年的答案不是选一个，而是把两个都用对。</p></blockquote><hr><h2 id="一、格局巨变：为什么你不再需要单一模型？"><a href="#一、格局巨变：为什么你不再需要单一模型？" class="headerlink" title="一、格局巨变：为什么你不再需要单一模型？"></a>一、格局巨变：为什么你不再需要单一模型？</h2><h3 id="从单模霸权到多模动态路由"><a href="#从单模霸权到多模动态路由" class="headerlink" title="从单模霸权到多模动态路由"></a>从单模霸权到多模动态路由</h3><p>2024 年，大多数开发者的工作流是这样的：选定一个模型，然后把所有编程任务全部压在它身上。GPT-4 或 Claude 3 几乎成了”默认答案”。</p><p>2026 年，这种做法已经显得粗糙。</p><p>原因很简单：<strong>不同模型在不同任务上的能力差异，已经大到足以影响工程交付效率</strong>。DeepSeek V3&#x2F;R1 系列在国内开发者中快速渗透，凭借极具竞争力的价格和令人惊艳的代码补全速度，成为日常高频任务的首选；而 Anthropic 在 2026 年初发布的 Claude 4.6（Sonnet&#x2F;Opus）则在复杂推理、大规模代码重构和多文件上下文管理上持续领先。</p><p>现代 AI 编程工作流的核心已不再是”哪个模型最强”，而是：</p><blockquote><p><strong>在正确的任务节点，调用正确的模型。</strong></p></blockquote><p>这就是多模动态路由（Multi-Model Dynamic Routing）的本质——把 LLM 当成工具箱，而不是万能锤。</p><h3 id="两个模型的定位分野"><a href="#两个模型的定位分野" class="headerlink" title="两个模型的定位分野"></a>两个模型的定位分野</h3><table><thead><tr><th>维度</th><th>DeepSeek V3 &#x2F; R1</th><th>Claude 4.6 (Sonnet&#x2F;Opus)</th></tr></thead><tbody><tr><td>定位</td><td>高性价比、高吞吐</td><td>高精度、深推理</td></tr><tr><td>适合场景</td><td>样板代码生成、单文件补全、快速原型</td><td>跨文件重构、架构设计、复杂 bug 追踪</td></tr><tr><td>上下文窗口</td><td>64K（V3）&#x2F; 128K（R1）</td><td>200K（Sonnet&#x2F;Opus）</td></tr><tr><td>响应速度</td><td>极快（低延迟）</td><td>中等（深度思考模式下更慢）</td></tr><tr><td>单价（每百万 Token）</td><td>约 ¥1–4</td><td>约 ¥20–80</td></tr><tr><td>中文理解</td><td>优秀</td><td>良好</td></tr></tbody></table><hr><h2 id="二、实测对决：多维度能力深度复盘"><a href="#二、实测对决：多维度能力深度复盘" class="headerlink" title="二、实测对决：多维度能力深度复盘"></a>二、实测对决：多维度能力深度复盘</h2><h3 id="2-1-复杂逻辑重构能力对比"><a href="#2-1-复杂逻辑重构能力对比" class="headerlink" title="2.1 复杂逻辑重构能力对比"></a>2.1 复杂逻辑重构能力对比</h3><p>以一个真实场景为例：将一个 1200 行的 Python Django 单体视图层，拆分为基于 Repository Pattern 的分层架构（Controller → Service → Repository），同时保持测试覆盖率不低于 80%。</p><p><strong>DeepSeek V3 表现：</strong></p><ul><li>能够正确识别代码中的 CRUD 逻辑并提取 Repository 类</li><li>在单文件范围内表现优秀</li><li>当涉及跨文件引用（如 <code>models.py</code> → <code>serializers.py</code> → <code>views.py</code>）时，出现约 15% 的引用错误率</li><li>生成的测试代码以 Mock 为主，覆盖率计算偏乐观</li></ul><p><strong>Claude 4.6 Sonnet 表现：</strong></p><ul><li>能完整分析 5 个相关文件的依赖图</li><li>重构方案符合 Django 最佳实践，Service 层边界清晰</li><li>自动识别并保留了原有的自定义 <code>permission_classes</code> 逻辑（DeepSeek 将其遗漏）</li><li>测试代码使用真实数据库事务，覆盖率实测达到 84%</li></ul><p><strong>结论：</strong> 单文件、确定性任务 → DeepSeek；跨文件、高复杂度重构 → Claude 4.6。</p><h3 id="2-2-Token-消耗成本核算"><a href="#2-2-Token-消耗成本核算" class="headerlink" title="2.2 Token 消耗成本核算"></a>2.2 Token 消耗成本核算</h3><p>以一个中等规模项目（10 人团队，每日 AI 辅助编程 8 小时）为基准，测算月度成本：</p><pre><code>场景 A：全量使用 Claude 4.6 Sonnet  日均输入 Token：约 800K  日均输出 Token：约 200K  月度费用估算：约 ¥3,200–4,800场景 B：DeepSeek 处理 70% 常规任务 + Claude 4.6 处理 30% 复杂任务  DeepSeek 月度费用：约 ¥180–300  Claude 4.6 月度费用：约 ¥960–1,440  合计：约 ¥1,140–1,740成本节省：约 55%–65%</code></pre><blockquote><p><strong>关键洞察：</strong> 黄金组合的成本优势不在于”少用贵的”，而在于<strong>把贵的用在刀刃上</strong>。</p></blockquote><h3 id="2-3-代码补全速度与开发体验"><a href="#2-3-代码补全速度与开发体验" class="headerlink" title="2.3 代码补全速度与开发体验"></a>2.3 代码补全速度与开发体验</h3><p>在 VS Code + Continue.dev 插件环境下实测：</p><ul><li><strong>DeepSeek</strong>：首 Token 延迟约 300–600ms，流式输出流畅，日常补全几乎无感知等待</li><li><strong>Claude 4.6</strong>：首 Token 延迟约 800–1500ms，在复杂推理任务中开启 Extended Thinking 后可达 3–8s</li></ul><p>对于高频的行内补全（Inline Completion）场景，DeepSeek 的体验明显更顺滑；而当你需要”解释这段代码的架构意图”或”帮我设计这个模块的接口”时，等 Claude 4.6 多思考几秒是完全值得的。</p><hr><h2 id="三、实战路线：构建你的-AI-编程「黄金组合」"><a href="#三、实战路线：构建你的-AI-编程「黄金组合」" class="headerlink" title="三、实战路线：构建你的 AI 编程「黄金组合」"></a>三、实战路线：构建你的 AI 编程「黄金组合」</h2><h3 id="3-1-按任务类型路由"><a href="#3-1-按任务类型路由" class="headerlink" title="3.1 按任务类型路由"></a>3.1 按任务类型路由</h3><pre><code>if 任务类型 in [&quot;样板代码&quot;, &quot;注释生成&quot;, &quot;简单 bug 修复&quot;, &quot;SQL 编写&quot;, &quot;单元测试补全&quot;]:    使用 DeepSeek V3  # 快、便宜、够用elif 任务类型 in [&quot;跨文件重构&quot;, &quot;架构设计&quot;, &quot;安全审计&quot;, &quot;复杂业务逻辑分析&quot;]:    使用 Claude 4.6 Sonnet  # 精、深、可靠elif 任务类型 in [&quot;系统设计 RFC&quot;, &quot;技术方案评审&quot;, &quot;高风险变更&quot;]:    使用 Claude 4.6 Opus  # 最强推理，按需使用</code></pre><h3 id="3-2-MVP-阶段的-DeepSeek-策略"><a href="#3-2-MVP-阶段的-DeepSeek-策略" class="headerlink" title="3.2 MVP 阶段的 DeepSeek 策略"></a>3.2 MVP 阶段的 DeepSeek 策略</h3><p>早期产品迭代速度优先，DeepSeek 是天然盟友：</p><ul><li>用 DeepSeek 快速生成 CRUD 骨架</li><li>用 DeepSeek 编写 80% 的标准化测试用例</li><li>用 DeepSeek 完成 API 文档的初稿</li></ul><p><strong>一个实用技巧：</strong> 给 DeepSeek 提供精准的 Prompt 模板（System Prompt 固定输出格式），可以将其输出质量提升 30% 以上，同时避免后续 Claude 处理时的格式清洗成本。</p><h3 id="3-3-复杂架构阶段的-Claude-4-6-策略"><a href="#3-3-复杂架构阶段的-Claude-4-6-策略" class="headerlink" title="3.3 复杂架构阶段的 Claude 4.6 策略"></a>3.3 复杂架构阶段的 Claude 4.6 策略</h3><p>当项目进入架构稳定期或面临大规模重构时，切换到 Claude 4.6：</p><ul><li>将整个模块的相关文件打包进上下文（Claude 4.6 的 200K 窗口是核心优势）</li><li>明确告知重构目标和约束条件（如”保持 API 兼容性”、”不引入新依赖”）</li><li>利用 Claude 的 Extended Thinking 模式进行架构方案的多路径推演</li></ul><hr><h2 id="四、避坑指南：如何解决模型切换导致的上下文丢失？"><a href="#四、避坑指南：如何解决模型切换导致的上下文丢失？" class="headerlink" title="四、避坑指南：如何解决模型切换导致的上下文丢失？"></a>四、避坑指南：如何解决模型切换导致的上下文丢失？</h2><p>这是多模型工作流中<strong>最常见、最致命的问题</strong>。</p><h3 id="坑-1：切换模型时丢失背景约定"><a href="#坑-1：切换模型时丢失背景约定" class="headerlink" title="坑 1：切换模型时丢失背景约定"></a>坑 1：切换模型时丢失背景约定</h3><p><strong>场景：</strong> 你在 DeepSeek 里约定了”所有函数使用下划线命名法”，切换到 Claude 后它默认输出了驼峰命名。</p><p><strong>解决方案：构建项目级 Context 文档</strong></p><pre><code class="language-markdown"># PROJECT_CONTEXT.md（每次切换模型时附带）## 技术栈- Python 3.12 + Django 5.1 + PostgreSQL 16- 测试框架：pytest + factory_boy## 编码规范- 函数命名：snake_case- 类命名：PascalCase- 禁止使用 print()，统一使用 logging## 当前任务背景- 正在重构 user_service.py，目标：拆分为 Repository + Service 层- 不得修改 User 模型的 DB schema</code></pre><p>将这个文档作为每次对话的 System Prompt 前缀，两个模型都能保持一致的”世界观”。</p><h3 id="坑-2：DeepSeek-生成的代码风格与-Claude-接手后产生冲突"><a href="#坑-2：DeepSeek-生成的代码风格与-Claude-接手后产生冲突" class="headerlink" title="坑 2：DeepSeek 生成的代码风格与 Claude 接手后产生冲突"></a>坑 2：DeepSeek 生成的代码风格与 Claude 接手后产生冲突</h3><p><strong>解决方案：设立「交接检查点」</strong></p><p>在从 DeepSeek 切换到 Claude 前，先跑一遍 linter（如 <code>ruff check</code> &#x2F; <code>eslint</code>），确保代码风格统一。这一步成本极低，但能避免 Claude 在处理时因风格噪音分散注意力。</p><h3 id="坑-3：长对话导致的”幻觉漂移”"><a href="#坑-3：长对话导致的”幻觉漂移”" class="headerlink" title="坑 3：长对话导致的”幻觉漂移”"></a>坑 3：长对话导致的”幻觉漂移”</h3><p>无论 DeepSeek 还是 Claude，超长对话都会导致早期约定被”遗忘”。</p><p><strong>解决方案：定期输出「对话摘要节点」</strong></p><pre><code>每完成一个功能模块，让模型输出：1. 本次完成的改动摘要（3 条以内）2. 当前文件的关键接口签名3. 下一步待处理的依赖项将此摘要作为新对话的起点，而非继续拉长旧对话。</code></pre><h3 id="坑-4：成本黑洞——不必要地将大文件喂给-Claude"><a href="#坑-4：成本黑洞——不必要地将大文件喂给-Claude" class="headerlink" title="坑 4：成本黑洞——不必要地将大文件喂给 Claude"></a>坑 4：成本黑洞——不必要地将大文件喂给 Claude</h3><p>Claude 4.6 的 200K 上下文虽大，但不是免费的。</p><p><strong>原则：最小上下文原则（Minimal Context Principle）</strong></p><ul><li>只传入与当前任务直接相关的文件</li><li>用 <code>#region</code> 注释标注关键代码段，只传入该段落</li><li>在 Claude 处理前，用 DeepSeek 先做一遍”上下文摘要”，压缩输入 Token</li></ul><hr><h2 id="结语：2026-年的-AI-编程，是系统工程"><a href="#结语：2026-年的-AI-编程，是系统工程" class="headerlink" title="结语：2026 年的 AI 编程，是系统工程"></a>结语：2026 年的 AI 编程，是系统工程</h2><p>DeepSeek 和 Claude 4.6 不是竞争关系，而是<strong>互补的工具链节点</strong>。前者让你跑得快，后者让你走得稳。真正拉开差距的，不是你用了哪个模型，而是你<strong>有没有把多模型协作变成一套可复用的工程流程</strong>。</p><p>从今天起，试着把你的任务分类，建立属于你团队的路由规则——这比单纯追逐”最新最强模型”，ROI 高得多。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="./Claude-Code%E5%AE%8C%E6%95%B4%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81.md">Claude Code 实战：如何用 AI Agent 自动化你的代码审查流程</a></li><li><a href="./%E7%94%A8-AI-%E5%86%99%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E6%B3%95.md">用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</a></li><li><a href="./2026%E5%B9%B4%E7%A8%8B%E5%BA%8F%E5%91%98%E5%BF%85%E5%A4%87%E7%9A%845%E4%B8%AAAI%E7%BC%96%E7%A8%8B%E7%A5%9E%E5%99%A8.md">2026 年程序员必备的 5 个 AI 编程神器</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI实战 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI编程 </tag>
+            
+            <tag> DeepSeek </tag>
+            
+            <tag> Claude </tag>
+            
+            <tag> 多模型协作 </tag>
+            
+            <tag> 编程效率 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</title>
       <link href="/posts/735773a7.html"/>
       <url>/posts/735773a7.html</url>
@@ -84,13 +117,13 @@
             
             <tag> Claude Code </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> AI 编程 </tag>
             
             <tag> 自动化工作流 </tag>
             
             <tag> Anthropic </tag>
+            
+            <tag> AI Agent </tag>
             
         </tags>
       
@@ -216,11 +249,11 @@
             
             <tag> AI编程 </tag>
             
+            <tag> AI Agent </tag>
+            
             <tag> AI开源项目 </tag>
             
             <tag> GitHub </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> 开源推荐 </tag>
             
@@ -363,9 +396,9 @@
             
             <tag> win10 </tag>
             
-            <tag> wsl </tag>
-            
             <tag> 效率提高 </tag>
+            
+            <tag> wsl </tag>
             
         </tags>
       
@@ -407,9 +440,9 @@
             
             <tag> win10 </tag>
             
-            <tag> wsl </tag>
-            
             <tag> 效率提高 </tag>
+            
+            <tag> wsl </tag>
             
         </tags>
       
@@ -430,9 +463,9 @@
             
             <tag> win10 </tag>
             
-            <tag> 效率提高 </tag>
-            
             <tag> 快捷键 </tag>
+            
+            <tag> 效率提高 </tag>
             
         </tags>
       
@@ -615,31 +648,9 @@
     
     
     <entry>
-      <title>about</title>
-      <link href="/about/index.html"/>
-      <url>/about/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>分类</title>
       <link href="/categories/index.html"/>
       <url>/categories/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>photo</title>
-      <link href="/photo/index.html"/>
-      <url>/photo/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -659,9 +670,9 @@
     
     
     <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
+      <title>留言板</title>
+      <link href="/messageboard/index.html"/>
+      <url>/messageboard/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -670,9 +681,20 @@
     
     
     <entry>
-      <title>留言板</title>
-      <link href="/messageboard/index.html"/>
-      <url>/messageboard/index.html</url>
+      <title>about</title>
+      <link href="/about/index.html"/>
+      <url>/about/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>photo</title>
+      <link href="/photo/index.html"/>
+      <url>/photo/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -692,6 +714,17 @@
     
     
     <entry>
+      <title>语师AI — 隐私政策</title>
+      <link href="/privacy/index.html"/>
+      <url>/privacy/index.html</url>
+      
+        <content type="html"><![CDATA[<h1 id="语师AI-隐私政策"><a href="#语师AI-隐私政策" class="headerlink" title="语师AI 隐私政策"></a>语师AI 隐私政策</h1><p><strong>更新日期：2026年3月31日</strong><br><strong>生效日期：2026年3月31日</strong></p><h2 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h2><p>欢迎使用「语师AI」小程序（以下简称”本产品”）。我们深知个人信息对您的重要性，将严格遵守相关法律法规，保护您的个人信息及隐私安全。请您仔细阅读本隐私政策。</p><h2 id="二、我们收集的信息"><a href="#二、我们收集的信息" class="headerlink" title="二、我们收集的信息"></a>二、我们收集的信息</h2><h3 id="2-1-您主动提供的信息"><a href="#2-1-您主动提供的信息" class="headerlink" title="2.1 您主动提供的信息"></a>2.1 您主动提供的信息</h3><ul><li><strong>作文内容</strong>：您提交的作文文本或拍照上传的作文图片，用于 AI 批改服务</li><li><strong>微信授权信息</strong>：微信昵称、头像（仅在您授权后获取）</li></ul><h3 id="2-2-自动收集的信息"><a href="#2-2-自动收集的信息" class="headerlink" title="2.2 自动收集的信息"></a>2.2 自动收集的信息</h3><ul><li><strong>设备信息</strong>：设备型号、操作系统版本（用于适配和问题排查）</li><li><strong>使用记录</strong>：批改次数、功能使用频率（用于服务优化）</li></ul><h3 id="2-3-我们不收集的信息"><a href="#2-3-我们不收集的信息" class="headerlink" title="2.3 我们不收集的信息"></a>2.3 我们不收集的信息</h3><ul><li>❌ 手机号码、身份证号等身份证件信息</li><li>❌ 通讯录、短信等通信信息</li><li>❌ 精确地理位置信息</li><li>❌ 学生真实姓名（由老师自行管理，我们不做身份核验）</li></ul><h2 id="三、信息的使用目的"><a href="#三、信息的使用目的" class="headerlink" title="三、信息的使用目的"></a>三、信息的使用目的</h2><p>我们收集的信息仅用于以下目的：</p><ol><li><strong>提供批改服务</strong>：将作文内容发送至 AI 模型进行分析和批改</li><li><strong>服务改进</strong>：分析使用数据以优化产品体验</li><li><strong>安全保障</strong>：防止恶意使用、保障服务稳定运行</li></ol><h2 id="四、信息的存储与保护"><a href="#四、信息的存储与保护" class="headerlink" title="四、信息的存储与保护"></a>四、信息的存储与保护</h2><ul><li>作文内容及批改结果存储在腾讯云（微信云开发）服务器，位于中国境内</li><li>采用传输加密（HTTPS）和存储加密措施保护数据安全</li><li>仅授权人员可访问用户数据，且受严格的访问控制</li></ul><h2 id="五、信息的共享"><a href="#五、信息的共享" class="headerlink" title="五、信息的共享"></a>五、信息的共享</h2><p>我们<strong>不会</strong>将您的个人信息出售、出租或共享给第三方，但以下情况除外：</p><ul><li>经您明确同意</li><li>为提供核心服务所必需（如将作文文本发送至 AI 大模型服务商进行批改）</li><li>法律法规要求</li></ul><h3 id="AI-服务说明"><a href="#AI-服务说明" class="headerlink" title="AI 服务说明"></a>AI 服务说明</h3><p>本产品使用腾讯云 CloudBase AI 大模型服务（DeepSeek）进行作文批改。作文内容将传输至该服务进行分析处理，处理完成后不会被 AI 服务商额外存储或用于其他目的。</p><h2 id="六、您的权利"><a href="#六、您的权利" class="headerlink" title="六、您的权利"></a>六、您的权利</h2><p>您享有以下权利：</p><ul><li><strong>查看</strong>：随时查看您的批改历史和个人信息</li><li><strong>删除</strong>：可联系我们删除您的账号和相关数据</li><li><strong>撤回授权</strong>：可在微信设置中撤回对本小程序的授权</li></ul><h2 id="七、未成年人保护"><a href="#七、未成年人保护" class="headerlink" title="七、未成年人保护"></a>七、未成年人保护</h2><p>本产品的直接使用者为教师。若教师代学生提交作文进行批改，教师应确保已获得学生监护人的适当授权。</p><h2 id="八、隐私政策的更新"><a href="#八、隐私政策的更新" class="headerlink" title="八、隐私政策的更新"></a>八、隐私政策的更新</h2><p>我们可能适时修订本隐私政策。更新后的政策将在本页面发布，重大变更将通过小程序内通知告知。</p><h2 id="九、联系我们"><a href="#九、联系我们" class="headerlink" title="九、联系我们"></a>九、联系我们</h2><p>如对本隐私政策有任何疑问或建议，请通过以下方式联系：</p><ul><li><strong>邮箱</strong>：<a href="mailto:&#x62;&#105;&#x6e;&#103;&#99;&#104;&#x75;&#x6e;&#x2e;&#x7a;&#x68;&#97;&#111;&#64;&#113;&#113;&#46;&#99;&#111;&#109;">bingchun.zhao@qq.com</a></li></ul><hr><p><em>本隐私政策适用于「语师AI」微信小程序。</em></p>]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>说说</title>
       <link href="/shuoshuo/index.html"/>
       <url>/shuoshuo/index.html</url>
@@ -703,11 +736,11 @@
     
     
     <entry>
-      <title>语师AI — 隐私政策</title>
-      <link href="/privacy/index.html"/>
-      <url>/privacy/index.html</url>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
-        <content type="html"><![CDATA[<h1 id="语师AI-隐私政策"><a href="#语师AI-隐私政策" class="headerlink" title="语师AI 隐私政策"></a>语师AI 隐私政策</h1><p><strong>更新日期：2026年3月31日</strong><br><strong>生效日期：2026年3月31日</strong></p><h2 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h2><p>欢迎使用「语师AI」小程序（以下简称”本产品”）。我们深知个人信息对您的重要性，将严格遵守相关法律法规，保护您的个人信息及隐私安全。请您仔细阅读本隐私政策。</p><h2 id="二、我们收集的信息"><a href="#二、我们收集的信息" class="headerlink" title="二、我们收集的信息"></a>二、我们收集的信息</h2><h3 id="2-1-您主动提供的信息"><a href="#2-1-您主动提供的信息" class="headerlink" title="2.1 您主动提供的信息"></a>2.1 您主动提供的信息</h3><ul><li><strong>作文内容</strong>：您提交的作文文本或拍照上传的作文图片，用于 AI 批改服务</li><li><strong>微信授权信息</strong>：微信昵称、头像（仅在您授权后获取）</li></ul><h3 id="2-2-自动收集的信息"><a href="#2-2-自动收集的信息" class="headerlink" title="2.2 自动收集的信息"></a>2.2 自动收集的信息</h3><ul><li><strong>设备信息</strong>：设备型号、操作系统版本（用于适配和问题排查）</li><li><strong>使用记录</strong>：批改次数、功能使用频率（用于服务优化）</li></ul><h3 id="2-3-我们不收集的信息"><a href="#2-3-我们不收集的信息" class="headerlink" title="2.3 我们不收集的信息"></a>2.3 我们不收集的信息</h3><ul><li>❌ 手机号码、身份证号等身份证件信息</li><li>❌ 通讯录、短信等通信信息</li><li>❌ 精确地理位置信息</li><li>❌ 学生真实姓名（由老师自行管理，我们不做身份核验）</li></ul><h2 id="三、信息的使用目的"><a href="#三、信息的使用目的" class="headerlink" title="三、信息的使用目的"></a>三、信息的使用目的</h2><p>我们收集的信息仅用于以下目的：</p><ol><li><strong>提供批改服务</strong>：将作文内容发送至 AI 模型进行分析和批改</li><li><strong>服务改进</strong>：分析使用数据以优化产品体验</li><li><strong>安全保障</strong>：防止恶意使用、保障服务稳定运行</li></ol><h2 id="四、信息的存储与保护"><a href="#四、信息的存储与保护" class="headerlink" title="四、信息的存储与保护"></a>四、信息的存储与保护</h2><ul><li>作文内容及批改结果存储在腾讯云（微信云开发）服务器，位于中国境内</li><li>采用传输加密（HTTPS）和存储加密措施保护数据安全</li><li>仅授权人员可访问用户数据，且受严格的访问控制</li></ul><h2 id="五、信息的共享"><a href="#五、信息的共享" class="headerlink" title="五、信息的共享"></a>五、信息的共享</h2><p>我们<strong>不会</strong>将您的个人信息出售、出租或共享给第三方，但以下情况除外：</p><ul><li>经您明确同意</li><li>为提供核心服务所必需（如将作文文本发送至 AI 大模型服务商进行批改）</li><li>法律法规要求</li></ul><h3 id="AI-服务说明"><a href="#AI-服务说明" class="headerlink" title="AI 服务说明"></a>AI 服务说明</h3><p>本产品使用腾讯云 CloudBase AI 大模型服务（DeepSeek）进行作文批改。作文内容将传输至该服务进行分析处理，处理完成后不会被 AI 服务商额外存储或用于其他目的。</p><h2 id="六、您的权利"><a href="#六、您的权利" class="headerlink" title="六、您的权利"></a>六、您的权利</h2><p>您享有以下权利：</p><ul><li><strong>查看</strong>：随时查看您的批改历史和个人信息</li><li><strong>删除</strong>：可联系我们删除您的账号和相关数据</li><li><strong>撤回授权</strong>：可在微信设置中撤回对本小程序的授权</li></ul><h2 id="七、未成年人保护"><a href="#七、未成年人保护" class="headerlink" title="七、未成年人保护"></a>七、未成年人保护</h2><p>本产品的直接使用者为教师。若教师代学生提交作文进行批改，教师应确保已获得学生监护人的适当授权。</p><h2 id="八、隐私政策的更新"><a href="#八、隐私政策的更新" class="headerlink" title="八、隐私政策的更新"></a>八、隐私政策的更新</h2><p>我们可能适时修订本隐私政策。更新后的政策将在本页面发布，重大变更将通过小程序内通知告知。</p><h2 id="九、联系我们"><a href="#九、联系我们" class="headerlink" title="九、联系我们"></a>九、联系我们</h2><p>如对本隐私政策有任何疑问或建议，请通过以下方式联系：</p><ul><li><strong>邮箱</strong>：<a href="mailto:&#x62;&#105;&#x6e;&#x67;&#x63;&#104;&#117;&#110;&#x2e;&#122;&#x68;&#x61;&#111;&#x40;&#x71;&#x71;&#46;&#99;&#x6f;&#109;">bingchun.zhao@qq.com</a></li></ul><hr><p><em>本隐私政策适用于「语师AI」微信小程序。</em></p>]]></content>
+        <content type="html"><![CDATA[]]></content>
       
     </entry>
     

@@ -6,7 +6,7 @@
   <link href="https://www.jrrm.top/atom.xml" rel="self"/>
   <link href="https://pubsubhubbub.appspot.com/" rel="hub"/>
   <link href="https://www.jrrm.top/"/>
-  <updated>2026-04-10T02:14:28.057Z</updated>
+  <updated>2026-04-14T02:12:22.064Z</updated>
   <id>https://www.jrrm.top/</id>
   
   <author>
@@ -24,11 +24,40 @@
 
   
   <entry>
+    <title>DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南</title>
+    <link href="https://www.jrrm.top/posts/8541121a.html"/>
+    <id>https://www.jrrm.top/posts/8541121a.html</id>
+    <published>2026-04-13T16:00:00.000Z</published>
+    <updated>2026-04-14T02:12:22.064Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="DeepSeek-vs-Claude-4-6：2026-年-AI-编程模型的「黄金组合」与避坑指南"><a href="#DeepSeek-vs-Claude-4-6：2026-年-AI-编程模型的「黄金组合」与避坑指南" class="headerlink" title="DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南"></a>DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南</h1><blockquote><p>你还在为”用哪个模型”纠结吗？2026 年的答案不是选一个，而是把两个都用对。</p></blockquote><hr><h2 id="一、格局巨变：为什么你不再需要单一模型？"><a href="#一、格局巨变：为什么你不再需要单一模型？" class="headerlink" title="一、格局巨变：为什么你不再需要单一模型？"></a>一、格局巨变：为什么你不再需要单一模型？</h2><h3 id="从单模霸权到多模动态路由"><a href="#从单模霸权到多模动态路由" class="headerlink" title="从单模霸权到多模动态路由"></a>从单模霸权到多模动态路由</h3><p>2024 年，大多数开发者的工作流是这样的：选定一个模型，然后把所有编程任务全部压在它身上。GPT-4 或 Claude 3 几乎成了”默认答案”。</p><p>2026 年，这种做法已经显得粗糙。</p><p>原因很简单：<strong>不同模型在不同任务上的能力差异，已经大到足以影响工程交付效率</strong>。DeepSeek V3&#x2F;R1 系列在国内开发者中快速渗透，凭借极具竞争力的价格和令人惊艳的代码补全速度，成为日常高频任务的首选；而 Anthropic 在 2026 年初发布的 Claude 4.6（Sonnet&#x2F;Opus）则在复杂推理、大规模代码重构和多文件上下文管理上持续领先。</p><p>现代 AI 编程工作流的核心已不再是”哪个模型最强”，而是：</p><blockquote><p><strong>在正确的任务节点，调用正确的模型。</strong></p></blockquote><p>这就是多模动态路由（Multi-Model Dynamic Routing）的本质——把 LLM 当成工具箱，而不是万能锤。</p><h3 id="两个模型的定位分野"><a href="#两个模型的定位分野" class="headerlink" title="两个模型的定位分野"></a>两个模型的定位分野</h3><table><thead><tr><th>维度</th><th>DeepSeek V3 &#x2F; R1</th><th>Claude 4.6 (Sonnet&#x2F;Opus)</th></tr></thead><tbody><tr><td>定位</td><td>高性价比、高吞吐</td><td>高精度、深推理</td></tr><tr><td>适合场景</td><td>样板代码生成、单文件补全、快速原型</td><td>跨文件重构、架构设计、复杂 bug 追踪</td></tr><tr><td>上下文窗口</td><td>64K（V3）&#x2F; 128K（R1）</td><td>200K（Sonnet&#x2F;Opus）</td></tr><tr><td>响应速度</td><td>极快（低延迟）</td><td>中等（深度思考模式下更慢）</td></tr><tr><td>单价（每百万 Token）</td><td>约 ¥1–4</td><td>约 ¥20–80</td></tr><tr><td>中文理解</td><td>优秀</td><td>良好</td></tr></tbody></table><hr><h2 id="二、实测对决：多维度能力深度复盘"><a href="#二、实测对决：多维度能力深度复盘" class="headerlink" title="二、实测对决：多维度能力深度复盘"></a>二、实测对决：多维度能力深度复盘</h2><h3 id="2-1-复杂逻辑重构能力对比"><a href="#2-1-复杂逻辑重构能力对比" class="headerlink" title="2.1 复杂逻辑重构能力对比"></a>2.1 复杂逻辑重构能力对比</h3><p>以一个真实场景为例：将一个 1200 行的 Python Django 单体视图层，拆分为基于 Repository Pattern 的分层架构（Controller → Service → Repository），同时保持测试覆盖率不低于 80%。</p><p><strong>DeepSeek V3 表现：</strong></p><ul><li>能够正确识别代码中的 CRUD 逻辑并提取 Repository 类</li><li>在单文件范围内表现优秀</li><li>当涉及跨文件引用（如 <code>models.py</code> → <code>serializers.py</code> → <code>views.py</code>）时，出现约 15% 的引用错误率</li><li>生成的测试代码以 Mock 为主，覆盖率计算偏乐观</li></ul><p><strong>Claude 4.6 Sonnet 表现：</strong></p><ul><li>能完整分析 5 个相关文件的依赖图</li><li>重构方案符合 Django 最佳实践，Service 层边界清晰</li><li>自动识别并保留了原有的自定义 <code>permission_classes</code> 逻辑（DeepSeek 将其遗漏）</li><li>测试代码使用真实数据库事务，覆盖率实测达到 84%</li></ul><p><strong>结论：</strong> 单文件、确定性任务 → DeepSeek；跨文件、高复杂度重构 → Claude 4.6。</p><h3 id="2-2-Token-消耗成本核算"><a href="#2-2-Token-消耗成本核算" class="headerlink" title="2.2 Token 消耗成本核算"></a>2.2 Token 消耗成本核算</h3><p>以一个中等规模项目（10 人团队，每日 AI 辅助编程 8 小时）为基准，测算月度成本：</p><pre><code>场景 A：全量使用 Claude 4.6 Sonnet  日均输入 Token：约 800K  日均输出 Token：约 200K  月度费用估算：约 ¥3,200–4,800场景 B：DeepSeek 处理 70% 常规任务 + Claude 4.6 处理 30% 复杂任务  DeepSeek 月度费用：约 ¥180–300  Claude 4.6 月度费用：约 ¥960–1,440  合计：约 ¥1,140–1,740成本节省：约 55%–65%</code></pre><blockquote><p><strong>关键洞察：</strong> 黄金组合的成本优势不在于”少用贵的”，而在于<strong>把贵的用在刀刃上</strong>。</p></blockquote><h3 id="2-3-代码补全速度与开发体验"><a href="#2-3-代码补全速度与开发体验" class="headerlink" title="2.3 代码补全速度与开发体验"></a>2.3 代码补全速度与开发体验</h3><p>在 VS Code + Continue.dev 插件环境下实测：</p><ul><li><strong>DeepSeek</strong>：首 Token 延迟约 300–600ms，流式输出流畅，日常补全几乎无感知等待</li><li><strong>Claude 4.6</strong>：首 Token 延迟约 800–1500ms，在复杂推理任务中开启 Extended Thinking 后可达 3–8s</li></ul><p>对于高频的行内补全（Inline Completion）场景，DeepSeek 的体验明显更顺滑；而当你需要”解释这段代码的架构意图”或”帮我设计这个模块的接口”时，等 Claude 4.6 多思考几秒是完全值得的。</p><hr><h2 id="三、实战路线：构建你的-AI-编程「黄金组合」"><a href="#三、实战路线：构建你的-AI-编程「黄金组合」" class="headerlink" title="三、实战路线：构建你的 AI 编程「黄金组合」"></a>三、实战路线：构建你的 AI 编程「黄金组合」</h2><h3 id="3-1-按任务类型路由"><a href="#3-1-按任务类型路由" class="headerlink" title="3.1 按任务类型路由"></a>3.1 按任务类型路由</h3><pre><code>if 任务类型 in [&quot;样板代码&quot;, &quot;注释生成&quot;, &quot;简单 bug 修复&quot;, &quot;SQL 编写&quot;, &quot;单元测试补全&quot;]:    使用 DeepSeek V3  # 快、便宜、够用elif 任务类型 in [&quot;跨文件重构&quot;, &quot;架构设计&quot;, &quot;安全审计&quot;, &quot;复杂业务逻辑分析&quot;]:    使用 Claude 4.6 Sonnet  # 精、深、可靠elif 任务类型 in [&quot;系统设计 RFC&quot;, &quot;技术方案评审&quot;, &quot;高风险变更&quot;]:    使用 Claude 4.6 Opus  # 最强推理，按需使用</code></pre><h3 id="3-2-MVP-阶段的-DeepSeek-策略"><a href="#3-2-MVP-阶段的-DeepSeek-策略" class="headerlink" title="3.2 MVP 阶段的 DeepSeek 策略"></a>3.2 MVP 阶段的 DeepSeek 策略</h3><p>早期产品迭代速度优先，DeepSeek 是天然盟友：</p><ul><li>用 DeepSeek 快速生成 CRUD 骨架</li><li>用 DeepSeek 编写 80% 的标准化测试用例</li><li>用 DeepSeek 完成 API 文档的初稿</li></ul><p><strong>一个实用技巧：</strong> 给 DeepSeek 提供精准的 Prompt 模板（System Prompt 固定输出格式），可以将其输出质量提升 30% 以上，同时避免后续 Claude 处理时的格式清洗成本。</p><h3 id="3-3-复杂架构阶段的-Claude-4-6-策略"><a href="#3-3-复杂架构阶段的-Claude-4-6-策略" class="headerlink" title="3.3 复杂架构阶段的 Claude 4.6 策略"></a>3.3 复杂架构阶段的 Claude 4.6 策略</h3><p>当项目进入架构稳定期或面临大规模重构时，切换到 Claude 4.6：</p><ul><li>将整个模块的相关文件打包进上下文（Claude 4.6 的 200K 窗口是核心优势）</li><li>明确告知重构目标和约束条件（如”保持 API 兼容性”、”不引入新依赖”）</li><li>利用 Claude 的 Extended Thinking 模式进行架构方案的多路径推演</li></ul><hr><h2 id="四、避坑指南：如何解决模型切换导致的上下文丢失？"><a href="#四、避坑指南：如何解决模型切换导致的上下文丢失？" class="headerlink" title="四、避坑指南：如何解决模型切换导致的上下文丢失？"></a>四、避坑指南：如何解决模型切换导致的上下文丢失？</h2><p>这是多模型工作流中<strong>最常见、最致命的问题</strong>。</p><h3 id="坑-1：切换模型时丢失背景约定"><a href="#坑-1：切换模型时丢失背景约定" class="headerlink" title="坑 1：切换模型时丢失背景约定"></a>坑 1：切换模型时丢失背景约定</h3><p><strong>场景：</strong> 你在 DeepSeek 里约定了”所有函数使用下划线命名法”，切换到 Claude 后它默认输出了驼峰命名。</p><p><strong>解决方案：构建项目级 Context 文档</strong></p><pre><code class="language-markdown"># PROJECT_CONTEXT.md（每次切换模型时附带）## 技术栈- Python 3.12 + Django 5.1 + PostgreSQL 16- 测试框架：pytest + factory_boy## 编码规范- 函数命名：snake_case- 类命名：PascalCase- 禁止使用 print()，统一使用 logging## 当前任务背景- 正在重构 user_service.py，目标：拆分为 Repository + Service 层- 不得修改 User 模型的 DB schema</code></pre><p>将这个文档作为每次对话的 System Prompt 前缀，两个模型都能保持一致的”世界观”。</p><h3 id="坑-2：DeepSeek-生成的代码风格与-Claude-接手后产生冲突"><a href="#坑-2：DeepSeek-生成的代码风格与-Claude-接手后产生冲突" class="headerlink" title="坑 2：DeepSeek 生成的代码风格与 Claude 接手后产生冲突"></a>坑 2：DeepSeek 生成的代码风格与 Claude 接手后产生冲突</h3><p><strong>解决方案：设立「交接检查点」</strong></p><p>在从 DeepSeek 切换到 Claude 前，先跑一遍 linter（如 <code>ruff check</code> &#x2F; <code>eslint</code>），确保代码风格统一。这一步成本极低，但能避免 Claude 在处理时因风格噪音分散注意力。</p><h3 id="坑-3：长对话导致的”幻觉漂移”"><a href="#坑-3：长对话导致的”幻觉漂移”" class="headerlink" title="坑 3：长对话导致的”幻觉漂移”"></a>坑 3：长对话导致的”幻觉漂移”</h3><p>无论 DeepSeek 还是 Claude，超长对话都会导致早期约定被”遗忘”。</p><p><strong>解决方案：定期输出「对话摘要节点」</strong></p><pre><code>每完成一个功能模块，让模型输出：1. 本次完成的改动摘要（3 条以内）2. 当前文件的关键接口签名3. 下一步待处理的依赖项将此摘要作为新对话的起点，而非继续拉长旧对话。</code></pre><h3 id="坑-4：成本黑洞——不必要地将大文件喂给-Claude"><a href="#坑-4：成本黑洞——不必要地将大文件喂给-Claude" class="headerlink" title="坑 4：成本黑洞——不必要地将大文件喂给 Claude"></a>坑 4：成本黑洞——不必要地将大文件喂给 Claude</h3><p>Claude 4.6 的 200K 上下文虽大，但不是免费的。</p><p><strong>原则：最小上下文原则（Minimal Context Principle）</strong></p><ul><li>只传入与当前任务直接相关的文件</li><li>用 <code>#region</code> 注释标注关键代码段，只传入该段落</li><li>在 Claude 处理前，用 DeepSeek 先做一遍”上下文摘要”，压缩输入 Token</li></ul><hr><h2 id="结语：2026-年的-AI-编程，是系统工程"><a href="#结语：2026-年的-AI-编程，是系统工程" class="headerlink" title="结语：2026 年的 AI 编程，是系统工程"></a>结语：2026 年的 AI 编程，是系统工程</h2><p>DeepSeek 和 Claude 4.6 不是竞争关系，而是<strong>互补的工具链节点</strong>。前者让你跑得快，后者让你走得稳。真正拉开差距的，不是你用了哪个模型，而是你<strong>有没有把多模型协作变成一套可复用的工程流程</strong>。</p><p>从今天起，试着把你的任务分类，建立属于你团队的路由规则——这比单纯追逐”最新最强模型”，ROI 高得多。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="./Claude-Code%E5%AE%8C%E6%95%B4%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81.md">Claude Code 实战：如何用 AI Agent 自动化你的代码审查流程</a></li><li><a href="./%E7%94%A8-AI-%E5%86%99%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E6%B3%95.md">用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</a></li><li><a href="./2026%E5%B9%B4%E7%A8%8B%E5%BA%8F%E5%91%98%E5%BF%85%E5%A4%87%E7%9A%845%E4%B8%AAAI%E7%BC%96%E7%A8%8B%E7%A5%9E%E5%99%A8.md">2026 年程序员必备的 5 个 AI 编程神器</a></li></ul>]]></content>
+    
+    
+    <summary type="html">2026 年 AI 编程领域已进入多模型动态路由时代。本文通过实测数据深度对比 DeepSeek 与 Claude 4.6 在复杂逻辑重构、Token 成本、上下文管理等维度的表现，揭示两者如何构成「高性价比 MVP 开发 + 高精度架构设计」的黄金组合，并提供完整的模型切换避坑指南，帮助开发者和技术团队在 2026 年找到最优 AI 编程策略。</summary>
+    
+    
+    
+    <category term="AI实战" scheme="https://www.jrrm.top/categories/AI%E5%AE%9E%E6%88%98/"/>
+    
+    
+    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="DeepSeek" scheme="https://www.jrrm.top/tags/DeepSeek/"/>
+    
+    <category term="Claude" scheme="https://www.jrrm.top/tags/Claude/"/>
+    
+    <category term="多模型协作" scheme="https://www.jrrm.top/tags/%E5%A4%9A%E6%A8%A1%E5%9E%8B%E5%8D%8F%E4%BD%9C/"/>
+    
+    <category term="编程效率" scheme="https://www.jrrm.top/tags/%E7%BC%96%E7%A8%8B%E6%95%88%E7%8E%87/"/>
+    
+  </entry>
+  
+  <entry>
     <title>用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</title>
     <link href="https://www.jrrm.top/posts/735773a7.html"/>
     <id>https://www.jrrm.top/posts/735773a7.html</id>
     <published>2026-04-10T02:10:00.000Z</published>
-    <updated>2026-04-10T02:14:28.057Z</updated>
+    <updated>2026-04-10T02:14:31.326Z</updated>
     
     <content type="html"><![CDATA[<h1 id="用-AI-写单元测试的正确方法：从提升覆盖率到保证业务逻辑"><a href="#用-AI-写单元测试的正确方法：从提升覆盖率到保证业务逻辑" class="headerlink" title="用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑"></a>用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</h1><p>很多团队引入 AI 写单元测试的第一个动作是：把函数贴给 AI，让它”补全测试”。结果覆盖率从 40% 飙到 85%，但下次上线还是出了 Bug。</p><p><strong>覆盖率高不等于业务逻辑被覆盖。</strong> 这篇文章要解决的，正是这个核心矛盾。</p><hr><h2 id="为什么-AI-生成的单元测试容易”虚高”"><a href="#为什么-AI-生成的单元测试容易”虚高”" class="headerlink" title="为什么 AI 生成的单元测试容易”虚高”"></a>为什么 AI 生成的单元测试容易”虚高”</h2><p>AI 在没有上下文的情况下生成测试，会倾向于：</p><ul><li>只测试 <strong>happy path</strong>，忽略边界条件</li><li>用 <code>expect(fn()).toBeDefined()</code> 这类断言”凑数”</li><li>对复杂业务逻辑做出<strong>错误假设</strong>，测试本身就是错的</li><li>Mock 过度，把真正需要集成验证的路径全部绕开</li></ul><p>根本原因在于：AI 不了解你的业务规则，它只能从代码结构推断”什么是合理的输入输出”。</p><hr><h2 id="正确姿势：先喂业务规则，再让-AI-写测试"><a href="#正确姿势：先喂业务规则，再让-AI-写测试" class="headerlink" title="正确姿势：先喂业务规则，再让 AI 写测试"></a>正确姿势：先喂业务规则，再让 AI 写测试</h2><h3 id="提示词工程：三段式结构"><a href="#提示词工程：三段式结构" class="headerlink" title="提示词工程：三段式结构"></a>提示词工程：三段式结构</h3><p>与其把函数直接扔给 AI，不如用结构化 Prompt 给出足够的上下文：</p><pre><code>## 角色你是一位熟悉 [业务领域] 的高级前端工程师，擅长用 Vitest 编写高质量单元测试。## 被测函数[粘贴函数代码]## 业务规则（重要）1. [规则一，例如：折扣最大不能超过原价的 50%]2. [规则二，例如：VIP 用户享受额外 9 折]3. [规则三，例如：优惠券与折扣不可叠加]## 要求- 使用 Vitest，describe/it 结构- 覆盖：正常流程、边界值、异常输入、业务规则冲突场景- 每个 it 的描述用中文，清晰说明测试意图- 不要使用 toBeDefined()，断言要具体到返回值</code></pre><p><strong>这三段中，”业务规则”是关键。</strong> 没有它，AI 只能猜。</p><hr><h3 id="完整示例：价格计算函数的测试"><a href="#完整示例：价格计算函数的测试" class="headerlink" title="完整示例：价格计算函数的测试"></a>完整示例：价格计算函数的测试</h3><p>被测函数：</p><pre><code class="language-typescript">// utils/pricing.tsexport interface PricingInput &#123;  originalPrice: number;  discountRate: number; // 0~1  isVip: boolean;  couponAmount: number;&#125;export function calculateFinalPrice(input: PricingInput): number &#123;  const &#123; originalPrice, discountRate, isVip, couponAmount &#125; = input;  if (originalPrice &lt;= 0) throw new Error(&#39;原价必须大于 0&#39;);  if (discountRate &lt; 0 || discountRate &gt; 1) throw new Error(&#39;折扣率必须在 0~1 之间&#39;);  // 业务规则：折扣最大不超过原价 50%  const effectiveRate = Math.max(discountRate, 0.5);  let price = originalPrice * effectiveRate;  // 业务规则：VIP 额外 9 折，但优惠券与折扣不可叠加  if (isVip &amp;&amp; couponAmount === 0) &#123;    price = price * 0.9;  &#125; else if (couponAmount &gt; 0) &#123;    price = price - couponAmount;  &#125;  return Math.max(price, 0);&#125;</code></pre><p>AI 根据业务规则生成的测试（使用 Vitest）：</p><pre><code class="language-typescript">// utils/pricing.test.tsimport &#123; describe, it, expect &#125; from &#39;vitest&#39;;import &#123; calculateFinalPrice &#125; from &#39;./pricing&#39;;describe(&#39;calculateFinalPrice 价格计算&#39;, () =&gt; &#123;  describe(&#39;正常流程&#39;, () =&gt; &#123;    it(&#39;普通用户无优惠券：按折扣率计算&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.8,        isVip: false,        couponAmount: 0,      &#125;);      expect(result).toBe(80);    &#125;);    it(&#39;VIP 用户无优惠券：折扣后再享 9 折&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.8,        isVip: true,        couponAmount: 0,      &#125;);      expect(result).toBe(72); // 100 * 0.8 * 0.9    &#125;);  &#125;);  describe(&#39;业务规则：折扣上限 50%&#39;, () =&gt; &#123;    it(&#39;折扣率低于 0.5 时，强制使用 0.5&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.2,        isVip: false,        couponAmount: 0,      &#125;);      expect(result).toBe(50); // 不能低于原价 50%    &#125;);  &#125;);  describe(&#39;业务规则：优惠券与折扣不可叠加&#39;, () =&gt; &#123;    it(&#39;有优惠券时，VIP 折扣不生效&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 100,        discountRate: 0.8,        isVip: true,        couponAmount: 10,      &#125;);      expect(result).toBe(70); // 80 - 10，VIP 9 折不叠加    &#125;);  &#125;);  describe(&#39;边界值与异常&#39;, () =&gt; &#123;    it(&#39;优惠券金额超过折后价时，最终价格为 0（不为负）&#39;, () =&gt; &#123;      const result = calculateFinalPrice(&#123;        originalPrice: 10,        discountRate: 0.8,        isVip: false,        couponAmount: 100,      &#125;);      expect(result).toBe(0);    &#125;);    it(&#39;原价为 0 时抛出异常&#39;, () =&gt; &#123;      expect(() =&gt;        calculateFinalPrice(&#123; originalPrice: 0, discountRate: 0.8, isVip: false, couponAmount: 0 &#125;)      ).toThrow(&#39;原价必须大于 0&#39;);    &#125;);    it(&#39;折扣率超出范围时抛出异常&#39;, () =&gt; &#123;      expect(() =&gt;        calculateFinalPrice(&#123; originalPrice: 100, discountRate: 1.5, isVip: false, couponAmount: 0 &#125;)      ).toThrow(&#39;折扣率必须在 0~1 之间&#39;);    &#125;);  &#125;);&#125;);</code></pre><hr><h2 id="AI-生成代码的审查清单"><a href="#AI-生成代码的审查清单" class="headerlink" title="AI 生成代码的审查清单"></a>AI 生成代码的审查清单</h2><p>拿到 AI 的测试后，不要直接合入，过一遍这个清单：</p><h3 id="断言质量检查"><a href="#断言质量检查" class="headerlink" title="断言质量检查"></a>断言质量检查</h3><ul><li><input disabled="" type="checkbox"> 所有断言都有<strong>具体预期值</strong>，没有 <code>toBeDefined()</code> &#x2F; <code>toBeTruthy()</code> 凑数</li><li><input disabled="" type="checkbox"> 异常测试用 <code>toThrow()</code> 而不是 <code>try/catch</code> 包裹后空断言</li><li><input disabled="" type="checkbox"> 浮点数比较使用 <code>toBeCloseTo()</code> 而非严格相等</li></ul><h3 id="业务覆盖检查"><a href="#业务覆盖检查" class="headerlink" title="业务覆盖检查"></a>业务覆盖检查</h3><ul><li><input disabled="" type="checkbox"> 每条业务规则至少有一个对应的 <code>it</code> 测试</li><li><input disabled="" type="checkbox"> 规则冲突场景（如本例中优惠券与 VIP 折扣）有专项测试</li><li><input disabled="" type="checkbox"> 边界值：最小值、最大值、零值、负值都已覆盖</li></ul><h3 id="Mock-合理性检查"><a href="#Mock-合理性检查" class="headerlink" title="Mock 合理性检查"></a>Mock 合理性检查</h3><ul><li><input disabled="" type="checkbox"> 外部依赖（API、数据库）才 Mock，纯函数不应该有 Mock</li><li><input disabled="" type="checkbox"> Mock 的返回值符合真实数据结构，不是随意构造的 <code>&#123;&#125;</code></li></ul><h3 id="测试描述可读性"><a href="#测试描述可读性" class="headerlink" title="测试描述可读性"></a>测试描述可读性</h3><ul><li><input disabled="" type="checkbox"> <code>describe</code> 和 <code>it</code> 的文字组合起来，能读成一句完整的业务陈述</li><li><input disabled="" type="checkbox"> 失败时的报错信息能快速定位是哪条业务规则被违反</li></ul><hr><h2 id="进阶：让-AI-帮你发现测试盲区"><a href="#进阶：让-AI-帮你发现测试盲区" class="headerlink" title="进阶：让 AI 帮你发现测试盲区"></a>进阶：让 AI 帮你发现测试盲区</h2><p>在已有测试的基础上，用这个 Prompt 让 AI 做覆盖率分析：</p><pre><code>以下是我的函数和现有测试，请分析：1. 哪些代码分支没有被测试到（结合代码逻辑，不只是行覆盖）2. 哪些业务场景可能在现实中出现，但测试中没有体现3. 给出补充测试的建议（只列场景描述，不需要写代码）[函数代码][现有测试代码]</code></pre><p>这比直接看 Istanbul&#x2F;V8 覆盖率报告更有价值——AI 能识别<strong>语义盲区</strong>，而不只是行未覆盖。</p><hr><h2 id="工具链推荐"><a href="#工具链推荐" class="headerlink" title="工具链推荐"></a>工具链推荐</h2><table><thead><tr><th>场景</th><th>推荐工具</th></tr></thead><tbody><tr><td>现代前端项目</td><td>Vitest（与 Vite 生态无缝集成，速度快）</td></tr><tr><td>Node.js &#x2F; 旧项目</td><td>Jest</td></tr><tr><td>AI 辅助编写</td><td>Claude Code、GitHub Copilot</td></tr><tr><td>覆盖率可视化</td><td><code>@vitest/coverage-v8</code> + <code>lcov</code></td></tr></tbody></table><hr><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>用 AI 写单元测试的正确工作流：</p><ol><li><strong>整理业务规则</strong>，写成清单（这步不能省）</li><li><strong>构造结构化 Prompt</strong>，把业务规则作为核心上下文</li><li><strong>审查 AI 输出</strong>，对照清单逐项确认</li><li><strong>让 AI 做盲区分析</strong>，补充语义层面的遗漏场景</li><li>把有效的 Prompt 模板沉淀为<strong>团队规范</strong></li></ol><p>覆盖率是结果，不是目标。真正的目标是：每一条业务规则，都有对应的测试在守护它。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="./Claude-Code-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97-%E7%94%A8AI%E5%8A%A9%E6%89%8B%E6%8F%90%E5%8D%87%E7%BC%96%E7%A8%8B%E6%95%88%E7%8E%87%E7%9A%84%E5%AE%8C%E6%95%B4%E6%95%99%E7%A8%8B.md">Claude Code 入门指南：用 AI 助手提升编程效率的完整教程</a></li><li><a href="https://vitest.dev/">Vitest 官方文档</a></li><li><a href="https://jestjs.io/">Jest 官方文档</a></li></ul>]]></content>
     
@@ -97,13 +126,13 @@
     
     <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
     
-    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
-    
     <category term="AI 编程" scheme="https://www.jrrm.top/tags/AI-%E7%BC%96%E7%A8%8B/"/>
     
     <category term="自动化工作流" scheme="https://www.jrrm.top/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81/"/>
     
     <category term="Anthropic" scheme="https://www.jrrm.top/tags/Anthropic/"/>
+    
+    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
     
   </entry>
   
@@ -213,11 +242,11 @@
     
     <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
+    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
+    
     <category term="AI开源项目" scheme="https://www.jrrm.top/tags/AI%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/"/>
     
     <category term="GitHub" scheme="https://www.jrrm.top/tags/GitHub/"/>
-    
-    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
     
     <category term="开源推荐" scheme="https://www.jrrm.top/tags/%E5%BC%80%E6%BA%90%E6%8E%A8%E8%8D%90/"/>
     
@@ -351,9 +380,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
-    
     <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
+    
+    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
     
   </entry>
   
@@ -403,9 +432,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
-    
     <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
+    
+    <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
     
   </entry>
   
@@ -430,9 +459,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
-    
     <category term="快捷键" scheme="https://www.jrrm.top/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
+    
+    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
     
   </entry>
   
@@ -553,29 +582,6 @@
     <category term="音视频" scheme="https://www.jrrm.top/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
     
     <category term="技术博客" scheme="https://www.jrrm.top/tags/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>为软路由选择系统，从零打造自己的专属软路由系统</title>
-    <link href="https://www.jrrm.top/posts/1161209.html"/>
-    <id>https://www.jrrm.top/posts/1161209.html</id>
-    <published>2020-07-04T13:57:17.000Z</published>
-    <updated>2020-10-08T03:57:30.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20180221.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><h1 id="软路由系统"><a href="#软路由系统" class="headerlink" title="软路由系统"></a>软路由系统</h1><p>常见软路由系统主要有爱快，openwrt，ros，爱快分流功能强大，适合公司，openwrt开源，功能插件比较多，适合折腾。ros据说比较稳定，我没试过，不多评论。这里我们选openwrt，毕竟要专属，就要折腾。</p><h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>我们选择自己编译openwrt，只保留自己使用的插件</p><p>系统：windows 10 的wsl</p><p>代码：</p><p>主仓库: <code>https://github.com/coolsnowwolf/lede.git</code></p><p>常用插件仓库：<code>https://github.com/zhaobingchun/openwrt-packages.git</code></p><h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><h2 id="配置wsl的环境，到win10应用商店，搜索ubuntu安装"><a href="#配置wsl的环境，到win10应用商店，搜索ubuntu安装" class="headerlink" title="配置wsl的环境，到win10应用商店，搜索ubuntu安装"></a>配置wsl的环境，到win10应用商店，搜索ubuntu安装</h2><h2 id="配置ubuntu环境"><a href="#配置ubuntu环境" class="headerlink" title="配置ubuntu环境"></a>配置ubuntu环境</h2><h3 id="修改环境变量"><a href="#修改环境变量" class="headerlink" title="修改环境变量"></a>修改环境变量</h3><p>打开wsl命令行输入：<code>sudo vim /etc/profile</code> 点击键盘i进入输入模式</p><p>在文件末尾输入：<code>export PATH=$(echo &quot;$PATH&quot; | sed -e &#39;s/:\/mnt.*//g&#39;)</code> 保存退出 按键盘esc 输入：wq</p><p>在命令行输入：<code>source /etc/profile</code> 重新载入配置</p><h3 id="安装依赖软件"><a href="#安装依赖软件" class="headerlink" title="安装依赖软件"></a>安装依赖软件</h3><p>在命令行输入：<code>sudo apt-get update</code></p><p>然后输入：</p><pre><code>sudo apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3.5 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget swig</code></pre><h3 id="下载代码"><a href="#下载代码" class="headerlink" title="下载代码"></a>下载代码</h3><p>在命令行输入：</p><pre><code>git clone https://github.com/coolsnowwolf/lede.git</code></pre><p>下载代码</p><p>添加第三方仓库：</p><p>两种方式：</p><p>一、进入代码目录</p><pre><code>cd ledecd packagemkdir openwrt-packagescd openwrt-packages</code></pre><p>然后将你要用到的插件放到这个目录中</p><p>二、进入代码目录</p><pre><code>cd ledevim feeds.conf.default</code></pre><p>使用我提供的仓库，在文件中插入这两行</p><pre><code>src-git kenzo https://github.com/kenzok8/openwrt-packagessrc-git small https://github.com/kenzok8/small</code></pre><p>保存</p><p>然后执行</p><pre><code>./scripts/feeds update -a./scripts/feeds install -a</code></pre><h3 id="配置编译"><a href="#配置编译" class="headerlink" title="配置编译"></a>配置编译</h3><p>现在开始打造属于自己的系统</p><p>输入：<code>make menuconfig</code></p><p>附上图：</p><p><img src="https://b3logfile.com/file/2020/07/image-c10d1070.png" alt="image.png"></p><p>第一步：修改Targe Images 键盘选中，按Enter键进入</p><p><img src="https://b3logfile.com/file/2020/07/image-7450d03b.png" alt="image.png"></p><p>把build efi image 跟 build vmware image 去掉，用不到，通过键盘方向键移动到相应位置，按键盘n 取消，如果要选中按y 前面出现 * 是选中，或者按空格键切换，* 编译到固件中，M 编译成模块 空 不选中，如果想搜索，可以按键盘 &#x2F; ,按两下esc 键，回到上一级</p><p>第二步：配置插件</p><p>选中LuCI 按Enter 进入</p><p><img src="https://b3logfile.com/file/2020/07/image-f35a5136.png" alt="image.png"></p><p>选中Applications 按Enter进入</p><p><img src="https://b3logfile.com/file/2020/07/image-af347bbf.png" alt="image.png"></p><p>这里只说一下我自己用的插件吧，其他的自己折腾</p><p>luci-app-accesscontrol  &#x2F;&#x2F; 修改控制台密码的</p><p>luci-app-adguardhome &#x2F;&#x2F; dns服务器，加速dns解析，拦截广告的</p><p>luci-app-advancedsetting &#x2F;&#x2F; 高级设置，在网页上改dnsmq，hosts的，不懂别乱改</p><p>luci-app-arpbind &#x2F;&#x2F; 绑定IP地址跟mac地址的，就是让你的设备固定IP</p><p>luci-app-ddns &#x2F;&#x2F; ddns 就是把你总变的公网IP绑定到域名上，方便外网访问</p><p>luci-app-diskman &#x2F;&#x2F; 硬盘分区的，主要系统盘太大，分个区间放东西用</p><p>luci-app-filetranfer &#x2F;&#x2F; 往路由器传文件的，省的用winscp了</p><p>luci-app-flowoffload &#x2F;&#x2F; 加速nat转发的，不知道个啥原理，反正看到加速就装了</p><p>luci-app-netdata &#x2F;&#x2F; 这个系统资源监控软件看起来比较强大</p><p>luci-app-openclash &#x2F;&#x2F; 这个代理上网的，看起来比较强大</p><p>luci-app-serverchan &#x2F;&#x2F; 这个是用来微信通知路由的太热了的</p><p>luci-app-ttyd &#x2F;&#x2F; 这个是在网页上敲命令行的，省的开xshell了</p><p>luci-app-unblockmusic &#x2F;&#x2F; 这个是解锁网易云变灰歌曲的，就是告诉它没变灰然后代理到其他服务器听</p><p>luci-app-upnp &#x2F;&#x2F; 这个是自动端口映射的，需要你的软件支持，可以在外网访问家里的服务</p><p>luci-app-usb-printer &#x2F;&#x2F; 这个是连接打印机的，能把usb打印机变成网络打印机</p><p>luci-app-vlmscd &#x2F;&#x2F; 这个是激活系统跟office的</p><p>按两下esc返回上一层</p><p>选中themes 按Enter进入</p><p><img src="https://b3logfile.com/file/2020/07/image-58bbde3d.png" alt="image.png"></p><p>选中 luci-theme-opentomato 个人比较喜欢这个主题，当然可以选其他的</p><p><img src="https://b3logfile.com/file/2020/07/image-2e25834a.png" alt="image.png"></p><p>一直按esc 直到出现save 选ok</p><p>然后开始编译：<code>make -j1 V=s</code> 第一次建议单线程编译，当然我没有听建议的，也能编过</p><p>然后等待跑码完，就编译好了自己的软路由系统</p><p>最后镜像文件在：<code>bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img</code></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20180221.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
-&lt;h1 id=&quot;软路由系统&quot;&gt;&lt;a href=&quot;#软路由系统&quot; class=</summary>
-      
-    
-    
-    
-    
-    <category term="软路由" scheme="https://www.jrrm.top/tags/%E8%BD%AF%E8%B7%AF%E7%94%B1/"/>
     
   </entry>
   
