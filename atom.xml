@@ -6,7 +6,7 @@
   <link href="https://www.jrrm.top/atom.xml" rel="self"/>
   <link href="https://pubsubhubbub.appspot.com/" rel="hub"/>
   <link href="https://www.jrrm.top/"/>
-  <updated>2026-04-14T02:12:22.064Z</updated>
+  <updated>2026-04-17T02:07:31.012Z</updated>
   <id>https://www.jrrm.top/</id>
   
   <author>
@@ -24,16 +24,45 @@
 
   
   <entry>
+    <title>AI 辅助代码审查实战：让 PR Review 不再拖慢交付</title>
+    <link href="https://www.jrrm.top/posts/2f8d61b2.html"/>
+    <id>https://www.jrrm.top/posts/2f8d61b2.html</id>
+    <published>2026-04-17T02:10:00.000Z</published>
+    <updated>2026-04-17T02:07:31.012Z</updated>
+    
+    <content type="html"><![CDATA[<p>在很多团队里，PR Review 往往是一个“大家都知道重要，但总是排队”的环节。</p><p>代码写完了，测试过了，准备合并了，结果 Review 还没回来；等审查意见回来，开发者上下文已经丢了一半，修复、解释、再提交，又是一轮等待。真正拖慢交付的，很多时候不是写代码，而是<strong>代码审查没有标准化、没有自动化、没有前置过滤</strong>。</p><p>这篇文章讲的不是“让 AI 替你决定合并与否”，而是把 AI 变成<strong>Review 前置筛子</strong>：先帮你发现明显问题、整理风险点、补齐检查清单，再把真正需要人来判断的部分交给团队成员。</p><span id="more"></span><h2 id="一、为什么-PR-Review-总是慢"><a href="#一、为什么-PR-Review-总是慢" class="headerlink" title="一、为什么 PR Review 总是慢"></a>一、为什么 PR Review 总是慢</h2><p>大多数团队的 Review 变慢，问题通常不在“人不愿意看”，而在于 Review 的输入本身太差。</p><h3 id="常见的四个瓶颈"><a href="#常见的四个瓶颈" class="headerlink" title="常见的四个瓶颈"></a>常见的四个瓶颈</h3><ol><li><p><strong>改动太大</strong></p><ul><li>一个 PR 里塞了功能、重构、格式化、修 bug</li><li>审查者需要先理解意图，再判断实现，成本很高</li></ul></li><li><p><strong>上下文不足</strong></p><ul><li>只看 diff 不知道为什么改</li><li>没有设计说明，没有测试说明，没有风险提示</li></ul></li><li><p><strong>检查点不统一</strong></p><ul><li>有的人看命名，有的人看性能，有的人看安全</li><li>审查标准不一致，反馈质量波动很大</li></ul></li><li><p><strong>重复劳动太多</strong></p><ul><li>大量时间花在找拼写、缩进、明显的空指针、无意义重构上</li><li>真正该关注的业务逻辑、边界条件、权限问题反而被稀释</li></ul></li></ol><p>AI 适合处理的，正是这些重复、机械、结构化的部分。</p><hr><h2 id="二、AI-辅助代码审查到底该做什么"><a href="#二、AI-辅助代码审查到底该做什么" class="headerlink" title="二、AI 辅助代码审查到底该做什么"></a>二、AI 辅助代码审查到底该做什么</h2><p>先说结论：AI 不是“最终裁判”，而是“第一轮审查员”。</p><h3 id="适合交给-AI-的内容"><a href="#适合交给-AI-的内容" class="headerlink" title="适合交给 AI 的内容"></a>适合交给 AI 的内容</h3><ul><li>代码风格和命名一致性</li><li>明显的逻辑漏洞</li><li>潜在的性能问题</li><li>可能的安全风险</li><li>测试覆盖缺口</li><li>是否违反项目约定</li><li>是否缺少必要的错误处理</li><li>是否有多余改动</li></ul><h3 id="不适合只靠-AI-的内容"><a href="#不适合只靠-AI-的内容" class="headerlink" title="不适合只靠 AI 的内容"></a>不适合只靠 AI 的内容</h3><ul><li>架构级决策</li><li>业务规则是否真的合理</li><li>对复杂边界的经验判断</li><li>跨团队影响评估</li><li>是否应该拆 PR、重设方案</li></ul><p>简单说，AI 负责“扫雷”，人负责“拍板”。</p><hr><h2 id="三、一个实用的-AI-Review-工作流"><a href="#三、一个实用的-AI-Review-工作流" class="headerlink" title="三、一个实用的 AI Review 工作流"></a>三、一个实用的 AI Review 工作流</h2><p>最稳妥的方式，不是把整个仓库丢给模型，而是让 AI 只看<strong>变化范围</strong>和<strong>审查目标</strong>。</p><h3 id="推荐流程"><a href="#推荐流程" class="headerlink" title="推荐流程"></a>推荐流程</h3><ol><li>开发者提交 PR</li><li>CI 把 diff 导出来</li><li>AI 先做结构化审查</li><li>输出风险清单和建议</li><li>人工只看高风险项</li><li>必要时再补人工深审</li></ol><p>这个流程的核心价值是：<strong>先缩小问题空间，再把人的注意力集中在真正重要的地方</strong>。</p><hr><h2 id="四、AI-Review-提示词怎么写"><a href="#四、AI-Review-提示词怎么写" class="headerlink" title="四、AI Review 提示词怎么写"></a>四、AI Review 提示词怎么写</h2><p>提示词不要写成“帮我看看代码有没有问题”，这种太空。</p><p>要明确让 AI 输出结构化结果，并且限定审查维度。</p><h3 id="推荐提示词模板"><a href="#推荐提示词模板" class="headerlink" title="推荐提示词模板"></a>推荐提示词模板</h3><pre><code class="language-text">你是一个资深代码审查员。请审查以下代码变更，重点关注：1. 安全性问题2. 性能问题3. 可维护性问题4. 测试缺口5. 是否违反常见项目规范输出格式：- 发现的问题- 风险等级- 修改建议- 是否建议阻塞合并如果信息不足，请明确说明，不要猜测。</code></pre><h3 id="进一步增强的约束"><a href="#进一步增强的约束" class="headerlink" title="进一步增强的约束"></a>进一步增强的约束</h3><p>你还可以加上：</p><ul><li>只基于 diff 判断，不要假设未提供的上下文</li><li>对不确定的内容标记为“需人工确认”</li><li>先给出高风险问题，再给出低风险问题</li><li>避免泛泛而谈，必须指出文件、行号、原因</li></ul><p>这样做出来的审查结果，才更像可执行报告，而不是聊天建议。</p><hr><h2 id="五、一个可落地的-GitHub-Actions-示例"><a href="#五、一个可落地的-GitHub-Actions-示例" class="headerlink" title="五、一个可落地的 GitHub Actions 示例"></a>五、一个可落地的 GitHub Actions 示例</h2><p>下面这个思路适合大多数团队：PR 打开或更新时，自动跑一轮 AI Review，结果作为评论或检查结果返回。</p><pre><code class="language-yaml">name: AI Code Reviewon:  pull_request:    types: [opened, synchronize, reopened]jobs:  review:    runs-on: ubuntu-latest    steps:      - name: Checkout repository        uses: actions/checkout@v4        with:          fetch-depth: 0      - name: Install Claude Code        run: npm install -g @anthropic-ai/claude-code      - name: Prepare diff        run: |          git diff origin/$&#123;&#123; github.base_ref &#125;&#125;...HEAD &gt; changes.diff      - name: AI Review        env:          ANTHROPIC_API_KEY: $&#123;&#123; secrets.ANTHROPIC_API_KEY &#125;&#125;        run: |          claude --print &quot;你是一个资深代码审查员。请审查以下变更，重点关注安全性、性能、可维护性和测试缺口。输出必须结构化，指出具体风险并给出建议。只基于以下 diff：$(cat changes.diff)&quot;</code></pre><h3 id="这个方案的好处"><a href="#这个方案的好处" class="headerlink" title="这个方案的好处"></a>这个方案的好处</h3><ul><li>每次 PR 都有统一的第一轮检查</li><li>减少漏看明显问题的概率</li><li>审查意见格式统一，方便团队阅读</li><li>可以把 AI 结果沉淀成模板，越来越稳定</li></ul><h3 id="但要注意"><a href="#但要注意" class="headerlink" title="但要注意"></a>但要注意</h3><p>不要把 AI 审查结果直接当最终结论。CI 适合做“前置过滤”，不是“完全替代”。</p><hr><h2 id="六、AI-Review-最适合发现哪些问题"><a href="#六、AI-Review-最适合发现哪些问题" class="headerlink" title="六、AI Review 最适合发现哪些问题"></a>六、AI Review 最适合发现哪些问题</h2><p>下面这些场景，AI 通常比人更快。</p><h3 id="1-空指针和边界遗漏"><a href="#1-空指针和边界遗漏" class="headerlink" title="1. 空指针和边界遗漏"></a>1. 空指针和边界遗漏</h3><p>很多 bug 并不是复杂逻辑，而是简单的输入没判断、返回值没处理。</p><p>例如：</p><pre><code class="language-ts">const user = await getUser(id);return user.profile.name;</code></pre><p>如果 <code>getUser</code> 可能返回 <code>null</code>，AI 很容易帮你抓出来。</p><h3 id="2-重复逻辑和可抽取代码"><a href="#2-重复逻辑和可抽取代码" class="headerlink" title="2. 重复逻辑和可抽取代码"></a>2. 重复逻辑和可抽取代码</h3><p>AI 很擅长指出“这里和别处差不多，可以抽函数”。</p><p>这类建议对长期维护很有价值，因为它帮助团队尽早发现代码膨胀的趋势。</p><h3 id="3-明显的性能问题"><a href="#3-明显的性能问题" class="headerlink" title="3. 明显的性能问题"></a>3. 明显的性能问题</h3><p>比如：</p><ul><li>在循环里重复查数据库</li><li>对大数组做多次全量遍历</li><li>在请求路径里做同步阻塞操作</li><li>不必要的深拷贝或序列化</li></ul><p>AI 可以快速标出这些模式。</p><h3 id="4-测试缺失"><a href="#4-测试缺失" class="headerlink" title="4. 测试缺失"></a>4. 测试缺失</h3><p>很多 PR 只改了实现，没有改测试。</p><p>AI 可以自动检查：</p><ul><li>是否新增了关键逻辑却没有对应测试</li><li>是否覆盖了异常路径</li><li>是否只测了 happy path</li></ul><p>这点和《<a href="/2026/04/16/use-ai-write-unit-tests-right-way/">用 AI 写单元测试的正确方法</a>》是强相关的。</p><hr><h2 id="七、把-AI-Review-和团队规范绑定起来"><a href="#七、把-AI-Review-和团队规范绑定起来" class="headerlink" title="七、把 AI Review 和团队规范绑定起来"></a>七、把 AI Review 和团队规范绑定起来</h2><p>如果团队没有审查规范，AI 的输出会显得很散。</p><p>所以更好的方式，是把团队规则写进审查提示里，甚至写进项目说明文件里。</p><h3 id="建议加上的规范项"><a href="#建议加上的规范项" class="headerlink" title="建议加上的规范项"></a>建议加上的规范项</h3><ul><li>新增接口必须有单元测试</li><li>数据库访问必须有错误处理</li><li>用户输入必须校验</li><li>关键路径禁止同步 I&#x2F;O</li><li>公共函数必须写清楚边界行为</li><li>生产相关改动必须给出回滚方案</li></ul><p>这样 AI 审查时就不是“泛评论”，而是“照着你们团队的尺子看代码”。</p><h3 id="如果你在用-Claude-Code"><a href="#如果你在用-Claude-Code" class="headerlink" title="如果你在用 Claude Code"></a>如果你在用 Claude Code</h3><p>可以把项目约定放进 <code>CLAUDE.md</code>，让它在审查时自动遵循团队规则。</p><p>这和本博客前面那篇《<a href="/2026/04/02/claude-code-complete-guide/">Claude Code 完整使用指南：从入门到自动化工作流</a>》是天然连贯的：一个解决“怎么用”，一个解决“怎么把它用进流程里”。</p><hr><h2 id="八、审查报告应该长什么样"><a href="#八、审查报告应该长什么样" class="headerlink" title="八、审查报告应该长什么样"></a>八、审查报告应该长什么样</h2><p>AI Review 的输出不要太散，最好固定成三层：</p><h3 id="第一层：结论"><a href="#第一层：结论" class="headerlink" title="第一层：结论"></a>第一层：结论</h3><ul><li>是否建议合并</li><li>风险等级</li><li>是否需要人工重点复核</li></ul><h3 id="第二层：问题列表"><a href="#第二层：问题列表" class="headerlink" title="第二层：问题列表"></a>第二层：问题列表</h3><p>每个问题最好包含：</p><ul><li>文件位置</li><li>问题描述</li><li>风险等级</li><li>修改建议</li></ul><h3 id="第三层：补充建议"><a href="#第三层：补充建议" class="headerlink" title="第三层：补充建议"></a>第三层：补充建议</h3><p>比如：</p><ul><li>是否应拆分 PR</li><li>是否应增加测试</li><li>是否应更新文档</li><li>是否应补回滚说明</li></ul><h3 id="推荐示例格式"><a href="#推荐示例格式" class="headerlink" title="推荐示例格式"></a>推荐示例格式</h3><pre><code class="language-text">结论：建议暂缓合并高风险问题：1. src/api/user.ts:42   - 问题：未处理 null 返回值，可能导致运行时异常   - 建议：增加空值判断并返回 404中风险问题：2. src/service/report.ts:88   - 问题：在请求路径中进行了两次全表扫描   - 建议：改为分页查询或缓存测试缺口：- 新增接口未覆盖鉴权失败场景- 未验证异常分支</code></pre><p>这种格式最适合团队协作，因为开发者可以直接按项修。</p><hr><h2 id="九、哪些团队最适合先上-AI-Review"><a href="#九、哪些团队最适合先上-AI-Review" class="headerlink" title="九、哪些团队最适合先上 AI Review"></a>九、哪些团队最适合先上 AI Review</h2><p>并不是所有团队都要一上来就全自动。</p><h3 id="最适合先做的团队"><a href="#最适合先做的团队" class="headerlink" title="最适合先做的团队"></a>最适合先做的团队</h3><ul><li>PR 数量多、Review 排队明显的团队</li><li>有统一编码规范的团队</li><li>业务迭代快、重复改动多的团队</li><li>新人比较多、代码风格不稳定的团队</li><li>需要频繁做安全和合规检查的团队</li></ul><h3 id="不建议一开始就完全自动化的情况"><a href="#不建议一开始就完全自动化的情况" class="headerlink" title="不建议一开始就完全自动化的情况"></a>不建议一开始就完全自动化的情况</h3><ul><li>项目文档很差，代码约定不统一</li><li>业务规则高度复杂，审查主要依赖经验</li><li>团队对 AI 结果没有信任基础</li><li>变更量很小，人工 Review 已经足够快</li></ul><p>这类场景更适合先做“辅助建议”，再逐步提权。</p><hr><h2 id="十、落地时最容易踩的坑"><a href="#十、落地时最容易踩的坑" class="headerlink" title="十、落地时最容易踩的坑"></a>十、落地时最容易踩的坑</h2><h3 id="坑-1：把-AI-输出当权威"><a href="#坑-1：把-AI-输出当权威" class="headerlink" title="坑 1：把 AI 输出当权威"></a>坑 1：把 AI 输出当权威</h3><p>AI 会帮你找问题，但它不是上下文全知者。涉及业务规则和历史包袱的部分，必须人工确认。</p><h3 id="坑-2：审查输入太长"><a href="#坑-2：审查输入太长" class="headerlink" title="坑 2：审查输入太长"></a>坑 2：审查输入太长</h3><p>整仓库、整个 PR、几十个文件一起喂，结果通常会变差。更好的做法是按模块、按 diff、按风险拆分。</p><h3 id="坑-3：没有统一模板"><a href="#坑-3：没有统一模板" class="headerlink" title="坑 3：没有统一模板"></a>坑 3：没有统一模板</h3><p>没有模板就没有稳定输出。今天像代码审查，明天像代码助手，后天像技术顾问，团队很难复用。</p><h3 id="坑-4：只看问题，不看建议"><a href="#坑-4：只看问题，不看建议" class="headerlink" title="坑 4：只看问题，不看建议"></a>坑 4：只看问题，不看建议</h3><p>AI 的价值不只是指出问题，更重要的是给出“下一步怎么改”。</p><hr><h2 id="十一、推荐的真实使用方式"><a href="#十一、推荐的真实使用方式" class="headerlink" title="十一、推荐的真实使用方式"></a>十一、推荐的真实使用方式</h2><p>如果你现在就想开始，建议这样上：</p><h3 id="第一步：人工审查前加一层-AI-预审"><a href="#第一步：人工审查前加一层-AI-预审" class="headerlink" title="第一步：人工审查前加一层 AI 预审"></a>第一步：人工审查前加一层 AI 预审</h3><p>先让 AI 看 diff，输出风险点。</p><h3 id="第二步：把-AI-结果写进-PR-模板"><a href="#第二步：把-AI-结果写进-PR-模板" class="headerlink" title="第二步：把 AI 结果写进 PR 模板"></a>第二步：把 AI 结果写进 PR 模板</h3><p>例如要求提交人附上：</p><ul><li>改动目的</li><li>风险点</li><li>测试结果</li><li>回滚方式</li></ul><h3 id="第三步：对高风险模块做强制-AI-审查"><a href="#第三步：对高风险模块做强制-AI-审查" class="headerlink" title="第三步：对高风险模块做强制 AI 审查"></a>第三步：对高风险模块做强制 AI 审查</h3><p>比如：</p><ul><li>鉴权</li><li>支付</li><li>数据导出</li><li>用户隐私相关逻辑</li></ul><h3 id="第四步：定期复盘误报和漏报"><a href="#第四步：定期复盘误报和漏报" class="headerlink" title="第四步：定期复盘误报和漏报"></a>第四步：定期复盘误报和漏报</h3><p>只要复盘几轮，AI 审查模板就会越来越准。</p><hr><h2 id="十二、总结"><a href="#十二、总结" class="headerlink" title="十二、总结"></a>十二、总结</h2><p>AI 辅助代码审查的真正价值，不是替代人，而是让审查流程从“纯人工排队”升级为“机器先筛、人再决策”。</p><p>它最擅长的是：</p><ul><li>快速找出明显问题</li><li>统一审查标准</li><li>降低重复劳动</li><li>给出结构化建议</li><li>让 Review 更早发生</li></ul><p>当你把 AI Review 和项目规范、CI 流程、测试体系结合起来之后，PR 审查就不再只是“等别人看”，而会变成一个可复制、可扩展、可持续优化的工程环节。</p><p>如果你已经在用 Claude Code，不妨把它进一步推进到“审查助手”角色；如果你还没有，那就从一条最简单的规则开始：<strong>让 AI 先帮你看第一遍，再让人做最终判断。</strong></p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li>《<a href="/2026/04/02/claude-code-complete-guide/">Claude Code 完整使用指南：从入门到自动化工作流</a>》</li><li>《<a href="/2026/04/16/use-ai-write-unit-tests-right-way/">用 AI 写单元测试的正确方法</a>》</li><li>《<a href="/2026/04/15/deepseek-vs-claude-4-6/">DeepSeek vs Claude 4.6：AI 编程模型的黄金组合</a>》</li><li><a href="https://docs.github.com/actions">GitHub Actions 官方文档</a></li><li><a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code 官方文档</a></li></ul>]]></content>
+    
+    
+    <summary type="html">通过 AI 辅助代码审查，把重复的 PR Review 工作自动化、结构化，帮助团队更快发现安全问题、性能隐患和可维护性风险。</summary>
+    
+    
+    
+    <category term="工具效率" scheme="https://www.jrrm.top/categories/%E5%B7%A5%E5%85%B7%E6%95%88%E7%8E%87/"/>
+    
+    
+    <category term="AI 编程" scheme="https://www.jrrm.top/tags/AI-%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="代码审查" scheme="https://www.jrrm.top/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/"/>
+    
+    <category term="PR Review" scheme="https://www.jrrm.top/tags/PR-Review/"/>
+    
+    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
+    
+    <category term="GitHub Actions" scheme="https://www.jrrm.top/tags/GitHub-Actions/"/>
+    
+  </entry>
+  
+  <entry>
     <title>DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南</title>
     <link href="https://www.jrrm.top/posts/8541121a.html"/>
     <id>https://www.jrrm.top/posts/8541121a.html</id>
     <published>2026-04-13T16:00:00.000Z</published>
-    <updated>2026-04-14T02:12:22.064Z</updated>
+    <updated>2026-04-14T15:52:49.865Z</updated>
     
     <content type="html"><![CDATA[<h1 id="DeepSeek-vs-Claude-4-6：2026-年-AI-编程模型的「黄金组合」与避坑指南"><a href="#DeepSeek-vs-Claude-4-6：2026-年-AI-编程模型的「黄金组合」与避坑指南" class="headerlink" title="DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南"></a>DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南</h1><blockquote><p>你还在为”用哪个模型”纠结吗？2026 年的答案不是选一个，而是把两个都用对。</p></blockquote><hr><h2 id="一、格局巨变：为什么你不再需要单一模型？"><a href="#一、格局巨变：为什么你不再需要单一模型？" class="headerlink" title="一、格局巨变：为什么你不再需要单一模型？"></a>一、格局巨变：为什么你不再需要单一模型？</h2><h3 id="从单模霸权到多模动态路由"><a href="#从单模霸权到多模动态路由" class="headerlink" title="从单模霸权到多模动态路由"></a>从单模霸权到多模动态路由</h3><p>2024 年，大多数开发者的工作流是这样的：选定一个模型，然后把所有编程任务全部压在它身上。GPT-4 或 Claude 3 几乎成了”默认答案”。</p><p>2026 年，这种做法已经显得粗糙。</p><p>原因很简单：<strong>不同模型在不同任务上的能力差异，已经大到足以影响工程交付效率</strong>。DeepSeek V3&#x2F;R1 系列在国内开发者中快速渗透，凭借极具竞争力的价格和令人惊艳的代码补全速度，成为日常高频任务的首选；而 Anthropic 在 2026 年初发布的 Claude 4.6（Sonnet&#x2F;Opus）则在复杂推理、大规模代码重构和多文件上下文管理上持续领先。</p><p>现代 AI 编程工作流的核心已不再是”哪个模型最强”，而是：</p><blockquote><p><strong>在正确的任务节点，调用正确的模型。</strong></p></blockquote><p>这就是多模动态路由（Multi-Model Dynamic Routing）的本质——把 LLM 当成工具箱，而不是万能锤。</p><h3 id="两个模型的定位分野"><a href="#两个模型的定位分野" class="headerlink" title="两个模型的定位分野"></a>两个模型的定位分野</h3><table><thead><tr><th>维度</th><th>DeepSeek V3 &#x2F; R1</th><th>Claude 4.6 (Sonnet&#x2F;Opus)</th></tr></thead><tbody><tr><td>定位</td><td>高性价比、高吞吐</td><td>高精度、深推理</td></tr><tr><td>适合场景</td><td>样板代码生成、单文件补全、快速原型</td><td>跨文件重构、架构设计、复杂 bug 追踪</td></tr><tr><td>上下文窗口</td><td>64K（V3）&#x2F; 128K（R1）</td><td>200K（Sonnet&#x2F;Opus）</td></tr><tr><td>响应速度</td><td>极快（低延迟）</td><td>中等（深度思考模式下更慢）</td></tr><tr><td>单价（每百万 Token）</td><td>约 ¥1–4</td><td>约 ¥20–80</td></tr><tr><td>中文理解</td><td>优秀</td><td>良好</td></tr></tbody></table><hr><h2 id="二、实测对决：多维度能力深度复盘"><a href="#二、实测对决：多维度能力深度复盘" class="headerlink" title="二、实测对决：多维度能力深度复盘"></a>二、实测对决：多维度能力深度复盘</h2><h3 id="2-1-复杂逻辑重构能力对比"><a href="#2-1-复杂逻辑重构能力对比" class="headerlink" title="2.1 复杂逻辑重构能力对比"></a>2.1 复杂逻辑重构能力对比</h3><p>以一个真实场景为例：将一个 1200 行的 Python Django 单体视图层，拆分为基于 Repository Pattern 的分层架构（Controller → Service → Repository），同时保持测试覆盖率不低于 80%。</p><p><strong>DeepSeek V3 表现：</strong></p><ul><li>能够正确识别代码中的 CRUD 逻辑并提取 Repository 类</li><li>在单文件范围内表现优秀</li><li>当涉及跨文件引用（如 <code>models.py</code> → <code>serializers.py</code> → <code>views.py</code>）时，出现约 15% 的引用错误率</li><li>生成的测试代码以 Mock 为主，覆盖率计算偏乐观</li></ul><p><strong>Claude 4.6 Sonnet 表现：</strong></p><ul><li>能完整分析 5 个相关文件的依赖图</li><li>重构方案符合 Django 最佳实践，Service 层边界清晰</li><li>自动识别并保留了原有的自定义 <code>permission_classes</code> 逻辑（DeepSeek 将其遗漏）</li><li>测试代码使用真实数据库事务，覆盖率实测达到 84%</li></ul><p><strong>结论：</strong> 单文件、确定性任务 → DeepSeek；跨文件、高复杂度重构 → Claude 4.6。</p><h3 id="2-2-Token-消耗成本核算"><a href="#2-2-Token-消耗成本核算" class="headerlink" title="2.2 Token 消耗成本核算"></a>2.2 Token 消耗成本核算</h3><p>以一个中等规模项目（10 人团队，每日 AI 辅助编程 8 小时）为基准，测算月度成本：</p><pre><code>场景 A：全量使用 Claude 4.6 Sonnet  日均输入 Token：约 800K  日均输出 Token：约 200K  月度费用估算：约 ¥3,200–4,800场景 B：DeepSeek 处理 70% 常规任务 + Claude 4.6 处理 30% 复杂任务  DeepSeek 月度费用：约 ¥180–300  Claude 4.6 月度费用：约 ¥960–1,440  合计：约 ¥1,140–1,740成本节省：约 55%–65%</code></pre><blockquote><p><strong>关键洞察：</strong> 黄金组合的成本优势不在于”少用贵的”，而在于<strong>把贵的用在刀刃上</strong>。</p></blockquote><h3 id="2-3-代码补全速度与开发体验"><a href="#2-3-代码补全速度与开发体验" class="headerlink" title="2.3 代码补全速度与开发体验"></a>2.3 代码补全速度与开发体验</h3><p>在 VS Code + Continue.dev 插件环境下实测：</p><ul><li><strong>DeepSeek</strong>：首 Token 延迟约 300–600ms，流式输出流畅，日常补全几乎无感知等待</li><li><strong>Claude 4.6</strong>：首 Token 延迟约 800–1500ms，在复杂推理任务中开启 Extended Thinking 后可达 3–8s</li></ul><p>对于高频的行内补全（Inline Completion）场景，DeepSeek 的体验明显更顺滑；而当你需要”解释这段代码的架构意图”或”帮我设计这个模块的接口”时，等 Claude 4.6 多思考几秒是完全值得的。</p><hr><h2 id="三、实战路线：构建你的-AI-编程「黄金组合」"><a href="#三、实战路线：构建你的-AI-编程「黄金组合」" class="headerlink" title="三、实战路线：构建你的 AI 编程「黄金组合」"></a>三、实战路线：构建你的 AI 编程「黄金组合」</h2><h3 id="3-1-按任务类型路由"><a href="#3-1-按任务类型路由" class="headerlink" title="3.1 按任务类型路由"></a>3.1 按任务类型路由</h3><pre><code>if 任务类型 in [&quot;样板代码&quot;, &quot;注释生成&quot;, &quot;简单 bug 修复&quot;, &quot;SQL 编写&quot;, &quot;单元测试补全&quot;]:    使用 DeepSeek V3  # 快、便宜、够用elif 任务类型 in [&quot;跨文件重构&quot;, &quot;架构设计&quot;, &quot;安全审计&quot;, &quot;复杂业务逻辑分析&quot;]:    使用 Claude 4.6 Sonnet  # 精、深、可靠elif 任务类型 in [&quot;系统设计 RFC&quot;, &quot;技术方案评审&quot;, &quot;高风险变更&quot;]:    使用 Claude 4.6 Opus  # 最强推理，按需使用</code></pre><h3 id="3-2-MVP-阶段的-DeepSeek-策略"><a href="#3-2-MVP-阶段的-DeepSeek-策略" class="headerlink" title="3.2 MVP 阶段的 DeepSeek 策略"></a>3.2 MVP 阶段的 DeepSeek 策略</h3><p>早期产品迭代速度优先，DeepSeek 是天然盟友：</p><ul><li>用 DeepSeek 快速生成 CRUD 骨架</li><li>用 DeepSeek 编写 80% 的标准化测试用例</li><li>用 DeepSeek 完成 API 文档的初稿</li></ul><p><strong>一个实用技巧：</strong> 给 DeepSeek 提供精准的 Prompt 模板（System Prompt 固定输出格式），可以将其输出质量提升 30% 以上，同时避免后续 Claude 处理时的格式清洗成本。</p><h3 id="3-3-复杂架构阶段的-Claude-4-6-策略"><a href="#3-3-复杂架构阶段的-Claude-4-6-策略" class="headerlink" title="3.3 复杂架构阶段的 Claude 4.6 策略"></a>3.3 复杂架构阶段的 Claude 4.6 策略</h3><p>当项目进入架构稳定期或面临大规模重构时，切换到 Claude 4.6：</p><ul><li>将整个模块的相关文件打包进上下文（Claude 4.6 的 200K 窗口是核心优势）</li><li>明确告知重构目标和约束条件（如”保持 API 兼容性”、”不引入新依赖”）</li><li>利用 Claude 的 Extended Thinking 模式进行架构方案的多路径推演</li></ul><hr><h2 id="四、避坑指南：如何解决模型切换导致的上下文丢失？"><a href="#四、避坑指南：如何解决模型切换导致的上下文丢失？" class="headerlink" title="四、避坑指南：如何解决模型切换导致的上下文丢失？"></a>四、避坑指南：如何解决模型切换导致的上下文丢失？</h2><p>这是多模型工作流中<strong>最常见、最致命的问题</strong>。</p><h3 id="坑-1：切换模型时丢失背景约定"><a href="#坑-1：切换模型时丢失背景约定" class="headerlink" title="坑 1：切换模型时丢失背景约定"></a>坑 1：切换模型时丢失背景约定</h3><p><strong>场景：</strong> 你在 DeepSeek 里约定了”所有函数使用下划线命名法”，切换到 Claude 后它默认输出了驼峰命名。</p><p><strong>解决方案：构建项目级 Context 文档</strong></p><pre><code class="language-markdown"># PROJECT_CONTEXT.md（每次切换模型时附带）## 技术栈- Python 3.12 + Django 5.1 + PostgreSQL 16- 测试框架：pytest + factory_boy## 编码规范- 函数命名：snake_case- 类命名：PascalCase- 禁止使用 print()，统一使用 logging## 当前任务背景- 正在重构 user_service.py，目标：拆分为 Repository + Service 层- 不得修改 User 模型的 DB schema</code></pre><p>将这个文档作为每次对话的 System Prompt 前缀，两个模型都能保持一致的”世界观”。</p><h3 id="坑-2：DeepSeek-生成的代码风格与-Claude-接手后产生冲突"><a href="#坑-2：DeepSeek-生成的代码风格与-Claude-接手后产生冲突" class="headerlink" title="坑 2：DeepSeek 生成的代码风格与 Claude 接手后产生冲突"></a>坑 2：DeepSeek 生成的代码风格与 Claude 接手后产生冲突</h3><p><strong>解决方案：设立「交接检查点」</strong></p><p>在从 DeepSeek 切换到 Claude 前，先跑一遍 linter（如 <code>ruff check</code> &#x2F; <code>eslint</code>），确保代码风格统一。这一步成本极低，但能避免 Claude 在处理时因风格噪音分散注意力。</p><h3 id="坑-3：长对话导致的”幻觉漂移”"><a href="#坑-3：长对话导致的”幻觉漂移”" class="headerlink" title="坑 3：长对话导致的”幻觉漂移”"></a>坑 3：长对话导致的”幻觉漂移”</h3><p>无论 DeepSeek 还是 Claude，超长对话都会导致早期约定被”遗忘”。</p><p><strong>解决方案：定期输出「对话摘要节点」</strong></p><pre><code>每完成一个功能模块，让模型输出：1. 本次完成的改动摘要（3 条以内）2. 当前文件的关键接口签名3. 下一步待处理的依赖项将此摘要作为新对话的起点，而非继续拉长旧对话。</code></pre><h3 id="坑-4：成本黑洞——不必要地将大文件喂给-Claude"><a href="#坑-4：成本黑洞——不必要地将大文件喂给-Claude" class="headerlink" title="坑 4：成本黑洞——不必要地将大文件喂给 Claude"></a>坑 4：成本黑洞——不必要地将大文件喂给 Claude</h3><p>Claude 4.6 的 200K 上下文虽大，但不是免费的。</p><p><strong>原则：最小上下文原则（Minimal Context Principle）</strong></p><ul><li>只传入与当前任务直接相关的文件</li><li>用 <code>#region</code> 注释标注关键代码段，只传入该段落</li><li>在 Claude 处理前，用 DeepSeek 先做一遍”上下文摘要”，压缩输入 Token</li></ul><hr><h2 id="结语：2026-年的-AI-编程，是系统工程"><a href="#结语：2026-年的-AI-编程，是系统工程" class="headerlink" title="结语：2026 年的 AI 编程，是系统工程"></a>结语：2026 年的 AI 编程，是系统工程</h2><p>DeepSeek 和 Claude 4.6 不是竞争关系，而是<strong>互补的工具链节点</strong>。前者让你跑得快，后者让你走得稳。真正拉开差距的，不是你用了哪个模型，而是你<strong>有没有把多模型协作变成一套可复用的工程流程</strong>。</p><p>从今天起，试着把你的任务分类，建立属于你团队的路由规则——这比单纯追逐”最新最强模型”，ROI 高得多。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="./Claude-Code%E5%AE%8C%E6%95%B4%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81.md">Claude Code 实战：如何用 AI Agent 自动化你的代码审查流程</a></li><li><a href="./%E7%94%A8-AI-%E5%86%99%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%96%B9%E6%B3%95.md">用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</a></li><li><a href="./2026%E5%B9%B4%E7%A8%8B%E5%BA%8F%E5%91%98%E5%BF%85%E5%A4%87%E7%9A%845%E4%B8%AAAI%E7%BC%96%E7%A8%8B%E7%A5%9E%E5%99%A8.md">2026 年程序员必备的 5 个 AI 编程神器</a></li></ul>]]></content>
     
     
-    <summary type="html">2026 年 AI 编程领域已进入多模型动态路由时代。本文通过实测数据深度对比 DeepSeek 与 Claude 4.6 在复杂逻辑重构、Token 成本、上下文管理等维度的表现，揭示两者如何构成「高性价比 MVP 开发 + 高精度架构设计」的黄金组合，并提供完整的模型切换避坑指南，帮助开发者和技术团队在 2026 年找到最优 AI 编程策略。</summary>
+    <summary type="html">2026年AI编程已进入多模型时代。本文实测对比DeepSeek与Claude 4.6在重构、Token成本及架构设计上的表现，揭示黄金组合策略与避坑指南。</summary>
     
     
     
@@ -124,15 +153,15 @@
     <category term="工具效率" scheme="https://www.jrrm.top/categories/%E5%B7%A5%E5%85%B7%E6%95%88%E7%8E%87/"/>
     
     
+    <category term="AI 编程" scheme="https://www.jrrm.top/tags/AI-%E7%BC%96%E7%A8%8B/"/>
+    
     <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
     
-    <category term="AI 编程" scheme="https://www.jrrm.top/tags/AI-%E7%BC%96%E7%A8%8B/"/>
+    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
     
     <category term="自动化工作流" scheme="https://www.jrrm.top/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81/"/>
     
     <category term="Anthropic" scheme="https://www.jrrm.top/tags/Anthropic/"/>
-    
-    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
     
   </entry>
   
@@ -182,9 +211,9 @@
     <category term="AI实战" scheme="https://www.jrrm.top/categories/AI%E5%AE%9E%E6%88%98/"/>
     
     
-    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
-    
     <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
+    
+    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
     <category term="Cursor" scheme="https://www.jrrm.top/tags/Cursor/"/>
     
@@ -240,13 +269,13 @@
     <category term="行业洞察" scheme="https://www.jrrm.top/categories/%E8%A1%8C%E4%B8%9A%E6%B4%9E%E5%AF%9F/"/>
     
     
-    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
-    
     <category term="AI开源项目" scheme="https://www.jrrm.top/tags/AI%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/"/>
     
     <category term="GitHub" scheme="https://www.jrrm.top/tags/GitHub/"/>
+    
+    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="AI Agent" scheme="https://www.jrrm.top/tags/AI-Agent/"/>
     
     <category term="开源推荐" scheme="https://www.jrrm.top/tags/%E5%BC%80%E6%BA%90%E6%8E%A8%E8%8D%90/"/>
     
@@ -296,11 +325,11 @@
     <category term="AI实战" scheme="https://www.jrrm.top/categories/AI%E5%AE%9E%E6%88%98/"/>
     
     
+    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
+    
     <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
     <category term="开发工具" scheme="https://www.jrrm.top/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/"/>
-    
-    <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
     
     <category term="Cursor" scheme="https://www.jrrm.top/tags/Cursor/"/>
     
@@ -325,9 +354,9 @@
     <category term="AI实战" scheme="https://www.jrrm.top/categories/AI%E5%AE%9E%E6%88%98/"/>
     
     
-    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
-    
     <category term="Claude Code" scheme="https://www.jrrm.top/tags/Claude-Code/"/>
+    
+    <category term="AI编程" scheme="https://www.jrrm.top/tags/AI%E7%BC%96%E7%A8%8B/"/>
     
     <category term="开发效率" scheme="https://www.jrrm.top/tags/%E5%BC%80%E5%8F%91%E6%95%88%E7%8E%87/"/>
     
@@ -380,9 +409,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
-    
     <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
+    
+    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
     
   </entry>
   
@@ -432,9 +461,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
-    
     <category term="wsl" scheme="https://www.jrrm.top/tags/wsl/"/>
+    
+    <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
     
   </entry>
   
@@ -459,9 +488,9 @@
     
     <category term="win10" scheme="https://www.jrrm.top/tags/win10/"/>
     
-    <category term="快捷键" scheme="https://www.jrrm.top/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
-    
     <category term="效率提高" scheme="https://www.jrrm.top/tags/%E6%95%88%E7%8E%87%E6%8F%90%E9%AB%98/"/>
+    
+    <category term="快捷键" scheme="https://www.jrrm.top/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
     
   </entry>
   
@@ -553,35 +582,6 @@
     <category term="UDP" scheme="https://www.jrrm.top/tags/UDP/"/>
     
     <category term="C语言" scheme="https://www.jrrm.top/tags/C%E8%AF%AD%E8%A8%80/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>为什么 TCP 协议有性能问题</title>
-    <link href="https://www.jrrm.top/posts/aaf32453.html"/>
-    <id>https://www.jrrm.top/posts/aaf32453.html</id>
-    <published>2020-10-07T15:33:38.000Z</published>
-    <updated>2020-10-08T03:56:37.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="https://b3logfile.com/bing/20181001.jpg?imageView2/1/w/768/h/432/interlace/1/q/100"></p><p>TCP 协议可以说是今天互联网的基石，作为可靠的传输协议，在今天几乎所有的数据都会通过 TCP 协议传输，然而 TCP 在设计之初没有考虑到现今复杂的网络环境，当你在地铁上或者火车上被断断续续的网络折磨时，你可能都不知道这一切可能都是 TCP 协议造成的。本文会分析 TCP 协议为什么在弱网环境下有严重的性能问题。</p><blockquote><p>注：本文的分析基于 <a href="https://tools.ietf.org/html/rfc793">RFC 793</a><a href="https://draveness.me/whys-the-design-tcp-performance/#fn:2">2</a> 中定义的 TCP 协议，从 RFC 793 发布至今已经过了将近 40 年，期间多个状态为 Proposed Standard 的非强制性 RFC 都对 TCP 协议进行了修订，尝试优化 TCP 协议的性能，例如：选择性 ACK（Selective ACK, SACK）、虚假超时剖析（Forward RTO, F-RTO）和 TCP 快开启（TCP Fast Open, TFO），最新版本的 Linux 中已经包含了这些 RFC 的实现。</p></blockquote><p>底层的数据传输协议在设计时必须要对带宽的利用率和通信延迟进行权衡和取舍，所以想要解决实际生产中的全部问题是不可能的，TCP 选择了充分利用带宽，为流量而设计，期望在尽可能短的时间内传输更多的数据。</p><blockquote><p>在网络通信中，从发送方发出数据开始到收到来自接收方的确认的时间被叫做往返时延（Round-Trip Time，RTT）。</p></blockquote><p>弱网环境是丢包率较高的特殊场景，TCP 在类似场景中的表现很差，当 RTT 为 30ms 时，一旦丢包率达到了 2%，TCP 的吞吐量就会下降 89.9%，从下面的表中我们可以看出丢包对 TCP 的吞吐量极其显著的影响：</p><table><thead><tr><th align="center">RTT</th><th align="center">TCP 吞吐量</th><th align="center">TCP 吞吐量（2% 丢包率）</th></tr></thead><tbody><tr><td align="center">0 ms</td><td align="center">93.5 Mbps</td><td align="center">3.72 Mbps</td></tr><tr><td align="center">30 ms</td><td align="center">16.2 Mbps</td><td align="center">1.63 Mbps</td></tr><tr><td align="center">60 ms</td><td align="center">8.7 Mbps</td><td align="center">1.33 Mbps</td></tr><tr><td align="center">90 ms</td><td align="center">5.32 Mbps</td><td align="center">0.85 Mbps</td></tr></tbody></table><p>本文将分析在弱网环境下（丢包率高）影响 TCP 性能的三个原因：</p><ul><li>TCP 的拥塞控制算法会在丢包时主动降低吞吐量；</li><li>TCP 的三次握手增加了数据传输的延迟和额外开销；</li><li>TCP 的累计应答机制导致了数据段的传输；</li></ul><p>在上述的三个原因中，拥塞控制算法是导致 TCP 在弱网环境下有着较差表现的首要原因，三次握手和累计应答两者的影响依次递减，但是也加剧了 TCP 的性能问题。</p><h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><p>TCP 拥塞控制算法是互联网上主要的拥塞控制措施，它使用一套基于线増积减（Additive increase&#x2F;multiplicative decrease，AIMD）的网络拥塞控制方法来控制拥塞，也是造成 TCP 性能问题的主要原因。</p><p>第一次发现的互联网拥塞崩溃是在 1986 年，NSFnet 阶段一的骨干网的处理能力从 32,000bit&#x2F;s 降到了 40bit&#x2F;s，该骨干网的处理能力直到 1987 和 1988 年，TCP 协议实现了拥塞控制之后才得到解决。正是因为发生过网络阻塞造成的崩溃，所以 TCP 的拥塞控制算法就认为只要发生了丢包当前网络就发生了拥堵，从这一假设出发，TCP 最初的实现 Tahoe 和 Reno 就使用了慢启动和拥塞避免两个机制实现拥塞控制，本节中对拥塞控制的分析就是基于这个版本的实现。</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353394tcpcongestioncontrol-76a5dc74.png" alt="2020010215779393353394tcpcongestioncontrol.png"></p><p><strong>图 1 - TCP 拥塞控制</strong></p><p>每一个 TCP 连接都会维护一个拥塞控制窗口（Congestion Window），它决定了发送方同时能向接收方发送多少数据，其作用主要有两个：</p><ol><li>防止发送方向接收方发送了太多数据，导致接收方无法处理；</li><li>防止 TCP 连接的任意一方向网络中发送大量数据，导致网络拥塞崩溃；</li></ol><p>除了拥塞窗口大小（cwnd）之外，TCP 连接的双方都有接收窗口大小（rwnd），在 TCP 连接建立之初，发送方和接收方都不清楚对方的接收窗口大小，所以通信双方需要一套动态的估算机制改变数据传输的速度，在 TCP 三次握手期间，通信双方会通过 ACK 消息通知对方自己的接收窗口大小，接收窗口大小一般是带宽延迟乘积（Bandwidth-delay product, BDP）决定的，不过在这里我们就不展开介绍了。</p><p>客户端能够同时传输的最大数据段的数量是接收窗口大小和拥塞窗口大小的最小值，即 <code>min(rwnd, cwnd)</code>。TCP 连接的初始拥塞窗口大小是一个比较小的值，在 Linux 中是由 <code>TCP_INIT_CWND</code> 定义的：</p><pre><code class="language-c">/* TCP initial congestion window as per rfc6928 */#define TCP_INIT_CWND10</code></pre><p>初始拥塞控制窗口的大小从出现之后被多次修改，几个名为 Increasing TCP’s Initial Window 的 RFC 文档：RFC2414、RFC3390和 RFC6928分别增加了 <code>initcwnd</code> 的值以适应不断提高的网络传输速度和带宽。</p><p>TCP 协议使用慢启动阈值（Slow start threshold, ssthresh）来决定使用慢启动或者拥塞避免算法：</p><ul><li>当拥塞窗口大小小于慢启动阈值时，使用慢启动；</li><li>当拥塞窗口大小大于慢启动阈值时，使用拥塞避免算法；</li><li>当拥塞窗口大小等于慢启动阈值时，使用慢启动或者拥塞避免算法；</li></ul><p><img src="https://b3logfile.com/file/2020/10/2020010815784189191423tcpslowstart-c2c0baf0.png" alt="2020010815784189191423tcpslowstart.png"></p><p><strong>图 2 - TCP 的慢启动</strong></p><p>如上图所示，使用 TCP 慢启动时，发送方每收到一个响应方的 ACK 消息，拥塞窗口大小就会加一。当拥塞窗口大小大于慢启动阈值时，就会使用拥塞避免算法：</p><ol><li><strong>线性增长</strong>：每经过一个往返时间 RTT，拥塞窗口大小会加一；</li><li><strong>积式减少</strong>：当发送方发送的数据包丢包时，慢启动阈值会设置为拥塞窗口大小的一半；</li></ol><p>TCP 的早期实现 Tahoe 和 Reno 在遇到丢包时会将拥塞控制大小重置为初始值，由于拥塞窗口大小小于慢启动阈值，所以重新进入慢启动阶段。</p><p>如果 TCP 连接刚刚建立，由于 Linux 系统的默认设置，客户端能够同时发送 10 个数据段，假设我们网络的带宽是 10M，RTT 是 40ms，每个数据段的大小是 1460 字节，那么使用 BDP 计算的通信双方窗口大小上限应该是 35，这样才能充分利用网络的带宽：</p><p>rwndmax&#x3D;10×106bit&#x2F;s⋅40×10−3s1460∗8bit&#x3D;35rwndmax&#x3D;10×106bit&#x2F;s⋅40×10−3s1460∗8bit&#x3D;35</p><p>然而拥塞控制窗口的大小从 10 涨到 35 需要 2RTT 的时间，具体的过程如下：</p><ol><li>发送方向接收方发送 <code>initcwnd = 10</code> 个数据段（消耗 0.5RTT）；</li><li>接收方接收到 10 个数据段后向发送方发送 ACK（消耗 0.5RTT）；</li><li>发送方接收到发送方的 ACK，拥塞控制窗口大小由于 10 个数据段的成功发送 +10，当前拥塞控制窗口大小达到 20；</li><li>发送方向接收方发送 20 个数据段（消耗 0.5RTT）；</li><li>接收方接收到 20 个数据段后向发送方发送 ACK（消耗 0.5RTT）；</li><li>发送方接收到发送方的 ACK，拥塞控制窗口大小由于 20 个数据段的成功发送 +20，当前拥塞控制窗口大小达到 40；</li></ol><p>从 TCP 三次握手建立连接到拥塞控制窗口大小达到假定网络状况的最大值 35 需要 3.5RTT 的时间，即 140ms，这是一个比较长的时间了。</p><p>早期互联网的大多数计算设备都通过有线网络连接，出现网络不稳定的可能性也比较低，所以 TCP 协议的设计者认为丢包意味着网络出现拥塞，一旦发生丢包，客户端疯狂重试就可能导致互联网的拥塞崩溃，所以发明了拥塞控制算法来解决该问题。</p><p>但是如今的网络环境更加复杂，无线网络的引入导致部分场景下的网络不稳定成了常态，所以丢包并不一定意味着网络拥堵，如果使用更加激进的策略传输数据，在一些场景下会得到更好的效果。</p><h2 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h2><p>TCP 使用三次握手建立连接应该是全世界所有工程师都十分了解的知识点，三次握手的主要目的是避免历史错误连接的建立并让通信的双方确定初始序列号，然而三次握手的成本相当高，在不丢包的情况下，它需要建立 TCP 连接的双方进行三次通信。</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353419basic3wayhandshake-c4a1e511.png" alt="2020010215779393353419basic3wayhandshake.png"></p><p><strong>图 3 - 常见的 TCP 三次握手</strong></p><p>如果我们要从北京访问上海的服务器，由于北京到上海的直线距离约为 1000 多公里，而光速是目前通信速度的极限，所以 RTT 一定会大于 6.7ms：</p><p>RTT&#x3D;1,000,000m÷300,000m&#x2F;ms×2&#x3D;6.7msRTT&#x3D;1,000,000m÷300,000m&#x2F;ms×2&#x3D;6.7ms</p><p>然而因为光在光纤中不是直线传播的，真正的传输速度会比光速慢 ~31%，而且数据需要在各种网络设备之间来回跳转，所以很难达到理论的极限值。在生产环境中从北京到上海的 RTT 大概在 40ms 左右，所以 TCP 建立连接所需要最短时间也需要 60ms（1.5RTT）。</p><p>在网络环境较差的地铁、车站等场景中，因为丢包率较高，客户端很难与服务端快速完成三次通信并建立 TCP 连接。当客户端长时间没有收到服务端的响应时，只能不断发起重试，随着请求次数逐渐增加，访问的延迟也会越来越高。</p><p>由于大多数的 HTTP 请求都不会携带大量的数据，未被压缩的请求和响应头大小在 ~200B 到 2KB 左右，而 TCP 三次握手带来的额外开销是 222 字节，其中以太网数据帧占 <code>3 * 14 = 42</code> 字节，IP 数据帧占 <code>3 * 20 = 60</code> 字节，TCP 数据帧约占 120 字节（三次握手的开销与请求和环境有关，具体值不固定）：</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353427tcpthreewayhandshakeoverhead-ee211593.png" alt="2020010215779393353427tcpthreewayhandshakeoverhead.png"></p><p><strong>图 4 - TCP 三次握手的额外开销</strong></p><p>虽然 TCP 不会为每一个发出的数据段建立连接，但是三次握手建立连接需要的成本还是相当高，不仅需要额外增加 1.5RTT 的网络延时，还需要增加 222 字节的额外开销，所以在弱网环境下，通过三次握手建立连接会加剧 TCP 的性能问题。</p><h2 id="重传机制"><a href="#重传机制" class="headerlink" title="重传机制"></a>重传机制</h2><p>TCP 传输的可靠性是通过序列号和接收方的 ACK 来保证的，当 TCP 传输一个数据段时，它会将该数据段的副本放到重传队列上并开启计时器：</p><ul><li>如果发送方收到了该数据段对应的 ACK 响应，当前数据段就会从重传队列中删除；</li><li>如果发送方在计时器到期之间都没有收到该数据段对应的 ACK，就会重新发送当前数据段；</li></ul><p>TCP 的 ACK 机制可能会导致发送方重新传输接收方已经收到了数据段。TCP 中的 ACK 消息表示该消息之前的全部消息都已经被成功接收和处理，例如：</p><ol><li>发送方向接收方发送了序号为 1-10 的消息；</li><li>接收方向发送方发送 ACK 8 响应；</li><li>发送方认为序号为 1-8 的消息已经被成功接收；</li></ol><p>这种 ACK 的方式在实现上比较简单，更容易保证消息的顺序性，但是在以下情况可能会导致发送方重传已经接收的数据：</p><p><img src="https://b3logfile.com/file/2020/10/2020010215779393353434tcpretransmissionall-8b762109.png" alt="2020010215779393353434tcpretransmissionall.png"></p><p><strong>图 5 - TCP 的重传策略</strong></p><p>如上图所示，接收方已经收到了序号为 2-5 的数据，但是由于 TCP ACK 的语义是<strong>当前数据段前的全部数据段都已经被接收和处理</strong>，所以接收方无法发送 ACK 消息，由于发送方没有收到 ACK，<strong>所有数据段</strong>对应的计时器就会超时并重新传输数据。在丢包较为严重的网络下，这种重传机制会造成大量的带宽浪费。</p><blockquote><p><a href="https://tools.ietf.org/html/rfc2581#page-6">RFC2581</a> 中提出的快速重传就会缓解上述问题，当接收方收到乱序的数据段时，会立刻发送三个连续的 ACK 触发发送方的重传。</p></blockquote><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>TCP 协议的一些设计在今天来看虽然仍然具有巨大的价值，但是并不能适用于所有场景。为了解决 TCP 的性能问题，目前业界有两种解决方案：</p><ol><li>使用 UDP 构建性能更加优异、更灵活的传输协议，例如：QUIC等；</li><li>通过不同的手段优化 TCP 协议的性能，例如：选择性 ACK（Selective ACK, SACK），TCP 快开启（TCP Fast Open, TFO）；</li></ol><p>由于 TCP 协议在操作系统内核中，不利于协议的更新，所以第一种方案目前发展的更好，HTTP&#x2F;3 就使用了 QUIC 作为传输协议。我们在这里重新回顾一下导致 TCP 性能问题的三个重要原因：</p><ul><li>TCP 的拥塞控制在发生丢包时会进行退让，减少能够发送的数据段数量，但是丢包并不一定意味着网络拥塞，更多的可能是网络状况较差；</li><li>TCP 的三次握手带来了额外开销，这些开销不只包括需要传输更多的数据，还增加了首次传输数据的网络延迟；</li><li>TCP 的重传机制在数据包丢失时可能会重新传输已经成功接收的数据段，造成带宽的浪费；</li></ul><p>TCP 协议作为互联网数据传输的基石可以说是当之无愧，虽然它确实在应对特殊场景时有些问题，但是它的设计思想有着非常多的借鉴意义并值得我们学习。</p><p>到最后，我们还是来看一些比较开放的相关问题，有兴趣的读者可以仔细思考一下下面的问题：</p><ul><li>QUIC 协议是能否保证丢包率较高时的传输性能？</li><li>除了 SACK 和 TFO 之外还有哪些手段可以优化 TCP 的性能？</li></ul><blockquote><p>如果对文章中的内容有疑问或者想要了解更多软件工程上一些设计决策背后的原因，可以在博客下面留言，作者会及时回复本文相关的疑问并选择其中合适的主题作为后续的内容。</p></blockquote>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;&lt;img src=&quot;https://b3logfile.com/bing/20181001.jpg?imageView2/1/w/768/h/432/interlace/1/q/100&quot;&gt;&lt;/p&gt;
-&lt;p&gt;TCP 协议可以说是今天互联网的基石，作为可靠的传输协议，在今天几乎所</summary>
-      
-    
-    
-    
-    
-    <category term="RTC" scheme="https://www.jrrm.top/tags/RTC/"/>
-    
-    <category term="实时通信" scheme="https://www.jrrm.top/tags/%E5%AE%9E%E6%97%B6%E9%80%9A%E4%BF%A1/"/>
-    
-    <category term="音视频" scheme="https://www.jrrm.top/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
-    
-    <category term="技术博客" scheme="https://www.jrrm.top/tags/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/"/>
     
   </entry>
   

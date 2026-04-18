@@ -4,6 +4,39 @@
   
     
     <entry>
+      <title>AI 辅助代码审查实战：让 PR Review 不再拖慢交付</title>
+      <link href="/posts/2f8d61b2.html"/>
+      <url>/posts/2f8d61b2.html</url>
+      
+        <content type="html"><![CDATA[<p>在很多团队里，PR Review 往往是一个“大家都知道重要，但总是排队”的环节。</p><p>代码写完了，测试过了，准备合并了，结果 Review 还没回来；等审查意见回来，开发者上下文已经丢了一半，修复、解释、再提交，又是一轮等待。真正拖慢交付的，很多时候不是写代码，而是<strong>代码审查没有标准化、没有自动化、没有前置过滤</strong>。</p><p>这篇文章讲的不是“让 AI 替你决定合并与否”，而是把 AI 变成<strong>Review 前置筛子</strong>：先帮你发现明显问题、整理风险点、补齐检查清单，再把真正需要人来判断的部分交给团队成员。</p><span id="more"></span><h2 id="一、为什么-PR-Review-总是慢"><a href="#一、为什么-PR-Review-总是慢" class="headerlink" title="一、为什么 PR Review 总是慢"></a>一、为什么 PR Review 总是慢</h2><p>大多数团队的 Review 变慢，问题通常不在“人不愿意看”，而在于 Review 的输入本身太差。</p><h3 id="常见的四个瓶颈"><a href="#常见的四个瓶颈" class="headerlink" title="常见的四个瓶颈"></a>常见的四个瓶颈</h3><ol><li><p><strong>改动太大</strong></p><ul><li>一个 PR 里塞了功能、重构、格式化、修 bug</li><li>审查者需要先理解意图，再判断实现，成本很高</li></ul></li><li><p><strong>上下文不足</strong></p><ul><li>只看 diff 不知道为什么改</li><li>没有设计说明，没有测试说明，没有风险提示</li></ul></li><li><p><strong>检查点不统一</strong></p><ul><li>有的人看命名，有的人看性能，有的人看安全</li><li>审查标准不一致，反馈质量波动很大</li></ul></li><li><p><strong>重复劳动太多</strong></p><ul><li>大量时间花在找拼写、缩进、明显的空指针、无意义重构上</li><li>真正该关注的业务逻辑、边界条件、权限问题反而被稀释</li></ul></li></ol><p>AI 适合处理的，正是这些重复、机械、结构化的部分。</p><hr><h2 id="二、AI-辅助代码审查到底该做什么"><a href="#二、AI-辅助代码审查到底该做什么" class="headerlink" title="二、AI 辅助代码审查到底该做什么"></a>二、AI 辅助代码审查到底该做什么</h2><p>先说结论：AI 不是“最终裁判”，而是“第一轮审查员”。</p><h3 id="适合交给-AI-的内容"><a href="#适合交给-AI-的内容" class="headerlink" title="适合交给 AI 的内容"></a>适合交给 AI 的内容</h3><ul><li>代码风格和命名一致性</li><li>明显的逻辑漏洞</li><li>潜在的性能问题</li><li>可能的安全风险</li><li>测试覆盖缺口</li><li>是否违反项目约定</li><li>是否缺少必要的错误处理</li><li>是否有多余改动</li></ul><h3 id="不适合只靠-AI-的内容"><a href="#不适合只靠-AI-的内容" class="headerlink" title="不适合只靠 AI 的内容"></a>不适合只靠 AI 的内容</h3><ul><li>架构级决策</li><li>业务规则是否真的合理</li><li>对复杂边界的经验判断</li><li>跨团队影响评估</li><li>是否应该拆 PR、重设方案</li></ul><p>简单说，AI 负责“扫雷”，人负责“拍板”。</p><hr><h2 id="三、一个实用的-AI-Review-工作流"><a href="#三、一个实用的-AI-Review-工作流" class="headerlink" title="三、一个实用的 AI Review 工作流"></a>三、一个实用的 AI Review 工作流</h2><p>最稳妥的方式，不是把整个仓库丢给模型，而是让 AI 只看<strong>变化范围</strong>和<strong>审查目标</strong>。</p><h3 id="推荐流程"><a href="#推荐流程" class="headerlink" title="推荐流程"></a>推荐流程</h3><ol><li>开发者提交 PR</li><li>CI 把 diff 导出来</li><li>AI 先做结构化审查</li><li>输出风险清单和建议</li><li>人工只看高风险项</li><li>必要时再补人工深审</li></ol><p>这个流程的核心价值是：<strong>先缩小问题空间，再把人的注意力集中在真正重要的地方</strong>。</p><hr><h2 id="四、AI-Review-提示词怎么写"><a href="#四、AI-Review-提示词怎么写" class="headerlink" title="四、AI Review 提示词怎么写"></a>四、AI Review 提示词怎么写</h2><p>提示词不要写成“帮我看看代码有没有问题”，这种太空。</p><p>要明确让 AI 输出结构化结果，并且限定审查维度。</p><h3 id="推荐提示词模板"><a href="#推荐提示词模板" class="headerlink" title="推荐提示词模板"></a>推荐提示词模板</h3><pre><code class="language-text">你是一个资深代码审查员。请审查以下代码变更，重点关注：1. 安全性问题2. 性能问题3. 可维护性问题4. 测试缺口5. 是否违反常见项目规范输出格式：- 发现的问题- 风险等级- 修改建议- 是否建议阻塞合并如果信息不足，请明确说明，不要猜测。</code></pre><h3 id="进一步增强的约束"><a href="#进一步增强的约束" class="headerlink" title="进一步增强的约束"></a>进一步增强的约束</h3><p>你还可以加上：</p><ul><li>只基于 diff 判断，不要假设未提供的上下文</li><li>对不确定的内容标记为“需人工确认”</li><li>先给出高风险问题，再给出低风险问题</li><li>避免泛泛而谈，必须指出文件、行号、原因</li></ul><p>这样做出来的审查结果，才更像可执行报告，而不是聊天建议。</p><hr><h2 id="五、一个可落地的-GitHub-Actions-示例"><a href="#五、一个可落地的-GitHub-Actions-示例" class="headerlink" title="五、一个可落地的 GitHub Actions 示例"></a>五、一个可落地的 GitHub Actions 示例</h2><p>下面这个思路适合大多数团队：PR 打开或更新时，自动跑一轮 AI Review，结果作为评论或检查结果返回。</p><pre><code class="language-yaml">name: AI Code Reviewon:  pull_request:    types: [opened, synchronize, reopened]jobs:  review:    runs-on: ubuntu-latest    steps:      - name: Checkout repository        uses: actions/checkout@v4        with:          fetch-depth: 0      - name: Install Claude Code        run: npm install -g @anthropic-ai/claude-code      - name: Prepare diff        run: |          git diff origin/$&#123;&#123; github.base_ref &#125;&#125;...HEAD &gt; changes.diff      - name: AI Review        env:          ANTHROPIC_API_KEY: $&#123;&#123; secrets.ANTHROPIC_API_KEY &#125;&#125;        run: |          claude --print &quot;你是一个资深代码审查员。请审查以下变更，重点关注安全性、性能、可维护性和测试缺口。输出必须结构化，指出具体风险并给出建议。只基于以下 diff：$(cat changes.diff)&quot;</code></pre><h3 id="这个方案的好处"><a href="#这个方案的好处" class="headerlink" title="这个方案的好处"></a>这个方案的好处</h3><ul><li>每次 PR 都有统一的第一轮检查</li><li>减少漏看明显问题的概率</li><li>审查意见格式统一，方便团队阅读</li><li>可以把 AI 结果沉淀成模板，越来越稳定</li></ul><h3 id="但要注意"><a href="#但要注意" class="headerlink" title="但要注意"></a>但要注意</h3><p>不要把 AI 审查结果直接当最终结论。CI 适合做“前置过滤”，不是“完全替代”。</p><hr><h2 id="六、AI-Review-最适合发现哪些问题"><a href="#六、AI-Review-最适合发现哪些问题" class="headerlink" title="六、AI Review 最适合发现哪些问题"></a>六、AI Review 最适合发现哪些问题</h2><p>下面这些场景，AI 通常比人更快。</p><h3 id="1-空指针和边界遗漏"><a href="#1-空指针和边界遗漏" class="headerlink" title="1. 空指针和边界遗漏"></a>1. 空指针和边界遗漏</h3><p>很多 bug 并不是复杂逻辑，而是简单的输入没判断、返回值没处理。</p><p>例如：</p><pre><code class="language-ts">const user = await getUser(id);return user.profile.name;</code></pre><p>如果 <code>getUser</code> 可能返回 <code>null</code>，AI 很容易帮你抓出来。</p><h3 id="2-重复逻辑和可抽取代码"><a href="#2-重复逻辑和可抽取代码" class="headerlink" title="2. 重复逻辑和可抽取代码"></a>2. 重复逻辑和可抽取代码</h3><p>AI 很擅长指出“这里和别处差不多，可以抽函数”。</p><p>这类建议对长期维护很有价值，因为它帮助团队尽早发现代码膨胀的趋势。</p><h3 id="3-明显的性能问题"><a href="#3-明显的性能问题" class="headerlink" title="3. 明显的性能问题"></a>3. 明显的性能问题</h3><p>比如：</p><ul><li>在循环里重复查数据库</li><li>对大数组做多次全量遍历</li><li>在请求路径里做同步阻塞操作</li><li>不必要的深拷贝或序列化</li></ul><p>AI 可以快速标出这些模式。</p><h3 id="4-测试缺失"><a href="#4-测试缺失" class="headerlink" title="4. 测试缺失"></a>4. 测试缺失</h3><p>很多 PR 只改了实现，没有改测试。</p><p>AI 可以自动检查：</p><ul><li>是否新增了关键逻辑却没有对应测试</li><li>是否覆盖了异常路径</li><li>是否只测了 happy path</li></ul><p>这点和《<a href="/2026/04/16/use-ai-write-unit-tests-right-way/">用 AI 写单元测试的正确方法</a>》是强相关的。</p><hr><h2 id="七、把-AI-Review-和团队规范绑定起来"><a href="#七、把-AI-Review-和团队规范绑定起来" class="headerlink" title="七、把 AI Review 和团队规范绑定起来"></a>七、把 AI Review 和团队规范绑定起来</h2><p>如果团队没有审查规范，AI 的输出会显得很散。</p><p>所以更好的方式，是把团队规则写进审查提示里，甚至写进项目说明文件里。</p><h3 id="建议加上的规范项"><a href="#建议加上的规范项" class="headerlink" title="建议加上的规范项"></a>建议加上的规范项</h3><ul><li>新增接口必须有单元测试</li><li>数据库访问必须有错误处理</li><li>用户输入必须校验</li><li>关键路径禁止同步 I&#x2F;O</li><li>公共函数必须写清楚边界行为</li><li>生产相关改动必须给出回滚方案</li></ul><p>这样 AI 审查时就不是“泛评论”，而是“照着你们团队的尺子看代码”。</p><h3 id="如果你在用-Claude-Code"><a href="#如果你在用-Claude-Code" class="headerlink" title="如果你在用 Claude Code"></a>如果你在用 Claude Code</h3><p>可以把项目约定放进 <code>CLAUDE.md</code>，让它在审查时自动遵循团队规则。</p><p>这和本博客前面那篇《<a href="/2026/04/02/claude-code-complete-guide/">Claude Code 完整使用指南：从入门到自动化工作流</a>》是天然连贯的：一个解决“怎么用”，一个解决“怎么把它用进流程里”。</p><hr><h2 id="八、审查报告应该长什么样"><a href="#八、审查报告应该长什么样" class="headerlink" title="八、审查报告应该长什么样"></a>八、审查报告应该长什么样</h2><p>AI Review 的输出不要太散，最好固定成三层：</p><h3 id="第一层：结论"><a href="#第一层：结论" class="headerlink" title="第一层：结论"></a>第一层：结论</h3><ul><li>是否建议合并</li><li>风险等级</li><li>是否需要人工重点复核</li></ul><h3 id="第二层：问题列表"><a href="#第二层：问题列表" class="headerlink" title="第二层：问题列表"></a>第二层：问题列表</h3><p>每个问题最好包含：</p><ul><li>文件位置</li><li>问题描述</li><li>风险等级</li><li>修改建议</li></ul><h3 id="第三层：补充建议"><a href="#第三层：补充建议" class="headerlink" title="第三层：补充建议"></a>第三层：补充建议</h3><p>比如：</p><ul><li>是否应拆分 PR</li><li>是否应增加测试</li><li>是否应更新文档</li><li>是否应补回滚说明</li></ul><h3 id="推荐示例格式"><a href="#推荐示例格式" class="headerlink" title="推荐示例格式"></a>推荐示例格式</h3><pre><code class="language-text">结论：建议暂缓合并高风险问题：1. src/api/user.ts:42   - 问题：未处理 null 返回值，可能导致运行时异常   - 建议：增加空值判断并返回 404中风险问题：2. src/service/report.ts:88   - 问题：在请求路径中进行了两次全表扫描   - 建议：改为分页查询或缓存测试缺口：- 新增接口未覆盖鉴权失败场景- 未验证异常分支</code></pre><p>这种格式最适合团队协作，因为开发者可以直接按项修。</p><hr><h2 id="九、哪些团队最适合先上-AI-Review"><a href="#九、哪些团队最适合先上-AI-Review" class="headerlink" title="九、哪些团队最适合先上 AI Review"></a>九、哪些团队最适合先上 AI Review</h2><p>并不是所有团队都要一上来就全自动。</p><h3 id="最适合先做的团队"><a href="#最适合先做的团队" class="headerlink" title="最适合先做的团队"></a>最适合先做的团队</h3><ul><li>PR 数量多、Review 排队明显的团队</li><li>有统一编码规范的团队</li><li>业务迭代快、重复改动多的团队</li><li>新人比较多、代码风格不稳定的团队</li><li>需要频繁做安全和合规检查的团队</li></ul><h3 id="不建议一开始就完全自动化的情况"><a href="#不建议一开始就完全自动化的情况" class="headerlink" title="不建议一开始就完全自动化的情况"></a>不建议一开始就完全自动化的情况</h3><ul><li>项目文档很差，代码约定不统一</li><li>业务规则高度复杂，审查主要依赖经验</li><li>团队对 AI 结果没有信任基础</li><li>变更量很小，人工 Review 已经足够快</li></ul><p>这类场景更适合先做“辅助建议”，再逐步提权。</p><hr><h2 id="十、落地时最容易踩的坑"><a href="#十、落地时最容易踩的坑" class="headerlink" title="十、落地时最容易踩的坑"></a>十、落地时最容易踩的坑</h2><h3 id="坑-1：把-AI-输出当权威"><a href="#坑-1：把-AI-输出当权威" class="headerlink" title="坑 1：把 AI 输出当权威"></a>坑 1：把 AI 输出当权威</h3><p>AI 会帮你找问题，但它不是上下文全知者。涉及业务规则和历史包袱的部分，必须人工确认。</p><h3 id="坑-2：审查输入太长"><a href="#坑-2：审查输入太长" class="headerlink" title="坑 2：审查输入太长"></a>坑 2：审查输入太长</h3><p>整仓库、整个 PR、几十个文件一起喂，结果通常会变差。更好的做法是按模块、按 diff、按风险拆分。</p><h3 id="坑-3：没有统一模板"><a href="#坑-3：没有统一模板" class="headerlink" title="坑 3：没有统一模板"></a>坑 3：没有统一模板</h3><p>没有模板就没有稳定输出。今天像代码审查，明天像代码助手，后天像技术顾问，团队很难复用。</p><h3 id="坑-4：只看问题，不看建议"><a href="#坑-4：只看问题，不看建议" class="headerlink" title="坑 4：只看问题，不看建议"></a>坑 4：只看问题，不看建议</h3><p>AI 的价值不只是指出问题，更重要的是给出“下一步怎么改”。</p><hr><h2 id="十一、推荐的真实使用方式"><a href="#十一、推荐的真实使用方式" class="headerlink" title="十一、推荐的真实使用方式"></a>十一、推荐的真实使用方式</h2><p>如果你现在就想开始，建议这样上：</p><h3 id="第一步：人工审查前加一层-AI-预审"><a href="#第一步：人工审查前加一层-AI-预审" class="headerlink" title="第一步：人工审查前加一层 AI 预审"></a>第一步：人工审查前加一层 AI 预审</h3><p>先让 AI 看 diff，输出风险点。</p><h3 id="第二步：把-AI-结果写进-PR-模板"><a href="#第二步：把-AI-结果写进-PR-模板" class="headerlink" title="第二步：把 AI 结果写进 PR 模板"></a>第二步：把 AI 结果写进 PR 模板</h3><p>例如要求提交人附上：</p><ul><li>改动目的</li><li>风险点</li><li>测试结果</li><li>回滚方式</li></ul><h3 id="第三步：对高风险模块做强制-AI-审查"><a href="#第三步：对高风险模块做强制-AI-审查" class="headerlink" title="第三步：对高风险模块做强制 AI 审查"></a>第三步：对高风险模块做强制 AI 审查</h3><p>比如：</p><ul><li>鉴权</li><li>支付</li><li>数据导出</li><li>用户隐私相关逻辑</li></ul><h3 id="第四步：定期复盘误报和漏报"><a href="#第四步：定期复盘误报和漏报" class="headerlink" title="第四步：定期复盘误报和漏报"></a>第四步：定期复盘误报和漏报</h3><p>只要复盘几轮，AI 审查模板就会越来越准。</p><hr><h2 id="十二、总结"><a href="#十二、总结" class="headerlink" title="十二、总结"></a>十二、总结</h2><p>AI 辅助代码审查的真正价值，不是替代人，而是让审查流程从“纯人工排队”升级为“机器先筛、人再决策”。</p><p>它最擅长的是：</p><ul><li>快速找出明显问题</li><li>统一审查标准</li><li>降低重复劳动</li><li>给出结构化建议</li><li>让 Review 更早发生</li></ul><p>当你把 AI Review 和项目规范、CI 流程、测试体系结合起来之后，PR 审查就不再只是“等别人看”，而会变成一个可复制、可扩展、可持续优化的工程环节。</p><p>如果你已经在用 Claude Code，不妨把它进一步推进到“审查助手”角色；如果你还没有，那就从一条最简单的规则开始：<strong>让 AI 先帮你看第一遍，再让人做最终判断。</strong></p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li>《<a href="/2026/04/02/claude-code-complete-guide/">Claude Code 完整使用指南：从入门到自动化工作流</a>》</li><li>《<a href="/2026/04/16/use-ai-write-unit-tests-right-way/">用 AI 写单元测试的正确方法</a>》</li><li>《<a href="/2026/04/15/deepseek-vs-claude-4-6/">DeepSeek vs Claude 4.6：AI 编程模型的黄金组合</a>》</li><li><a href="https://docs.github.com/actions">GitHub Actions 官方文档</a></li><li><a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code 官方文档</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 工具效率 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI 编程 </tag>
+            
+            <tag> 代码审查 </tag>
+            
+            <tag> PR Review </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> GitHub Actions </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南</title>
       <link href="/posts/8541121a.html"/>
       <url>/posts/8541121a.html</url>
@@ -115,15 +148,15 @@
       
         <tags>
             
+            <tag> AI 编程 </tag>
+            
             <tag> Claude Code </tag>
             
-            <tag> AI 编程 </tag>
+            <tag> AI Agent </tag>
             
             <tag> 自动化工作流 </tag>
             
             <tag> Anthropic </tag>
-            
-            <tag> AI Agent </tag>
             
         </tags>
       
@@ -181,9 +214,9 @@
       
         <tags>
             
-            <tag> AI编程 </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI编程 </tag>
             
             <tag> Cursor </tag>
             
@@ -247,13 +280,13 @@
       
         <tags>
             
-            <tag> AI编程 </tag>
-            
-            <tag> AI Agent </tag>
-            
             <tag> AI开源项目 </tag>
             
             <tag> GitHub </tag>
+            
+            <tag> AI编程 </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 开源推荐 </tag>
             
@@ -311,11 +344,11 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> AI编程 </tag>
             
             <tag> 开发工具 </tag>
-            
-            <tag> Claude Code </tag>
             
             <tag> Cursor </tag>
             
@@ -344,9 +377,9 @@
       
         <tags>
             
-            <tag> AI编程 </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI编程 </tag>
             
             <tag> 开发效率 </tag>
             
@@ -396,9 +429,9 @@
             
             <tag> win10 </tag>
             
-            <tag> 效率提高 </tag>
-            
             <tag> wsl </tag>
+            
+            <tag> 效率提高 </tag>
             
         </tags>
       
@@ -440,9 +473,9 @@
             
             <tag> win10 </tag>
             
-            <tag> 效率提高 </tag>
-            
             <tag> wsl </tag>
+            
+            <tag> 效率提高 </tag>
             
         </tags>
       
@@ -463,9 +496,9 @@
             
             <tag> win10 </tag>
             
-            <tag> 快捷键 </tag>
-            
             <tag> 效率提高 </tag>
+            
+            <tag> 快捷键 </tag>
             
         </tags>
       
@@ -648,9 +681,9 @@
     
     
     <entry>
-      <title>分类</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
+      <title>about</title>
+      <link href="/about/index.html"/>
+      <url>/about/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -670,31 +703,42 @@
     
     
     <entry>
-      <title>留言板</title>
-      <link href="/messageboard/index.html"/>
-      <url>/messageboard/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>about</title>
-      <link href="/about/index.html"/>
-      <url>/about/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>photo</title>
       <link href="/photo/index.html"/>
       <url>/photo/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>分类</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>说说</title>
+      <link href="/shuoshuo/index.html"/>
+      <url>/shuoshuo/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>留言板</title>
+      <link href="/messageboard/index.html"/>
+      <url>/messageboard/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -718,18 +762,7 @@
       <link href="/privacy/index.html"/>
       <url>/privacy/index.html</url>
       
-        <content type="html"><![CDATA[<h1 id="语师AI-隐私政策"><a href="#语师AI-隐私政策" class="headerlink" title="语师AI 隐私政策"></a>语师AI 隐私政策</h1><p><strong>更新日期：2026年3月31日</strong><br><strong>生效日期：2026年3月31日</strong></p><h2 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h2><p>欢迎使用「语师AI」小程序（以下简称”本产品”）。我们深知个人信息对您的重要性，将严格遵守相关法律法规，保护您的个人信息及隐私安全。请您仔细阅读本隐私政策。</p><h2 id="二、我们收集的信息"><a href="#二、我们收集的信息" class="headerlink" title="二、我们收集的信息"></a>二、我们收集的信息</h2><h3 id="2-1-您主动提供的信息"><a href="#2-1-您主动提供的信息" class="headerlink" title="2.1 您主动提供的信息"></a>2.1 您主动提供的信息</h3><ul><li><strong>作文内容</strong>：您提交的作文文本或拍照上传的作文图片，用于 AI 批改服务</li><li><strong>微信授权信息</strong>：微信昵称、头像（仅在您授权后获取）</li></ul><h3 id="2-2-自动收集的信息"><a href="#2-2-自动收集的信息" class="headerlink" title="2.2 自动收集的信息"></a>2.2 自动收集的信息</h3><ul><li><strong>设备信息</strong>：设备型号、操作系统版本（用于适配和问题排查）</li><li><strong>使用记录</strong>：批改次数、功能使用频率（用于服务优化）</li></ul><h3 id="2-3-我们不收集的信息"><a href="#2-3-我们不收集的信息" class="headerlink" title="2.3 我们不收集的信息"></a>2.3 我们不收集的信息</h3><ul><li>❌ 手机号码、身份证号等身份证件信息</li><li>❌ 通讯录、短信等通信信息</li><li>❌ 精确地理位置信息</li><li>❌ 学生真实姓名（由老师自行管理，我们不做身份核验）</li></ul><h2 id="三、信息的使用目的"><a href="#三、信息的使用目的" class="headerlink" title="三、信息的使用目的"></a>三、信息的使用目的</h2><p>我们收集的信息仅用于以下目的：</p><ol><li><strong>提供批改服务</strong>：将作文内容发送至 AI 模型进行分析和批改</li><li><strong>服务改进</strong>：分析使用数据以优化产品体验</li><li><strong>安全保障</strong>：防止恶意使用、保障服务稳定运行</li></ol><h2 id="四、信息的存储与保护"><a href="#四、信息的存储与保护" class="headerlink" title="四、信息的存储与保护"></a>四、信息的存储与保护</h2><ul><li>作文内容及批改结果存储在腾讯云（微信云开发）服务器，位于中国境内</li><li>采用传输加密（HTTPS）和存储加密措施保护数据安全</li><li>仅授权人员可访问用户数据，且受严格的访问控制</li></ul><h2 id="五、信息的共享"><a href="#五、信息的共享" class="headerlink" title="五、信息的共享"></a>五、信息的共享</h2><p>我们<strong>不会</strong>将您的个人信息出售、出租或共享给第三方，但以下情况除外：</p><ul><li>经您明确同意</li><li>为提供核心服务所必需（如将作文文本发送至 AI 大模型服务商进行批改）</li><li>法律法规要求</li></ul><h3 id="AI-服务说明"><a href="#AI-服务说明" class="headerlink" title="AI 服务说明"></a>AI 服务说明</h3><p>本产品使用腾讯云 CloudBase AI 大模型服务（DeepSeek）进行作文批改。作文内容将传输至该服务进行分析处理，处理完成后不会被 AI 服务商额外存储或用于其他目的。</p><h2 id="六、您的权利"><a href="#六、您的权利" class="headerlink" title="六、您的权利"></a>六、您的权利</h2><p>您享有以下权利：</p><ul><li><strong>查看</strong>：随时查看您的批改历史和个人信息</li><li><strong>删除</strong>：可联系我们删除您的账号和相关数据</li><li><strong>撤回授权</strong>：可在微信设置中撤回对本小程序的授权</li></ul><h2 id="七、未成年人保护"><a href="#七、未成年人保护" class="headerlink" title="七、未成年人保护"></a>七、未成年人保护</h2><p>本产品的直接使用者为教师。若教师代学生提交作文进行批改，教师应确保已获得学生监护人的适当授权。</p><h2 id="八、隐私政策的更新"><a href="#八、隐私政策的更新" class="headerlink" title="八、隐私政策的更新"></a>八、隐私政策的更新</h2><p>我们可能适时修订本隐私政策。更新后的政策将在本页面发布，重大变更将通过小程序内通知告知。</p><h2 id="九、联系我们"><a href="#九、联系我们" class="headerlink" title="九、联系我们"></a>九、联系我们</h2><p>如对本隐私政策有任何疑问或建议，请通过以下方式联系：</p><ul><li><strong>邮箱</strong>：<a href="mailto:&#x62;&#105;&#x6e;&#103;&#99;&#104;&#x75;&#x6e;&#x2e;&#x7a;&#x68;&#97;&#111;&#64;&#113;&#113;&#46;&#99;&#111;&#109;">bingchun.zhao@qq.com</a></li></ul><hr><p><em>本隐私政策适用于「语师AI」微信小程序。</em></p>]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>说说</title>
-      <link href="/shuoshuo/index.html"/>
-      <url>/shuoshuo/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
+        <content type="html"><![CDATA[<h1 id="语师AI-隐私政策"><a href="#语师AI-隐私政策" class="headerlink" title="语师AI 隐私政策"></a>语师AI 隐私政策</h1><p><strong>更新日期：2026年3月31日</strong><br><strong>生效日期：2026年3月31日</strong></p><h2 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h2><p>欢迎使用「语师AI」小程序（以下简称”本产品”）。我们深知个人信息对您的重要性，将严格遵守相关法律法规，保护您的个人信息及隐私安全。请您仔细阅读本隐私政策。</p><h2 id="二、我们收集的信息"><a href="#二、我们收集的信息" class="headerlink" title="二、我们收集的信息"></a>二、我们收集的信息</h2><h3 id="2-1-您主动提供的信息"><a href="#2-1-您主动提供的信息" class="headerlink" title="2.1 您主动提供的信息"></a>2.1 您主动提供的信息</h3><ul><li><strong>作文内容</strong>：您提交的作文文本或拍照上传的作文图片，用于 AI 批改服务</li><li><strong>微信授权信息</strong>：微信昵称、头像（仅在您授权后获取）</li></ul><h3 id="2-2-自动收集的信息"><a href="#2-2-自动收集的信息" class="headerlink" title="2.2 自动收集的信息"></a>2.2 自动收集的信息</h3><ul><li><strong>设备信息</strong>：设备型号、操作系统版本（用于适配和问题排查）</li><li><strong>使用记录</strong>：批改次数、功能使用频率（用于服务优化）</li></ul><h3 id="2-3-我们不收集的信息"><a href="#2-3-我们不收集的信息" class="headerlink" title="2.3 我们不收集的信息"></a>2.3 我们不收集的信息</h3><ul><li>❌ 手机号码、身份证号等身份证件信息</li><li>❌ 通讯录、短信等通信信息</li><li>❌ 精确地理位置信息</li><li>❌ 学生真实姓名（由老师自行管理，我们不做身份核验）</li></ul><h2 id="三、信息的使用目的"><a href="#三、信息的使用目的" class="headerlink" title="三、信息的使用目的"></a>三、信息的使用目的</h2><p>我们收集的信息仅用于以下目的：</p><ol><li><strong>提供批改服务</strong>：将作文内容发送至 AI 模型进行分析和批改</li><li><strong>服务改进</strong>：分析使用数据以优化产品体验</li><li><strong>安全保障</strong>：防止恶意使用、保障服务稳定运行</li></ol><h2 id="四、信息的存储与保护"><a href="#四、信息的存储与保护" class="headerlink" title="四、信息的存储与保护"></a>四、信息的存储与保护</h2><ul><li>作文内容及批改结果存储在腾讯云（微信云开发）服务器，位于中国境内</li><li>采用传输加密（HTTPS）和存储加密措施保护数据安全</li><li>仅授权人员可访问用户数据，且受严格的访问控制</li></ul><h2 id="五、信息的共享"><a href="#五、信息的共享" class="headerlink" title="五、信息的共享"></a>五、信息的共享</h2><p>我们<strong>不会</strong>将您的个人信息出售、出租或共享给第三方，但以下情况除外：</p><ul><li>经您明确同意</li><li>为提供核心服务所必需（如将作文文本发送至 AI 大模型服务商进行批改）</li><li>法律法规要求</li></ul><h3 id="AI-服务说明"><a href="#AI-服务说明" class="headerlink" title="AI 服务说明"></a>AI 服务说明</h3><p>本产品使用腾讯云 CloudBase AI 大模型服务（DeepSeek）进行作文批改。作文内容将传输至该服务进行分析处理，处理完成后不会被 AI 服务商额外存储或用于其他目的。</p><h2 id="六、您的权利"><a href="#六、您的权利" class="headerlink" title="六、您的权利"></a>六、您的权利</h2><p>您享有以下权利：</p><ul><li><strong>查看</strong>：随时查看您的批改历史和个人信息</li><li><strong>删除</strong>：可联系我们删除您的账号和相关数据</li><li><strong>撤回授权</strong>：可在微信设置中撤回对本小程序的授权</li></ul><h2 id="七、未成年人保护"><a href="#七、未成年人保护" class="headerlink" title="七、未成年人保护"></a>七、未成年人保护</h2><p>本产品的直接使用者为教师。若教师代学生提交作文进行批改，教师应确保已获得学生监护人的适当授权。</p><h2 id="八、隐私政策的更新"><a href="#八、隐私政策的更新" class="headerlink" title="八、隐私政策的更新"></a>八、隐私政策的更新</h2><p>我们可能适时修订本隐私政策。更新后的政策将在本页面发布，重大变更将通过小程序内通知告知。</p><h2 id="九、联系我们"><a href="#九、联系我们" class="headerlink" title="九、联系我们"></a>九、联系我们</h2><p>如对本隐私政策有任何疑问或建议，请通过以下方式联系：</p><ul><li><strong>邮箱</strong>：<a href="mailto:&#98;&#105;&#x6e;&#103;&#x63;&#104;&#x75;&#110;&#x2e;&#x7a;&#104;&#x61;&#x6f;&#x40;&#113;&#113;&#46;&#x63;&#111;&#x6d;">bingchun.zhao@qq.com</a></li></ul><hr><p><em>本隐私政策适用于「语师AI」微信小程序。</em></p>]]></content>
       
     </entry>
     
