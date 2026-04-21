@@ -1,0 +1,886 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>从零用 Python 写一个 MCP Server：本地文件与数据库实战 | 一个技术宅</title><meta name="author" content="bingchun.zhao"><meta name="copyright" content="bingchun.zhao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="手把手教你用 Python 搭建一个可用的 MCP Server，把本地文件读取、目录搜索和 SQLite 数据查询接进 Claude Desktop，真正把 AI Agent 从“会聊”变成“会干活”。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零用 Python 写一个 MCP Server：本地文件与数据库实战">
+<meta property="og:url" content="https://www.jrrm.top/posts/9e4f1c2a.html">
+<meta property="og:site_name" content="一个技术宅">
+<meta property="og:description" content="手把手教你用 Python 搭建一个可用的 MCP Server，把本地文件读取、目录搜索和 SQLite 数据查询接进 Claude Desktop，真正把 AI Agent 从“会聊”变成“会干活”。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.jrrm.top/images/blog/ai-prompt-engineering-cover.png">
+<meta property="article:published_time" content="2026-04-20T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-19T12:16:20.120Z">
+<meta property="article:author" content="bingchun.zhao">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="Claude Desktop">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="本地自动化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.jrrm.top/images/blog/ai-prompt-engineering-cover.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "从零用 Python 写一个 MCP Server：本地文件与数据库实战",
+  "url": "https://www.jrrm.top/posts/9e4f1c2a.html",
+  "image": "https://www.jrrm.top/images/blog/ai-prompt-engineering-cover.png",
+  "datePublished": "2026-04-20T02:00:00.000Z",
+  "dateModified": "2026-04-19T12:16:20.120Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "bingchun.zhao",
+      "url": "https://www.jrrm.top/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.jrrm.top/posts/9e4f1c2a.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)')
+          const mediaQueryLight = window.matchMedia('(prefers-color-scheme: light)')
+
+          if (theme === undefined) {
+            if (mediaQueryLight.matches) activateLightMode()
+            else if (mediaQueryDark.matches) activateDarkMode()
+            else {
+              const hour = new Date().getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            mediaQueryDark.addEventListener('change', () => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else {
+            theme === 'light' ? activateLightMode() : activateDarkMode()
+          }
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5c3eb8698998c15145868b03c7229014";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+btf.addGlobalFn('pjaxComplete', () => {
+  _hmt.push(['_trackPageview',window.location.pathname])
+}, 'baidu_analytics')
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '从零用 Python 写一个 MCP Server：本地文件与数据库实战',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="一个技术宅" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load', preloader.endLoading)
+  // 兜底：5 秒后强制移除遮罩，防止外部脚本加载超时导致白屏
+  setTimeout(preloader.endLoading, 5000)
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">71</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment"></i><span> 说说</span></a></li><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/books/"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li><li><a class="site-page child" href="/songs/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-gamepad"></i><span> 游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/images/blog/ai-prompt-engineering-cover.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">一个技术宅</span></a><a class="nav-page-title" href="/"><span class="site-name">从零用 Python 写一个 MCP Server：本地文件与数据库实战</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/shuoshuo/"><i class="fa-fw fas fa-comment"></i><span> 说说</span></a></li><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/books/"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li><li><a class="site-page child" href="/songs/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-gamepad"></i><span> 游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">从零用 Python 写一个 MCP Server：本地文件与数据库实战</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-20T02:00:00.000Z" title="发表于 2026-04-20 10:00:00">2026-04-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-04-19T12:16:20.120Z" title="更新于 2026-04-19 20:16:20">2026-04-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI%E5%AE%9E%E6%88%98/">AI实战</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/9e4f1c2a.html#post-comment"><span id="twikoo-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>如果你已经开始接触 MCP，下一步最值得做的事情，不是继续背协议名词，而是<strong>亲手写一个自己的 MCP Server</strong>。</p>
+<p>原因很简单：只要你真正把“本地文件”和“数据库查询”接进来，你就会马上明白 MCP 到底解决了什么问题——它不是在替代你的业务逻辑，而是在给 AI Agent 提供一套稳定、统一、可复用的工具接入方式。</p>
+<p>这篇文章我们不讲概念堆砌，直接用 Python 做一个最小可用、能落地的 MCP Server：</p>
+<ul>
+<li>能读本地文本文件</li>
+<li>能列出目录内容</li>
+<li>能查询 SQLite 数据库</li>
+<li>能被 Claude Desktop 直接调用</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="一、为什么要自己写-MCP-Server"><a href="#一、为什么要自己写-MCP-Server" class="headerlink" title="一、为什么要自己写 MCP Server"></a>一、为什么要自己写 MCP Server</h2><p>很多人第一次接触 MCP 时，会觉得“现成的 Server 已经很多了，为什么还要自己写”。</p>
+<p>答案是：<strong>你几乎一定会有自己的私有数据源和内部规则</strong>。</p>
+<p>现成的 MCP Server 很适合通用工具，比如 GitHub、Notion、文件系统；但一旦你想接入：</p>
+<ul>
+<li>本地知识库</li>
+<li>团队共享文档</li>
+<li>内网数据库</li>
+<li>项目专属脚本</li>
+<li>只允许读不允许写的业务数据</li>
+</ul>
+<p>你就会发现，自己写一个 Server 反而更稳。</p>
+<h3 id="自己写-Server-的三个价值"><a href="#自己写-Server-的三个价值" class="headerlink" title="自己写 Server 的三个价值"></a>自己写 Server 的三个价值</h3><ol>
+<li><p><strong>可控</strong></p>
+<ul>
+<li>你决定暴露什么工具</li>
+<li>你决定哪些路径能读，哪些不能读</li>
+<li>你决定返回的数据粒度</li>
+</ul>
+</li>
+<li><p><strong>可复用</strong></p>
+<ul>
+<li>写一次，Claude Desktop、你自己的 Agent、后续脚本都能用</li>
+</ul>
+</li>
+<li><p><strong>更贴近业务</strong></p>
+<ul>
+<li>不是“给 AI 一个数据库”，而是“给 AI 一个符合你团队规则的数据库视图”</li>
+</ul>
+</li>
+</ol>
+<p>如果你已经看过《<a href="/posts/3337c530.html">Claude Code 完整使用指南：从入门到自动化工作流</a>》，你会更容易理解这件事：Claude Code 解决的是“怎么让 AI 进入工作流”，MCP 解决的是“怎么让 AI 接上真实工具”。</p>
+<hr>
+<h2 id="二、先搭一个最小可运行的-Python-MCP-Server"><a href="#二、先搭一个最小可运行的-Python-MCP-Server" class="headerlink" title="二、先搭一个最小可运行的 Python MCP Server"></a>二、先搭一个最小可运行的 Python MCP Server</h2><p>我们用 Python 官方&#x2F;主流 MCP SDK 的写法来做一个简单服务器。下面这个示例重点是思路清楚、结构简单、能直接扩展。</p>
+<h3 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1. 安装依赖"></a>1. 安装依赖</h3><pre><code class="language-bash">python -m venv .venv
+source .venv/bin/activate
+pip install mcp
+</code></pre>
+<p>如果你在公司环境里有额外规范，也可以把 <code>sqlite3</code>、<code>pathlib</code> 这些标准库直接用起来，不额外引入复杂依赖。</p>
+<h3 id="2-创建-server-py"><a href="#2-创建-server-py" class="headerlink" title="2. 创建 server.py"></a>2. 创建 server.py</h3><p>下面这个版本包含三个工具：</p>
+<ul>
+<li><code>read_text_file</code>：读取文本文件</li>
+<li><code>list_dir</code>：列出目录内容</li>
+<li><code>query_sqlite</code>：查询 SQLite 数据库</li>
+</ul>
+<pre><code class="language-python">from pathlib import Path
+import sqlite3
+from typing import Any
+
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP(&quot;local-tools&quot;)
+
+BASE_DIR = Path.home() / &quot;Documents&quot;
+
+
+def _safe_path(path: str) -&gt; Path:
+    &quot;&quot;&quot;限制只能访问 BASE_DIR 下的文件，避免越权读取。&quot;&quot;&quot;
+    target = (BASE_DIR / path).resolve()
+    if BASE_DIR not in target.parents and target != BASE_DIR:
+        raise ValueError(f&quot;Path not allowed: &#123;path&#125;&quot;)
+    return target
+
+
+@mcp.tool()
+def read_text_file(path: str) -&gt; str:
+    &quot;&quot;&quot;读取 BASE_DIR 下的文本文件。&quot;&quot;&quot;
+    file_path = _safe_path(path)
+    if not file_path.exists():
+        return f&quot;File not found: &#123;path&#125;&quot;
+    if not file_path.is_file():
+        return f&quot;Not a file: &#123;path&#125;&quot;
+    return file_path.read_text(encoding=&quot;utf-8&quot;)
+
+
+@mcp.tool()
+def list_dir(path: str = &quot;.&quot;) -&gt; list[str]:
+    &quot;&quot;&quot;列出目录内容。&quot;&quot;&quot;
+    dir_path = _safe_path(path)
+    if not dir_path.exists():
+        return [f&quot;Directory not found: &#123;path&#125;&quot;]
+    if not dir_path.is_dir():
+        return [f&quot;Not a directory: &#123;path&#125;&quot;]
+    return sorted([p.name for p in dir_path.iterdir()])
+
+
+@mcp.tool()
+def query_sqlite(db_file: str, sql: str) -&gt; list[dict[str, Any]]:
+    &quot;&quot;&quot;只读查询 SQLite 数据库。&quot;&quot;&quot;
+    db_path = _safe_path(db_file)
+    if not db_path.exists():
+        return [&#123;&quot;error&quot;: f&quot;Database not found: &#123;db_file&#125;&quot;&#125;]
+
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    try:
+        cur = conn.execute(sql)
+        rows = cur.fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
+
+if __name__ == &quot;__main__&quot;:
+    mcp.run()
+</code></pre>
+<h3 id="3-这段代码做了什么"><a href="#3-这段代码做了什么" class="headerlink" title="3. 这段代码做了什么"></a>3. 这段代码做了什么</h3><p>别被代码吓到，它本质上只有三个关键点：</p>
+<ul>
+<li><code>FastMCP(&quot;local-tools&quot;)</code>：创建 MCP Server</li>
+<li><code>@mcp.tool()</code>：把普通 Python 函数暴露成工具</li>
+<li><code>mcp.run()</code>：启动服务</li>
+</ul>
+<p>真正值得注意的，是我在 <code>_safe_path()</code> 里加了一个<strong>路径白名单限制</strong>。</p>
+<p>这一步很重要，因为 MCP Server 一旦连上了 AI，就不是“给程序读文件”，而是“给智能体发能力”。你必须明确控制它能读哪里、不能读哪里。</p>
+<hr>
+<h2 id="三、把这个-Server-接到-Claude-Desktop"><a href="#三、把这个-Server-接到-Claude-Desktop" class="headerlink" title="三、把这个 Server 接到 Claude Desktop"></a>三、把这个 Server 接到 Claude Desktop</h2><p>写完 Server 之后，下一步是让 Claude Desktop 知道它的存在。</p>
+<p>通常你需要在 Claude Desktop 的配置里加入一个 MCP Server 配置项。不同版本字段可能略有差异，但思路都一样：</p>
+<ul>
+<li>指定启动命令</li>
+<li>指定工作目录</li>
+<li>如有需要，传入环境变量</li>
+</ul>
+<p>下面是一个典型写法示例：</p>
+<pre><code class="language-json">&#123;
+  &quot;mcpServers&quot;: &#123;
+    &quot;local-tools&quot;: &#123;
+      &quot;command&quot;: &quot;python&quot;,
+      &quot;args&quot;: [&quot;/Users/yourname/projects/local-tools/server.py&quot;],
+      &quot;env&quot;: &#123;
+        &quot;PYTHONUNBUFFERED&quot;: &quot;1&quot;
+      &#125;
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+<p>配置完成后，你就可以在 Claude Desktop 里这样问：</p>
+<ul>
+<li>“帮我看看 Documents 目录下有哪些文件”</li>
+<li>“读取 notes.md，帮我总结今天的待办”</li>
+<li>“查一下这个 SQLite 里最近 10 条记录”</li>
+</ul>
+<p>这时 AI 不是在“猜”，而是在调你自己暴露出来的工具。</p>
+<hr>
+<h2 id="四、把文件读取做成真正好用的工具"><a href="#四、把文件读取做成真正好用的工具" class="headerlink" title="四、把文件读取做成真正好用的工具"></a>四、把文件读取做成真正好用的工具</h2><p>很多人写的第一版 MCP Server 有一个问题：<strong>工具能跑，但不好用</strong>。</p>
+<p>原因通常不是代码错，而是工具设计太粗。</p>
+<h3 id="推荐的设计原则"><a href="#推荐的设计原则" class="headerlink" title="推荐的设计原则"></a>推荐的设计原则</h3><h4 id="1-工具要小而精"><a href="#1-工具要小而精" class="headerlink" title="1. 工具要小而精"></a>1. 工具要小而精</h4><p>不要把“读文件、搜文件、改文件、写文件”全揉成一个超级工具。</p>
+<p>更好的做法是：</p>
+<ul>
+<li><code>read_text_file</code></li>
+<li><code>list_dir</code></li>
+<li><code>search_file</code></li>
+<li><code>query_sqlite</code></li>
+</ul>
+<p>每个工具只负责一件事，AI 更容易选，也更容易调。</p>
+<h4 id="2-返回值要结构清晰"><a href="#2-返回值要结构清晰" class="headerlink" title="2. 返回值要结构清晰"></a>2. 返回值要结构清晰</h4><p>AI 最怕“看起来像人写的长段解释”。</p>
+<p>例如目录查询，最好返回：</p>
+<pre><code class="language-json">[
+  &quot;notes.md&quot;,
+  &quot;todo.md&quot;,
+  &quot;archive/&quot;
+]
+</code></pre>
+<p>而不是一大段混杂的描述。</p>
+<h4 id="3-限制可访问范围"><a href="#3-限制可访问范围" class="headerlink" title="3. 限制可访问范围"></a>3. 限制可访问范围</h4><p>尤其是文件工具，务必要做目录白名单。</p>
+<p>一旦你把整个磁盘都开放给 AI，风险就不再是“工具是否好用”，而是“你是否真的想把这个权限交出去”。</p>
+<hr>
+<h2 id="五、把-SQLite-接入后，MCP-才真正有生产力"><a href="#五、把-SQLite-接入后，MCP-才真正有生产力" class="headerlink" title="五、把 SQLite 接入后，MCP 才真正有生产力"></a>五、把 SQLite 接入后，MCP 才真正有生产力</h2><p>单纯读文件已经有用了，但真正让 MCP 变强的，通常是<strong>把本地数据库接进来</strong>。</p>
+<p>这意味着 AI 不只是看文本，而是可以直接查结构化信息。</p>
+<h3 id="一个非常实用的场景"><a href="#一个非常实用的场景" class="headerlink" title="一个非常实用的场景"></a>一个非常实用的场景</h3><p>你有一个本地 SQLite 数据库，存着：</p>
+<ul>
+<li>文章草稿</li>
+<li>任务列表</li>
+<li>本地知识库</li>
+<li>研究记录</li>
+</ul>
+<p>你可以让 AI 直接查：</p>
+<ul>
+<li>最近 7 天的任务完成情况</li>
+<li>还没发布的文章草稿</li>
+<li>某个关键词相关的历史记录</li>
+</ul>
+<p>这比把所有内容复制进提示词里高效得多。</p>
+<h3 id="一个查询示例"><a href="#一个查询示例" class="headerlink" title="一个查询示例"></a>一个查询示例</h3><pre><code class="language-python">@mcp.tool()
+def latest_articles(db_file: str, limit: int = 10) -&gt; list[dict[str, Any]]:
+    &quot;&quot;&quot;查询最近文章列表。&quot;&quot;&quot;
+    db_path = _safe_path(db_file)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    try:
+        cur = conn.execute(
+            &quot;&quot;&quot;
+            SELECT title, published_at, tags
+            FROM articles
+            ORDER BY published_at DESC
+            LIMIT ?
+            &quot;&quot;&quot;,
+            (limit,),
+        )
+        return [dict(row) for row in cur.fetchall()]
+    finally:
+        conn.close()
+</code></pre>
+<p>如果你把这个工具接到 Claude Desktop，AI 就能直接问：</p>
+<blockquote>
+<p>“帮我找出最近未发布但和 MCP 相关的文章草稿。”</p>
+</blockquote>
+<p>这就是 MCP 真正开始像“智能工作台”的时刻。</p>
+<hr>
+<h2 id="六、常见坑：为什么你的-MCP-Server-看起来能跑，但不好用"><a href="#六、常见坑：为什么你的-MCP-Server-看起来能跑，但不好用" class="headerlink" title="六、常见坑：为什么你的 MCP Server 看起来能跑，但不好用"></a>六、常见坑：为什么你的 MCP Server 看起来能跑，但不好用</h2><h3 id="坑-1：工具太多"><a href="#坑-1：工具太多" class="headerlink" title="坑 1：工具太多"></a>坑 1：工具太多</h3><p>工具越多，AI 越容易选错。</p>
+<p>建议先从 3 到 5 个高频工具开始，跑顺了再扩展。</p>
+<h3 id="坑-2：权限太大"><a href="#坑-2：权限太大" class="headerlink" title="坑 2：权限太大"></a>坑 2：权限太大</h3><p>如果你的工具默认能读写整个系统，迟早会出问题。</p>
+<p>建议：</p>
+<ul>
+<li>默认只读</li>
+<li>写操作单独拆工具</li>
+<li>对路径、SQL、URL 做白名单&#x2F;黑名单限制</li>
+</ul>
+<h3 id="坑-3：返回值不结构化"><a href="#坑-3：返回值不结构化" class="headerlink" title="坑 3：返回值不结构化"></a>坑 3：返回值不结构化</h3><p>AI 喜欢结构化返回。</p>
+<p>简单、稳定、可预测，比“写得像文档”更重要。</p>
+<h3 id="坑-4：没有错误提示"><a href="#坑-4：没有错误提示" class="headerlink" title="坑 4：没有错误提示"></a>坑 4：没有错误提示</h3><p>如果文件不存在、数据库表不存在、SQL 语法错了，要尽量返回明确错误。</p>
+<p>不要只回一个空字符串。</p>
+<hr>
+<h2 id="七、适合你直接落地的-3-个-MCP-Server-小项目"><a href="#七、适合你直接落地的-3-个-MCP-Server-小项目" class="headerlink" title="七、适合你直接落地的 3 个 MCP Server 小项目"></a>七、适合你直接落地的 3 个 MCP Server 小项目</h2><p>如果你想从这篇文章立刻开始，建议做下面三种小项目之一：</p>
+<h3 id="1-本地笔记查询器"><a href="#1-本地笔记查询器" class="headerlink" title="1. 本地笔记查询器"></a>1. 本地笔记查询器</h3><p>工具：</p>
+<ul>
+<li><code>list_notes</code></li>
+<li><code>read_note</code></li>
+<li><code>search_note</code></li>
+</ul>
+<p>适合：Obsidian、Markdown 知识库、研究笔记。</p>
+<h3 id="2-文章草稿检索器"><a href="#2-文章草稿检索器" class="headerlink" title="2. 文章草稿检索器"></a>2. 文章草稿检索器</h3><p>工具：</p>
+<ul>
+<li><code>latest_drafts</code></li>
+<li><code>search_drafts_by_keyword</code></li>
+<li><code>get_draft_status</code></li>
+</ul>
+<p>适合：内容团队、博客作者、公众号运营。</p>
+<h3 id="3-SQLite-运营面板"><a href="#3-SQLite-运营面板" class="headerlink" title="3. SQLite 运营面板"></a>3. SQLite 运营面板</h3><p>工具：</p>
+<ul>
+<li><code>latest_articles</code></li>
+<li><code>count_by_tag</code></li>
+<li><code>find_unpublished</code></li>
+</ul>
+<p>适合：把自己的内容和任务系统结构化起来。</p>
+<p>这三种都不复杂，但都足够让你真正理解 MCP 的价值。</p>
+<hr>
+<h2 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a>八、总结</h2><p>Python 写 MCP Server 的核心意义，不是“我会不会又多学一个框架”，而是你终于可以把自己的本地数据、团队数据、业务规则，统一接进一个标准化的 Agent 接口里。</p>
+<p>它让 AI 从“会回答”变成“会操作”，而且这些操作不是散乱的脚本，而是可复用、可治理、可逐步扩展的工具能力。</p>
+<p>如果你今天只想记住一句话，那就是：</p>
+<p><strong>MCP 不是让 AI 更聪明，而是让 AI 能真正调用你自己的世界。</strong></p>
+<hr>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/posts/3337c530.html">Claude Code 完整使用指南：从入门到自动化工作流</a></li>
+<li><a href="/posts/2f8d61b2.html">AI 辅助代码审查实战：让 PR Review 不再拖慢交付</a></li>
+<li><a href="/posts/735773a7.html">用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://docs.github.com/actions">GitHub Actions 官方文档</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://www.jrrm.top">bingchun.zhao</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://www.jrrm.top/posts/9e4f1c2a.html">https://www.jrrm.top/posts/9e4f1c2a.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://www.jrrm.top" target="_blank">一个技术宅</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a><a class="post-meta__tags" href="/tags/Claude-Desktop/">Claude Desktop</a><a class="post-meta__tags" href="/tags/Python/">Python</a><a class="post-meta__tags" href="/tags/%E6%9C%AC%E5%9C%B0%E8%87%AA%E5%8A%A8%E5%8C%96/">本地自动化</a></div><div class="post-share"><div class="social-share" data-image="/images/blog/ai-prompt-engineering-cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechat.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechat.png" alt="微信支付"/></a><div class="post-qr-code-desc">微信支付</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/posts/7b6d2a1f.html" title="Claude Desktop 接入 GitHub：MCP 实战，从查看 PR 到自动化操作"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/claude-code-guide-2026.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Claude Desktop 接入 GitHub：MCP 实战，从查看 PR 到自动化操作</div></div><div class="info-2"><div class="info-item-1">通过 GitHub MCP Server 把 Issue、Pull Request、变更摘要和仓库信息接入 Claude Desktop，让 AI 直接查看 PR、整理风险点，并逐步参与自动化协作。</div></div></div></a><a class="pagination-related" href="/posts/2f8d61b2.html" title="AI 辅助代码审查实战：让 PR Review 不再拖慢交付"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/ai-code-review-pr-review.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 辅助代码审查实战：让 PR Review 不再拖慢交付</div></div><div class="info-2"><div class="info-item-1">通过 AI 辅助代码审查，把重复的 PR Review 工作自动化、结构化，帮助团队更快发现安全问题、性能隐患和可维护性风险。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/7b6d2a1f.html" title="Claude Desktop 接入 GitHub：MCP 实战，从查看 PR 到自动化操作"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/claude-code-guide-2026.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-21</div><div class="info-item-2">Claude Desktop 接入 GitHub：MCP 实战，从查看 PR 到自动化操作</div></div><div class="info-2"><div class="info-item-1">通过 GitHub MCP Server 把 Issue、Pull Request、变更摘要和仓库信息接入 Claude Desktop，让 AI 直接查看 PR、整理风险点，并逐步参与自动化协作。</div></div></div></a><a class="pagination-related" href="/posts/21c9a31c.html" title="2026 年最值得关注的 10 个 AI 开源项目：从编程助手到本地部署全覆盖"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-28</div><div class="info-item-2">2026 年最值得关注的 10 个 AI 开源项目：从编程助手到本地部署全覆盖</div></div><div class="info-2"><div class="info-item-1">盘点 2026 年 GitHub 上最火的 10 个 AI 开源项目，涵盖 AI 编程助手、本地大模型、AI Agent 框架、工作流编排等方向，附 Star 数据、适用场景和上手建议。</div></div></div></a><a class="pagination-related" href="/posts/3337c530.html" title="Claude Code 完整使用指南：从入门到自动化工作流"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/claude-code-guide-2026.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-02</div><div class="info-item-2">Claude Code 完整使用指南：从入门到自动化工作流</div></div><div class="info-2"><div class="info-item-1">深度解析 Claude Code 的核心能力、配置技巧与自动化工作流搭建，帮助开发者真正把 AI 编程助手融入日常开发流程，而不只是偶尔用用的玩具。</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">bingchun.zhao</div><div class="author-info-description">一个技术宅，喜欢研究技术，喜欢分享技术</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">71</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/zhaobingchun"><i class="fab fa-github"></i><span>关注我</span></a><div class="card-info-social-icons"><a class="social-icon" href="mailto:bingchun.zhao@qq.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fas fa-rss" style="color: #ff6600;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">网站建设中...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E5%B7%B1%E5%86%99-MCP-Server"><span class="toc-number">1.</span> <span class="toc-text">一、为什么要自己写 MCP Server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%B7%B1%E5%86%99-Server-%E7%9A%84%E4%B8%89%E4%B8%AA%E4%BB%B7%E5%80%BC"><span class="toc-number">1.1.</span> <span class="toc-text">自己写 Server 的三个价值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%85%88%E6%90%AD%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%9A%84-Python-MCP-Server"><span class="toc-number">2.</span> <span class="toc-text">二、先搭一个最小可运行的 Python MCP Server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96"><span class="toc-number">2.1.</span> <span class="toc-text">1. 安装依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA-server-py"><span class="toc-number">2.2.</span> <span class="toc-text">2. 创建 server.py</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">2.3.</span> <span class="toc-text">3. 这段代码做了什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%8A%8A%E8%BF%99%E4%B8%AA-Server-%E6%8E%A5%E5%88%B0-Claude-Desktop"><span class="toc-number">3.</span> <span class="toc-text">三、把这个 Server 接到 Claude Desktop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%8A%8A%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%81%9A%E6%88%90%E7%9C%9F%E6%AD%A3%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number">4.</span> <span class="toc-text">四、把文件读取做成真正好用的工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="toc-number">4.1.</span> <span class="toc-text">推荐的设计原则</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%B7%A5%E5%85%B7%E8%A6%81%E5%B0%8F%E8%80%8C%E7%B2%BE"><span class="toc-number">4.1.1.</span> <span class="toc-text">1. 工具要小而精</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%BF%94%E5%9B%9E%E5%80%BC%E8%A6%81%E7%BB%93%E6%9E%84%E6%B8%85%E6%99%B0"><span class="toc-number">4.1.2.</span> <span class="toc-text">2. 返回值要结构清晰</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E9%99%90%E5%88%B6%E5%8F%AF%E8%AE%BF%E9%97%AE%E8%8C%83%E5%9B%B4"><span class="toc-number">4.1.3.</span> <span class="toc-text">3. 限制可访问范围</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%8A%8A-SQLite-%E6%8E%A5%E5%85%A5%E5%90%8E%EF%BC%8CMCP-%E6%89%8D%E7%9C%9F%E6%AD%A3%E6%9C%89%E7%94%9F%E4%BA%A7%E5%8A%9B"><span class="toc-number">5.</span> <span class="toc-text">五、把 SQLite 接入后，MCP 才真正有生产力</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E9%9D%9E%E5%B8%B8%E5%AE%9E%E7%94%A8%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">5.1.</span> <span class="toc-text">一个非常实用的场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%9F%A5%E8%AF%A2%E7%A4%BA%E4%BE%8B"><span class="toc-number">5.2.</span> <span class="toc-text">一个查询示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%B8%B8%E8%A7%81%E5%9D%91%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%A0%E7%9A%84-MCP-Server-%E7%9C%8B%E8%B5%B7%E6%9D%A5%E8%83%BD%E8%B7%91%EF%BC%8C%E4%BD%86%E4%B8%8D%E5%A5%BD%E7%94%A8"><span class="toc-number">6.</span> <span class="toc-text">六、常见坑：为什么你的 MCP Server 看起来能跑，但不好用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%91-1%EF%BC%9A%E5%B7%A5%E5%85%B7%E5%A4%AA%E5%A4%9A"><span class="toc-number">6.1.</span> <span class="toc-text">坑 1：工具太多</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%91-2%EF%BC%9A%E6%9D%83%E9%99%90%E5%A4%AA%E5%A4%A7"><span class="toc-number">6.2.</span> <span class="toc-text">坑 2：权限太大</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%91-3%EF%BC%9A%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8D%E7%BB%93%E6%9E%84%E5%8C%96"><span class="toc-number">6.3.</span> <span class="toc-text">坑 3：返回值不结构化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%91-4%EF%BC%9A%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%8F%90%E7%A4%BA"><span class="toc-number">6.4.</span> <span class="toc-text">坑 4：没有错误提示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E9%80%82%E5%90%88%E4%BD%A0%E7%9B%B4%E6%8E%A5%E8%90%BD%E5%9C%B0%E7%9A%84-3-%E4%B8%AA-MCP-Server-%E5%B0%8F%E9%A1%B9%E7%9B%AE"><span class="toc-number">7.</span> <span class="toc-text">七、适合你直接落地的 3 个 MCP Server 小项目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%9C%AC%E5%9C%B0%E7%AC%94%E8%AE%B0%E6%9F%A5%E8%AF%A2%E5%99%A8"><span class="toc-number">7.1.</span> <span class="toc-text">1. 本地笔记查询器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%96%87%E7%AB%A0%E8%8D%89%E7%A8%BF%E6%A3%80%E7%B4%A2%E5%99%A8"><span class="toc-number">7.2.</span> <span class="toc-text">2. 文章草稿检索器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-SQLite-%E8%BF%90%E8%90%A5%E9%9D%A2%E6%9D%BF"><span class="toc-number">7.3.</span> <span class="toc-text">3. SQLite 运营面板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">八、总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB"><span class="toc-number">9.</span> <span class="toc-text">延伸阅读</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/7b6d2a1f.html" title="Claude Desktop 接入 GitHub：MCP 实战，从查看 PR 到自动化操作"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/claude-code-guide-2026.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Desktop 接入 GitHub：MCP 实战，从查看 PR 到自动化操作"/></a><div class="content"><a class="title" href="/posts/7b6d2a1f.html" title="Claude Desktop 接入 GitHub：MCP 实战，从查看 PR 到自动化操作">Claude Desktop 接入 GitHub：MCP 实战，从查看 PR 到自动化操作</a><time datetime="2026-04-21T02:00:00.000Z" title="发表于 2026-04-21 10:00:00">2026-04-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/9e4f1c2a.html" title="从零用 Python 写一个 MCP Server：本地文件与数据库实战"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/blog/ai-prompt-engineering-cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从零用 Python 写一个 MCP Server：本地文件与数据库实战"/></a><div class="content"><a class="title" href="/posts/9e4f1c2a.html" title="从零用 Python 写一个 MCP Server：本地文件与数据库实战">从零用 Python 写一个 MCP Server：本地文件与数据库实战</a><time datetime="2026-04-20T02:00:00.000Z" title="发表于 2026-04-20 10:00:00">2026-04-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2f8d61b2.html" title="AI 辅助代码审查实战：让 PR Review 不再拖慢交付"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/covers/ai-code-review-pr-review.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 辅助代码审查实战：让 PR Review 不再拖慢交付"/></a><div class="content"><a class="title" href="/posts/2f8d61b2.html" title="AI 辅助代码审查实战：让 PR Review 不再拖慢交付">AI 辅助代码审查实战：让 PR Review 不再拖慢交付</a><time datetime="2026-04-17T02:10:00.000Z" title="发表于 2026-04-17 10:10:00">2026-04-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/8541121a.html" title="DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南">DeepSeek vs Claude 4.6：2026 年 AI 编程模型的「黄金组合」与避坑指南</a><time datetime="2026-04-13T16:00:00.000Z" title="发表于 2026-04-14 00:00:00">2026-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/735773a7.html" title="用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑">用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</a><time datetime="2026-04-10T02:10:00.000Z" title="发表于 2026-04-10 10:10:00">2026-04-10</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2020 - 2026 By bingchun.zhao</span></div><div class="footer_custom_text"><a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.miit.gov.cn/#/Integrated/index"><span>备案号：鲁ICP备18038916号-1</span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = `%%{init:{ 'theme':'${theme}'}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (false) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const applyThemeDefaultsConfig = theme => {
+    if (theme === 'dark-mode') {
+      Chart.defaults.color = "rgba(255, 255, 255, 0.8)"
+      Chart.defaults.borderColor = "rgba(255, 255, 255, 0.2)"
+      Chart.defaults.scale.ticks.backdropColor = "transparent"
+    } else {
+      Chart.defaults.color = "rgba(0, 0, 0, 0.8)"
+      Chart.defaults.borderColor = "rgba(0, 0, 0, 0.1)"
+      Chart.defaults.scale.ticks.backdropColor = "transparent"
+    }
+  }
+
+  // Recursively traverse the config object and automatically apply theme-specific color schemes
+  const applyThemeConfig = (obj, theme) => {
+    if (typeof obj !== 'object' || obj === null) return
+
+    Object.keys(obj).forEach(key => {
+      const value = obj[key]
+      // If the property is an object and has theme-specific options, apply them
+      if (typeof value === 'object' && value !== null) {
+        if (value[theme]) {
+          obj[key] = value[theme] // Apply the value for the current theme
+        } else {
+          // Recursively process child objects
+          applyThemeConfig(value, theme)
+        }
+      }
+    })
+  }
+
+  const runChartJS = ele => {
+    window.loadChartJS = true
+
+    Array.from(ele).forEach((item, index) => {
+      const chartSrc = item.firstElementChild
+      const chartID = item.getAttribute('data-chartjs-id') || ('chartjs-' + index) // Use custom ID or default ID
+      const width = item.getAttribute('data-width')
+      const existingCanvas = document.getElementById(chartID)
+
+      // If a canvas already exists, remove it to avoid rendering duplicates
+      if (existingCanvas) {
+          existingCanvas.parentNode.remove()
+      }
+
+      const chartDefinition = chartSrc.textContent
+      const canvas = document.createElement('canvas')
+      canvas.id = chartID
+
+      const div = document.createElement('div')
+      div.className = 'chartjs-wrap'
+
+      if (width) {
+        div.style.width = width
+      }
+
+      div.appendChild(canvas)
+      chartSrc.insertAdjacentElement('afterend', div)
+
+      const ctx = document.getElementById(chartID).getContext('2d')
+
+      const config = JSON.parse(chartDefinition)
+
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark-mode' : 'light-mode'
+
+      // Set default styles (initial setup)
+      applyThemeDefaultsConfig(theme)
+
+      // Automatically traverse the config and apply dual-mode color schemes
+      applyThemeConfig(config, theme)
+
+      new Chart(ctx, config)
+    })
+  }
+
+  const loadChartJS = () => {
+    const chartJSEle = document.querySelectorAll('#article-container .chartjs-container')
+    if (chartJSEle.length === 0) return
+
+    window.loadChartJS ? runChartJS(chartJSEle) : btf.getScript('https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js').then(() => runChartJS(chartJSEle))
+  }
+
+  // Listen for theme change events
+  btf.addGlobalFn('themeChange', loadChartJS, 'chartjs')
+  btf.addGlobalFn('encrypt', loadChartJS, 'chartjs')
+
+  window.pjax ? loadChartJS() : document.addEventListener('DOMContentLoaded', loadChartJS)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = (el = document, path = location.pathname) => {
+    twikoo.init({
+      el: el.querySelector('#twikoo-wrap'),
+      envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      },
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    GLOBAL_CONFIG_SITE.pageType === 'post' && getCount()
+
+    isShuoshuo && (window.shuoshuoComment.destroyTwikoo = () => {
+      if (el.children.length) {
+        el.innerHTML = ''
+        el.classList.add('no-comment')
+      }
+    })
+  }
+
+  const loadTwikoo = (el, path) => {
+    if (typeof twikoo === 'object') setTimeout(() => init(el, path), 0)
+    else btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(() => init(el, path))
+  }
+
+  if (isShuoshuo) {
+    'Twikoo' === 'Twikoo'
+      ? window.shuoshuoComment = { loadComment: loadTwikoo }
+      : window.loadOtherComment = loadTwikoo
+    return
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><script>window.newestComments = {
+  changeContent: content => {
+    if (content === '') return content
+
+    content = content.replace(/<img.*?src="(.*?)"?[^\>]+>/ig, '[图片]') // replace image link
+    content = content.replace(/<a[^>]+?href=["']?([^"']+)["']?[^>]*>([^<]+)<\/a>/gi, '[链接]') // replace url
+    content = content.replace(/<pre><code>.*?<\/pre>/gi, '[代码]') // replace code
+    content = content.replace(/<code>.*?<\/code>/gi, '[代码]') // replace code
+    content = content.replace(/<[^>]+>/g, "") // remove html tag
+
+    if (content.length > 150) {
+      content = content.substring(0, 150) + '...'
+    }
+    return content
+  },
+
+  generateHtml: (array, ele) => {
+    let result = ''
+
+    if (array.length) {
+      for (let i = 0; i < array.length; i++) {
+        result += '<div class="aside-list-item">'
+
+        if (true && array[i].avatar) {
+          const imgAttr = 'data-lazy-src'
+          const lazyloadNative = ''
+          result += `<a href="${array[i].url}" class="thumbnail"><img ${imgAttr}="${array[i].avatar}" alt="${array[i].nick}" ${lazyloadNative}></a>`
+        }
+
+        result += `<div class="content">
+        <a class="comment" href="${array[i].url}" title="${array[i].content}">${array[i].content}</a>
+        <div class="name"><span>${array[i].nick} / </span><time datetime="${array[i].date}">${btf.diffDate(array[i].date, true)}</time></div>
+        </div></div>`
+      }
+    } else {
+      result += '暂无评论'
+    }
+
+    ele.innerHTML = result
+    window.lazyLoadInstance && window.lazyLoadInstance.update()
+    window.pjax && window.pjax.refresh(ele)
+  },
+
+  newestCommentInit: (name, getComment) => {
+    const $dom = document.querySelector('#card-newest-comments .aside-list')
+    if ($dom) {
+      const data = btf.saveToLocal.get(name)
+      if (data) {
+        newestComments.generateHtml(JSON.parse(data), $dom)
+      } else {
+        getComment($dom)
+      }
+    }
+  },
+
+  run: (name, getComment) => {
+    newestComments.newestCommentInit(name, getComment)
+    btf.addGlobalFn('pjaxComplete', () => newestComments.newestCommentInit(name, getComment), name)
+  }
+}</script><script>window.addEventListener('load', () => {
+  const keyName = 'twikoo-newest-comments'
+  const { changeContent, generateHtml, run } = window.newestComments
+
+  const getComment = ele => {
+    const runTwikoo = () => {
+      twikoo.getRecentComments({
+        envId: 'https://comment.jrrm.top/.netlify/functions/twikoo',
+        region: '',
+        pageSize: 6,
+        includeReply: true
+      }).then(res => {
+        const twikooArray = res.map(e => {
+          return {
+            'content': changeContent(e.comment),
+            'avatar': e.avatar,
+            'nick': e.nick,
+            'url': e.url + '#' + e.id,
+            'date': new Date(e.created).toISOString()
+          }
+        })
+
+        btf.saveToLocal.set(keyName, JSON.stringify(twikooArray), 10/(60*24))
+        generateHtml(twikooArray, ele)
+      }).catch(err => {
+        console.error(err)
+        ele.textContent= "无法获取评论，请确认相关配置是否正确"
+      })
+    }
+
+    if (typeof twikoo === 'object') {
+      runTwikoo()
+    } else {
+      btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(runTwikoo)
+    }
+  }
+
+  run(keyName, getComment)
+})</script><div class="aplayer no-destroy" data-id="2235097256" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true" data-order="random" data-volume="0.3" data-mini="true" data-listfolded="true" data-lrctype="1"> </div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

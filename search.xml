@@ -4,6 +4,72 @@
   
     
     <entry>
+      <title>Claude Desktop 接入 GitHub：MCP 实战，从查看 PR 到自动化操作</title>
+      <link href="/posts/7b6d2a1f.html"/>
+      <url>/posts/7b6d2a1f.html</url>
+      
+        <content type="html"><![CDATA[<p>如果说 Python 写 MCP Server 解决的是“怎么把本地能力接进来”，那 GitHub MCP Server 解决的就是另一个更常见的问题：<strong>怎么让 Claude Desktop 直接看懂你的仓库、Issue 和 PR</strong>。</p><p>这篇文章我们不做概念科普，直接走实战路径：</p><ul><li>把 GitHub 接进 Claude Desktop</li><li>读取仓库、Issue、Pull Request</li><li>让 AI 帮你总结变更风险</li><li>进一步把它和代码审查、自动化工作流结合起来</li></ul><span id="more"></span><h2 id="一、为什么-GitHub-是最值得接的-MCP-工具源"><a href="#一、为什么-GitHub-是最值得接的-MCP-工具源" class="headerlink" title="一、为什么 GitHub 是最值得接的 MCP 工具源"></a>一、为什么 GitHub 是最值得接的 MCP 工具源</h2><p>在所有开发工具里，GitHub 可能是最适合 MCP 的一个。</p><p>原因很直接：</p><ol><li><p><strong>信息密度高</strong></p><ul><li>Issue、PR、Commit、Diff、Review、CI 状态都在里面</li></ul></li><li><p><strong>结构化程度高</strong></p><ul><li>非常适合 AI 读取和总结</li></ul></li><li><p><strong>协作价值大</strong></p><ul><li>很多团队的日常工作都围绕 PR 展开</li></ul></li><li><p><strong>自动化空间大</strong></p><ul><li>读 PR、总结风险、检查未决评论、识别重复问题，这些都很适合交给 AI 先处理一遍</li></ul></li></ol><p>如果你已经看过《<a href="/posts/2f8d61b2.html">AI 辅助代码审查实战：让 PR Review 不再拖慢交付</a>》，这篇会更像那篇文章的“工具落地版”：前者讲“怎么让 AI 先筛”，后者讲“怎么把仓库直接接进 AI 的工作台”。</p><hr><h2 id="二、先准备好最小闭环"><a href="#二、先准备好最小闭环" class="headerlink" title="二、先准备好最小闭环"></a>二、先准备好最小闭环</h2><p>在开始之前，你只需要三样东西：</p><ul><li>Claude Desktop 或支持 MCP 的 Agent 客户端</li><li>GitHub Personal Access Token（建议最小权限）</li><li>GitHub MCP Server</li></ul><h3 id="权限建议"><a href="#权限建议" class="headerlink" title="权限建议"></a>权限建议</h3><p>Token 不要一上来就给全仓库写权限。</p><p>建议先从只读开始：</p><ul><li><code>repo:read</code></li><li>读取 Issues &#x2F; Pull Requests &#x2F; Commits</li></ul><p>如果你之后要让它执行写操作，再单独扩展权限。</p><hr><h2 id="三、配置-GitHub-MCP-Server"><a href="#三、配置-GitHub-MCP-Server" class="headerlink" title="三、配置 GitHub MCP Server"></a>三、配置 GitHub MCP Server</h2><p>不同实现的 GitHub MCP Server 启动方式可能略有不同，但思路一致：</p><ul><li>指定启动命令</li><li>传入 GitHub Token</li><li>在 Claude Desktop 里注册成一个 MCP Server</li></ul><p>一个常见写法示例如下：</p><pre><code class="language-json">&#123;  &quot;mcpServers&quot;: &#123;    &quot;github&quot;: &#123;      &quot;command&quot;: &quot;npx&quot;,      &quot;args&quot;: [&quot;-y&quot;, &quot;@modelcontextprotocol/server-github&quot;],      &quot;env&quot;: &#123;        &quot;GITHUB_TOKEN&quot;: &quot;ghp_xxxxxxxxxxxxxxxxxxxx&quot;      &#125;    &#125;  &#125;&#125;</code></pre><blockquote><p>注：不同发行版的包名和参数可能略有差异，实际以你安装的 GitHub MCP Server 文档为准；但配置结构基本都类似。</p></blockquote><p>配置好以后，Claude Desktop 就会多出一个 GitHub 工具源。</p><hr><h2 id="四、你可以先让-AI-做哪些-GitHub-任务"><a href="#四、你可以先让-AI-做哪些-GitHub-任务" class="headerlink" title="四、你可以先让 AI 做哪些 GitHub 任务"></a>四、你可以先让 AI 做哪些 GitHub 任务</h2><p>最稳妥的做法，是先让 AI 做<strong>只读类任务</strong>。</p><h3 id="1-看-open-PR"><a href="#1-看-open-PR" class="headerlink" title="1. 看 open PR"></a>1. 看 open PR</h3><p>你可以直接问：</p><blockquote><p>帮我列出最近 5 个 open PR，并按风险点总结一下。</p></blockquote><p>AI 会先读取 PR 元数据，再帮你做初步归类：</p><ul><li>文档类</li><li>功能类</li><li>重构类</li><li>高风险改动</li></ul><h3 id="2-总结-PR-内容"><a href="#2-总结-PR-内容" class="headerlink" title="2. 总结 PR 内容"></a>2. 总结 PR 内容</h3><p>你可以让它回答：</p><blockquote><p>这个 PR 改了什么？涉及哪些模块？有没有明显测试缺口？</p></blockquote><p>这一步非常适合代替“先看 diff 再理解上下文”的低效流程。</p><h3 id="3-检查-Issue-是否重复"><a href="#3-检查-Issue-是否重复" class="headerlink" title="3. 检查 Issue 是否重复"></a>3. 检查 Issue 是否重复</h3><p>你可以问：</p><blockquote><p>这个 Issue 跟最近 30 天内已有的 Issue 有没有重复？</p></blockquote><p>这对中大型仓库尤其有价值。</p><h3 id="4-让-AI-先做-PR-Review-预审"><a href="#4-让-AI-先做-PR-Review-预审" class="headerlink" title="4. 让 AI 先做 PR Review 预审"></a>4. 让 AI 先做 PR Review 预审</h3><p>例如：</p><blockquote><p>帮我审查这个 PR 的变更摘要，列出安全、性能、测试和可维护性风险。</p></blockquote><p>这和你团队里的人工 Review 并不冲突，反而能把 Review 变成“先机器筛一遍，再由人拍板”。</p><hr><h2 id="五、一个更实用的工作流：PR-预审模板"><a href="#五、一个更实用的工作流：PR-预审模板" class="headerlink" title="五、一个更实用的工作流：PR 预审模板"></a>五、一个更实用的工作流：PR 预审模板</h2><p>如果你想把 GitHub MCP 真正用起来，建议把它和 PR 模板绑定。</p><p>比如每个 PR 都要求提交人写：</p><ul><li>改动目的</li><li>核心文件</li><li>风险点</li><li>测试结果</li><li>回滚方式</li></ul><p>然后让 Claude Desktop 去读取这些内容，再补上自己的判断。</p><h3 id="推荐提问方式"><a href="#推荐提问方式" class="headerlink" title="推荐提问方式"></a>推荐提问方式</h3><pre><code class="language-text">请基于这个 PR 的标题、描述和变更文件，输出一个结构化审查报告：1. 这次改动的核心目标是什么2. 可能的风险点有哪些3. 哪些地方需要人工重点确认4. 是否建议合并</code></pre><p>这种提问方式能逼着 AI 输出更接近“审查报告”，而不是“聊天总结”。</p><hr><h2 id="六、从查看-PR-到自动化操作，边界怎么划"><a href="#六、从查看-PR-到自动化操作，边界怎么划" class="headerlink" title="六、从查看 PR 到自动化操作，边界怎么划"></a>六、从查看 PR 到自动化操作，边界怎么划</h2><p>很多人听到“接入 GitHub”之后，第一反应是：</p><blockquote><p>能不能直接让 AI 帮我合 PR、发评论、关 Issue？</p></blockquote><p>答案是：<strong>能做，但不建议一上来就这么干。</strong></p><h3 id="推荐的演进顺序"><a href="#推荐的演进顺序" class="headerlink" title="推荐的演进顺序"></a>推荐的演进顺序</h3><h4 id="第一阶段：只读"><a href="#第一阶段：只读" class="headerlink" title="第一阶段：只读"></a>第一阶段：只读</h4><ul><li>读仓库信息</li><li>读 PR &#x2F; Issue</li><li>做总结和风险分析</li></ul><h4 id="第二阶段：半自动"><a href="#第二阶段：半自动" class="headerlink" title="第二阶段：半自动"></a>第二阶段：半自动</h4><ul><li>生成建议评论草稿</li><li>生成 Review 模板</li><li>由人手动确认后再发出</li></ul><h4 id="第三阶段：受控自动"><a href="#第三阶段：受控自动" class="headerlink" title="第三阶段：受控自动"></a>第三阶段：受控自动</h4><ul><li>对低风险操作自动执行</li><li>对高风险操作需要人工确认</li></ul><h4 id="第四阶段：策略化自动化"><a href="#第四阶段：策略化自动化" class="headerlink" title="第四阶段：策略化自动化"></a>第四阶段：策略化自动化</h4><ul><li>结合 CI、标签、文件路径、风险等级进行自动路由</li></ul><p>这个顺序很重要，因为 GitHub 代表的是<strong>真实协作现场</strong>，任何误操作都会直接影响团队节奏。</p><hr><h2 id="七、一个可落地的-GitHub-Claude-Desktop-例子"><a href="#七、一个可落地的-GitHub-Claude-Desktop-例子" class="headerlink" title="七、一个可落地的 GitHub + Claude Desktop 例子"></a>七、一个可落地的 GitHub + Claude Desktop 例子</h2><p>假设你现在有一个仓库里出现了一个 PR，提交了 12 个文件。</p><p>你可以直接问 Claude Desktop：</p><blockquote><p>请帮我看这个 PR：</p><ul><li>改了哪些模块</li><li>是否可能引入空指针或权限问题</li><li>有没有漏测的场景</li><li>如果让我给出 Review 意见，最该先问哪三个问题</li></ul></blockquote><p>Claude 会从 GitHub 里把 PR 的上下文拉出来，再结合你给出的审查维度输出结果。</p><h3 id="这比纯手工快在哪"><a href="#这比纯手工快在哪" class="headerlink" title="这比纯手工快在哪"></a>这比纯手工快在哪</h3><ul><li>不用自己打开网页、切仓库、翻 diff</li><li>不用一边看代码一边记上下文</li><li>不用来回切 Issue、PR、commit 页面</li></ul><p>本质上，它帮你把“仓库浏览”变成了“对话式浏览”。</p><hr><h2 id="八、适合和-GitHub-MCP-一起搭配的场景"><a href="#八、适合和-GitHub-MCP-一起搭配的场景" class="headerlink" title="八、适合和 GitHub MCP 一起搭配的场景"></a>八、适合和 GitHub MCP 一起搭配的场景</h2><h3 id="1-代码审查"><a href="#1-代码审查" class="headerlink" title="1. 代码审查"></a>1. 代码审查</h3><p>和《<a href="/posts/2f8d61b2.html">AI 辅助代码审查实战：让 PR Review 不再拖慢交付</a>》形成闭环：</p><ul><li>GitHub MCP 负责读取 PR</li><li>AI 负责先筛风险点</li><li>人负责最终决定是否合并</li></ul><h3 id="2-发布前检查"><a href="#2-发布前检查" class="headerlink" title="2. 发布前检查"></a>2. 发布前检查</h3><p>发布前让 AI 看：</p><ul><li>相关 Issue 是否都已关闭</li><li>PR 是否有未解决评论</li><li>是否有回滚方案</li></ul><h3 id="3-项目管理"><a href="#3-项目管理" class="headerlink" title="3. 项目管理"></a>3. 项目管理</h3><p>如果你的仓库用 Issue 管项目，可以让 AI 帮你：</p><ul><li>总结迭代进度</li><li>找出卡住的任务</li><li>统计高频问题</li></ul><h3 id="4-新人上手"><a href="#4-新人上手" class="headerlink" title="4. 新人上手"></a>4. 新人上手</h3><p>对新人来说，GitHub MCP 是非常好的“仓库导览器”：</p><ul><li>仓库怎么分层</li><li>近期变更集中在哪些模块</li><li>哪些 PR 最值得看</li></ul><hr><h2 id="九、要特别注意的安全问题"><a href="#九、要特别注意的安全问题" class="headerlink" title="九、要特别注意的安全问题"></a>九、要特别注意的安全问题</h2><p>GitHub 接入 AI 以后，最重要的不是“能不能”，而是“怎么安全地能”。</p><h3 id="1-最小权限"><a href="#1-最小权限" class="headerlink" title="1. 最小权限"></a>1. 最小权限</h3><p>Token 只给必要权限，先读后写。</p><h3 id="2-只让它做低风险动作"><a href="#2-只让它做低风险动作" class="headerlink" title="2. 只让它做低风险动作"></a>2. 只让它做低风险动作</h3><p>例如：</p><ul><li>读取 Issue</li><li>总结 PR</li><li>提交建议评论草稿</li></ul><p>不要一开始就让它直接执行高影响操作。</p><h3 id="3-保留人工确认"><a href="#3-保留人工确认" class="headerlink" title="3. 保留人工确认"></a>3. 保留人工确认</h3><p>凡是会影响合并、删除、关闭、发布的动作，建议都保留确认步骤。</p><h3 id="4-记录操作轨迹"><a href="#4-记录操作轨迹" class="headerlink" title="4. 记录操作轨迹"></a>4. 记录操作轨迹</h3><p>建议保留：</p><ul><li>AI 输出</li><li>实际执行动作</li><li>人工确认记录</li></ul><p>这样后面排查问题时才有依据。</p><hr><h2 id="十、总结"><a href="#十、总结" class="headerlink" title="十、总结"></a>十、总结</h2><p>GitHub 是最适合 MCP 的工具源之一，因为它既结构化，又高频，又和开发协作深度绑定。</p><p>当你把 GitHub 接进 Claude Desktop 后，AI 不再只是“看代码的人”，而会变成一个能帮你：</p><ul><li>读 PR</li><li>看 Issue</li><li>汇总风险</li><li>组织 Review</li><li>辅助项目管理</li></ul><p>的协作伙伴。</p><p>如果你已经在用 Claude Code、AI 代码审查或者 GitHub Actions，这篇文章就更像是把这些点串起来的“中心枢纽”。</p><p><strong>一句话总结：</strong><br>把 GitHub 接进 MCP，不是为了让 AI 直接接管仓库，而是为了让你在仓库里思考和行动都更快。</p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="/posts/9e4f1c2a.html">从零用 Python 写一个 MCP Server：本地文件与数据库实战</a></li><li><a href="/posts/2f8d61b2.html">AI 辅助代码审查实战：让 PR Review 不再拖慢交付</a></li><li><a href="/posts/3337c530.html">Claude Code 完整使用指南：从入门到自动化工作流</a></li><li><a href="https://docs.github.com/actions">GitHub Actions 官方文档</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 工具效率 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> GitHub </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 代码审查 </tag>
+            
+            <tag> MCP </tag>
+            
+            <tag> Claude Desktop </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>从零用 Python 写一个 MCP Server：本地文件与数据库实战</title>
+      <link href="/posts/9e4f1c2a.html"/>
+      <url>/posts/9e4f1c2a.html</url>
+      
+        <content type="html"><![CDATA[<p>如果你已经开始接触 MCP，下一步最值得做的事情，不是继续背协议名词，而是<strong>亲手写一个自己的 MCP Server</strong>。</p><p>原因很简单：只要你真正把“本地文件”和“数据库查询”接进来，你就会马上明白 MCP 到底解决了什么问题——它不是在替代你的业务逻辑，而是在给 AI Agent 提供一套稳定、统一、可复用的工具接入方式。</p><p>这篇文章我们不讲概念堆砌，直接用 Python 做一个最小可用、能落地的 MCP Server：</p><ul><li>能读本地文本文件</li><li>能列出目录内容</li><li>能查询 SQLite 数据库</li><li>能被 Claude Desktop 直接调用</li></ul><span id="more"></span><h2 id="一、为什么要自己写-MCP-Server"><a href="#一、为什么要自己写-MCP-Server" class="headerlink" title="一、为什么要自己写 MCP Server"></a>一、为什么要自己写 MCP Server</h2><p>很多人第一次接触 MCP 时，会觉得“现成的 Server 已经很多了，为什么还要自己写”。</p><p>答案是：<strong>你几乎一定会有自己的私有数据源和内部规则</strong>。</p><p>现成的 MCP Server 很适合通用工具，比如 GitHub、Notion、文件系统；但一旦你想接入：</p><ul><li>本地知识库</li><li>团队共享文档</li><li>内网数据库</li><li>项目专属脚本</li><li>只允许读不允许写的业务数据</li></ul><p>你就会发现，自己写一个 Server 反而更稳。</p><h3 id="自己写-Server-的三个价值"><a href="#自己写-Server-的三个价值" class="headerlink" title="自己写 Server 的三个价值"></a>自己写 Server 的三个价值</h3><ol><li><p><strong>可控</strong></p><ul><li>你决定暴露什么工具</li><li>你决定哪些路径能读，哪些不能读</li><li>你决定返回的数据粒度</li></ul></li><li><p><strong>可复用</strong></p><ul><li>写一次，Claude Desktop、你自己的 Agent、后续脚本都能用</li></ul></li><li><p><strong>更贴近业务</strong></p><ul><li>不是“给 AI 一个数据库”，而是“给 AI 一个符合你团队规则的数据库视图”</li></ul></li></ol><p>如果你已经看过《<a href="/posts/3337c530.html">Claude Code 完整使用指南：从入门到自动化工作流</a>》，你会更容易理解这件事：Claude Code 解决的是“怎么让 AI 进入工作流”，MCP 解决的是“怎么让 AI 接上真实工具”。</p><hr><h2 id="二、先搭一个最小可运行的-Python-MCP-Server"><a href="#二、先搭一个最小可运行的-Python-MCP-Server" class="headerlink" title="二、先搭一个最小可运行的 Python MCP Server"></a>二、先搭一个最小可运行的 Python MCP Server</h2><p>我们用 Python 官方&#x2F;主流 MCP SDK 的写法来做一个简单服务器。下面这个示例重点是思路清楚、结构简单、能直接扩展。</p><h3 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1. 安装依赖"></a>1. 安装依赖</h3><pre><code class="language-bash">python -m venv .venvsource .venv/bin/activatepip install mcp</code></pre><p>如果你在公司环境里有额外规范，也可以把 <code>sqlite3</code>、<code>pathlib</code> 这些标准库直接用起来，不额外引入复杂依赖。</p><h3 id="2-创建-server-py"><a href="#2-创建-server-py" class="headerlink" title="2. 创建 server.py"></a>2. 创建 server.py</h3><p>下面这个版本包含三个工具：</p><ul><li><code>read_text_file</code>：读取文本文件</li><li><code>list_dir</code>：列出目录内容</li><li><code>query_sqlite</code>：查询 SQLite 数据库</li></ul><pre><code class="language-python">from pathlib import Pathimport sqlite3from typing import Anyfrom mcp.server.fastmcp import FastMCPmcp = FastMCP(&quot;local-tools&quot;)BASE_DIR = Path.home() / &quot;Documents&quot;def _safe_path(path: str) -&gt; Path:    &quot;&quot;&quot;限制只能访问 BASE_DIR 下的文件，避免越权读取。&quot;&quot;&quot;    target = (BASE_DIR / path).resolve()    if BASE_DIR not in target.parents and target != BASE_DIR:        raise ValueError(f&quot;Path not allowed: &#123;path&#125;&quot;)    return target@mcp.tool()def read_text_file(path: str) -&gt; str:    &quot;&quot;&quot;读取 BASE_DIR 下的文本文件。&quot;&quot;&quot;    file_path = _safe_path(path)    if not file_path.exists():        return f&quot;File not found: &#123;path&#125;&quot;    if not file_path.is_file():        return f&quot;Not a file: &#123;path&#125;&quot;    return file_path.read_text(encoding=&quot;utf-8&quot;)@mcp.tool()def list_dir(path: str = &quot;.&quot;) -&gt; list[str]:    &quot;&quot;&quot;列出目录内容。&quot;&quot;&quot;    dir_path = _safe_path(path)    if not dir_path.exists():        return [f&quot;Directory not found: &#123;path&#125;&quot;]    if not dir_path.is_dir():        return [f&quot;Not a directory: &#123;path&#125;&quot;]    return sorted([p.name for p in dir_path.iterdir()])@mcp.tool()def query_sqlite(db_file: str, sql: str) -&gt; list[dict[str, Any]]:    &quot;&quot;&quot;只读查询 SQLite 数据库。&quot;&quot;&quot;    db_path = _safe_path(db_file)    if not db_path.exists():        return [&#123;&quot;error&quot;: f&quot;Database not found: &#123;db_file&#125;&quot;&#125;]    conn = sqlite3.connect(db_path)    conn.row_factory = sqlite3.Row    try:        cur = conn.execute(sql)        rows = cur.fetchall()        return [dict(row) for row in rows]    finally:        conn.close()if __name__ == &quot;__main__&quot;:    mcp.run()</code></pre><h3 id="3-这段代码做了什么"><a href="#3-这段代码做了什么" class="headerlink" title="3. 这段代码做了什么"></a>3. 这段代码做了什么</h3><p>别被代码吓到，它本质上只有三个关键点：</p><ul><li><code>FastMCP(&quot;local-tools&quot;)</code>：创建 MCP Server</li><li><code>@mcp.tool()</code>：把普通 Python 函数暴露成工具</li><li><code>mcp.run()</code>：启动服务</li></ul><p>真正值得注意的，是我在 <code>_safe_path()</code> 里加了一个<strong>路径白名单限制</strong>。</p><p>这一步很重要，因为 MCP Server 一旦连上了 AI，就不是“给程序读文件”，而是“给智能体发能力”。你必须明确控制它能读哪里、不能读哪里。</p><hr><h2 id="三、把这个-Server-接到-Claude-Desktop"><a href="#三、把这个-Server-接到-Claude-Desktop" class="headerlink" title="三、把这个 Server 接到 Claude Desktop"></a>三、把这个 Server 接到 Claude Desktop</h2><p>写完 Server 之后，下一步是让 Claude Desktop 知道它的存在。</p><p>通常你需要在 Claude Desktop 的配置里加入一个 MCP Server 配置项。不同版本字段可能略有差异，但思路都一样：</p><ul><li>指定启动命令</li><li>指定工作目录</li><li>如有需要，传入环境变量</li></ul><p>下面是一个典型写法示例：</p><pre><code class="language-json">&#123;  &quot;mcpServers&quot;: &#123;    &quot;local-tools&quot;: &#123;      &quot;command&quot;: &quot;python&quot;,      &quot;args&quot;: [&quot;/Users/yourname/projects/local-tools/server.py&quot;],      &quot;env&quot;: &#123;        &quot;PYTHONUNBUFFERED&quot;: &quot;1&quot;      &#125;    &#125;  &#125;&#125;</code></pre><p>配置完成后，你就可以在 Claude Desktop 里这样问：</p><ul><li>“帮我看看 Documents 目录下有哪些文件”</li><li>“读取 notes.md，帮我总结今天的待办”</li><li>“查一下这个 SQLite 里最近 10 条记录”</li></ul><p>这时 AI 不是在“猜”，而是在调你自己暴露出来的工具。</p><hr><h2 id="四、把文件读取做成真正好用的工具"><a href="#四、把文件读取做成真正好用的工具" class="headerlink" title="四、把文件读取做成真正好用的工具"></a>四、把文件读取做成真正好用的工具</h2><p>很多人写的第一版 MCP Server 有一个问题：<strong>工具能跑，但不好用</strong>。</p><p>原因通常不是代码错，而是工具设计太粗。</p><h3 id="推荐的设计原则"><a href="#推荐的设计原则" class="headerlink" title="推荐的设计原则"></a>推荐的设计原则</h3><h4 id="1-工具要小而精"><a href="#1-工具要小而精" class="headerlink" title="1. 工具要小而精"></a>1. 工具要小而精</h4><p>不要把“读文件、搜文件、改文件、写文件”全揉成一个超级工具。</p><p>更好的做法是：</p><ul><li><code>read_text_file</code></li><li><code>list_dir</code></li><li><code>search_file</code></li><li><code>query_sqlite</code></li></ul><p>每个工具只负责一件事，AI 更容易选，也更容易调。</p><h4 id="2-返回值要结构清晰"><a href="#2-返回值要结构清晰" class="headerlink" title="2. 返回值要结构清晰"></a>2. 返回值要结构清晰</h4><p>AI 最怕“看起来像人写的长段解释”。</p><p>例如目录查询，最好返回：</p><pre><code class="language-json">[  &quot;notes.md&quot;,  &quot;todo.md&quot;,  &quot;archive/&quot;]</code></pre><p>而不是一大段混杂的描述。</p><h4 id="3-限制可访问范围"><a href="#3-限制可访问范围" class="headerlink" title="3. 限制可访问范围"></a>3. 限制可访问范围</h4><p>尤其是文件工具，务必要做目录白名单。</p><p>一旦你把整个磁盘都开放给 AI，风险就不再是“工具是否好用”，而是“你是否真的想把这个权限交出去”。</p><hr><h2 id="五、把-SQLite-接入后，MCP-才真正有生产力"><a href="#五、把-SQLite-接入后，MCP-才真正有生产力" class="headerlink" title="五、把 SQLite 接入后，MCP 才真正有生产力"></a>五、把 SQLite 接入后，MCP 才真正有生产力</h2><p>单纯读文件已经有用了，但真正让 MCP 变强的，通常是<strong>把本地数据库接进来</strong>。</p><p>这意味着 AI 不只是看文本，而是可以直接查结构化信息。</p><h3 id="一个非常实用的场景"><a href="#一个非常实用的场景" class="headerlink" title="一个非常实用的场景"></a>一个非常实用的场景</h3><p>你有一个本地 SQLite 数据库，存着：</p><ul><li>文章草稿</li><li>任务列表</li><li>本地知识库</li><li>研究记录</li></ul><p>你可以让 AI 直接查：</p><ul><li>最近 7 天的任务完成情况</li><li>还没发布的文章草稿</li><li>某个关键词相关的历史记录</li></ul><p>这比把所有内容复制进提示词里高效得多。</p><h3 id="一个查询示例"><a href="#一个查询示例" class="headerlink" title="一个查询示例"></a>一个查询示例</h3><pre><code class="language-python">@mcp.tool()def latest_articles(db_file: str, limit: int = 10) -&gt; list[dict[str, Any]]:    &quot;&quot;&quot;查询最近文章列表。&quot;&quot;&quot;    db_path = _safe_path(db_file)    conn = sqlite3.connect(db_path)    conn.row_factory = sqlite3.Row    try:        cur = conn.execute(            &quot;&quot;&quot;            SELECT title, published_at, tags            FROM articles            ORDER BY published_at DESC            LIMIT ?            &quot;&quot;&quot;,            (limit,),        )        return [dict(row) for row in cur.fetchall()]    finally:        conn.close()</code></pre><p>如果你把这个工具接到 Claude Desktop，AI 就能直接问：</p><blockquote><p>“帮我找出最近未发布但和 MCP 相关的文章草稿。”</p></blockquote><p>这就是 MCP 真正开始像“智能工作台”的时刻。</p><hr><h2 id="六、常见坑：为什么你的-MCP-Server-看起来能跑，但不好用"><a href="#六、常见坑：为什么你的-MCP-Server-看起来能跑，但不好用" class="headerlink" title="六、常见坑：为什么你的 MCP Server 看起来能跑，但不好用"></a>六、常见坑：为什么你的 MCP Server 看起来能跑，但不好用</h2><h3 id="坑-1：工具太多"><a href="#坑-1：工具太多" class="headerlink" title="坑 1：工具太多"></a>坑 1：工具太多</h3><p>工具越多，AI 越容易选错。</p><p>建议先从 3 到 5 个高频工具开始，跑顺了再扩展。</p><h3 id="坑-2：权限太大"><a href="#坑-2：权限太大" class="headerlink" title="坑 2：权限太大"></a>坑 2：权限太大</h3><p>如果你的工具默认能读写整个系统，迟早会出问题。</p><p>建议：</p><ul><li>默认只读</li><li>写操作单独拆工具</li><li>对路径、SQL、URL 做白名单&#x2F;黑名单限制</li></ul><h3 id="坑-3：返回值不结构化"><a href="#坑-3：返回值不结构化" class="headerlink" title="坑 3：返回值不结构化"></a>坑 3：返回值不结构化</h3><p>AI 喜欢结构化返回。</p><p>简单、稳定、可预测，比“写得像文档”更重要。</p><h3 id="坑-4：没有错误提示"><a href="#坑-4：没有错误提示" class="headerlink" title="坑 4：没有错误提示"></a>坑 4：没有错误提示</h3><p>如果文件不存在、数据库表不存在、SQL 语法错了，要尽量返回明确错误。</p><p>不要只回一个空字符串。</p><hr><h2 id="七、适合你直接落地的-3-个-MCP-Server-小项目"><a href="#七、适合你直接落地的-3-个-MCP-Server-小项目" class="headerlink" title="七、适合你直接落地的 3 个 MCP Server 小项目"></a>七、适合你直接落地的 3 个 MCP Server 小项目</h2><p>如果你想从这篇文章立刻开始，建议做下面三种小项目之一：</p><h3 id="1-本地笔记查询器"><a href="#1-本地笔记查询器" class="headerlink" title="1. 本地笔记查询器"></a>1. 本地笔记查询器</h3><p>工具：</p><ul><li><code>list_notes</code></li><li><code>read_note</code></li><li><code>search_note</code></li></ul><p>适合：Obsidian、Markdown 知识库、研究笔记。</p><h3 id="2-文章草稿检索器"><a href="#2-文章草稿检索器" class="headerlink" title="2. 文章草稿检索器"></a>2. 文章草稿检索器</h3><p>工具：</p><ul><li><code>latest_drafts</code></li><li><code>search_drafts_by_keyword</code></li><li><code>get_draft_status</code></li></ul><p>适合：内容团队、博客作者、公众号运营。</p><h3 id="3-SQLite-运营面板"><a href="#3-SQLite-运营面板" class="headerlink" title="3. SQLite 运营面板"></a>3. SQLite 运营面板</h3><p>工具：</p><ul><li><code>latest_articles</code></li><li><code>count_by_tag</code></li><li><code>find_unpublished</code></li></ul><p>适合：把自己的内容和任务系统结构化起来。</p><p>这三种都不复杂，但都足够让你真正理解 MCP 的价值。</p><hr><h2 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a>八、总结</h2><p>Python 写 MCP Server 的核心意义，不是“我会不会又多学一个框架”，而是你终于可以把自己的本地数据、团队数据、业务规则，统一接进一个标准化的 Agent 接口里。</p><p>它让 AI 从“会回答”变成“会操作”，而且这些操作不是散乱的脚本，而是可复用、可治理、可逐步扩展的工具能力。</p><p>如果你今天只想记住一句话，那就是：</p><p><strong>MCP 不是让 AI 更聪明，而是让 AI 能真正调用你自己的世界。</strong></p><hr><h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul><li><a href="/posts/3337c530.html">Claude Code 完整使用指南：从入门到自动化工作流</a></li><li><a href="/posts/2f8d61b2.html">AI 辅助代码审查实战：让 PR Review 不再拖慢交付</a></li><li><a href="/posts/735773a7.html">用 AI 写单元测试的正确方法：从提升覆盖率到保证业务逻辑</a></li><li><a href="https://docs.github.com/actions">GitHub Actions 官方文档</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI实战 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
+            
+            <tag> Claude Desktop </tag>
+            
+            <tag> Python </tag>
+            
+            <tag> 本地自动化 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>AI 辅助代码审查实战：让 PR Review 不再拖慢交付</title>
       <link href="/posts/2f8d61b2.html"/>
       <url>/posts/2f8d61b2.html</url>
@@ -20,13 +86,13 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> AI 编程 </tag>
             
             <tag> 代码审查 </tag>
             
             <tag> PR Review </tag>
-            
-            <tag> Claude Code </tag>
             
             <tag> GitHub Actions </tag>
             
@@ -148,11 +214,11 @@
       
         <tags>
             
-            <tag> AI 编程 </tag>
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
-            <tag> AI Agent </tag>
+            <tag> AI 编程 </tag>
             
             <tag> 自动化工作流 </tag>
             
@@ -214,13 +280,13 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI编程 </tag>
             
-            <tag> Cursor </tag>
+            <tag> Claude Code </tag>
             
             <tag> 开发效率 </tag>
+            
+            <tag> Cursor </tag>
             
             <tag> AI工具对比 </tag>
             
@@ -344,9 +410,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI编程 </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> 开发工具 </tag>
             
@@ -377,9 +443,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI编程 </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> 开发效率 </tag>
             
@@ -681,9 +747,9 @@
     
     
     <entry>
-      <title>about</title>
-      <link href="/about/index.html"/>
-      <url>/about/index.html</url>
+      <title>分类</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -703,6 +769,17 @@
     
     
     <entry>
+      <title>留言板</title>
+      <link href="/messageboard/index.html"/>
+      <url>/messageboard/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>photo</title>
       <link href="/photo/index.html"/>
       <url>/photo/index.html</url>
@@ -714,9 +791,9 @@
     
     
     <entry>
-      <title>分类</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -736,20 +813,9 @@
     
     
     <entry>
-      <title>留言板</title>
-      <link href="/messageboard/index.html"/>
-      <url>/messageboard/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>日志</title>
-      <link href="/timeline/index.html"/>
-      <url>/timeline/index.html</url>
+      <title>about</title>
+      <link href="/about/index.html"/>
+      <url>/about/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -762,16 +828,16 @@
       <link href="/privacy/index.html"/>
       <url>/privacy/index.html</url>
       
-        <content type="html"><![CDATA[<h1 id="语师AI-隐私政策"><a href="#语师AI-隐私政策" class="headerlink" title="语师AI 隐私政策"></a>语师AI 隐私政策</h1><p><strong>更新日期：2026年3月31日</strong><br><strong>生效日期：2026年3月31日</strong></p><h2 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h2><p>欢迎使用「语师AI」小程序（以下简称”本产品”）。我们深知个人信息对您的重要性，将严格遵守相关法律法规，保护您的个人信息及隐私安全。请您仔细阅读本隐私政策。</p><h2 id="二、我们收集的信息"><a href="#二、我们收集的信息" class="headerlink" title="二、我们收集的信息"></a>二、我们收集的信息</h2><h3 id="2-1-您主动提供的信息"><a href="#2-1-您主动提供的信息" class="headerlink" title="2.1 您主动提供的信息"></a>2.1 您主动提供的信息</h3><ul><li><strong>作文内容</strong>：您提交的作文文本或拍照上传的作文图片，用于 AI 批改服务</li><li><strong>微信授权信息</strong>：微信昵称、头像（仅在您授权后获取）</li></ul><h3 id="2-2-自动收集的信息"><a href="#2-2-自动收集的信息" class="headerlink" title="2.2 自动收集的信息"></a>2.2 自动收集的信息</h3><ul><li><strong>设备信息</strong>：设备型号、操作系统版本（用于适配和问题排查）</li><li><strong>使用记录</strong>：批改次数、功能使用频率（用于服务优化）</li></ul><h3 id="2-3-我们不收集的信息"><a href="#2-3-我们不收集的信息" class="headerlink" title="2.3 我们不收集的信息"></a>2.3 我们不收集的信息</h3><ul><li>❌ 手机号码、身份证号等身份证件信息</li><li>❌ 通讯录、短信等通信信息</li><li>❌ 精确地理位置信息</li><li>❌ 学生真实姓名（由老师自行管理，我们不做身份核验）</li></ul><h2 id="三、信息的使用目的"><a href="#三、信息的使用目的" class="headerlink" title="三、信息的使用目的"></a>三、信息的使用目的</h2><p>我们收集的信息仅用于以下目的：</p><ol><li><strong>提供批改服务</strong>：将作文内容发送至 AI 模型进行分析和批改</li><li><strong>服务改进</strong>：分析使用数据以优化产品体验</li><li><strong>安全保障</strong>：防止恶意使用、保障服务稳定运行</li></ol><h2 id="四、信息的存储与保护"><a href="#四、信息的存储与保护" class="headerlink" title="四、信息的存储与保护"></a>四、信息的存储与保护</h2><ul><li>作文内容及批改结果存储在腾讯云（微信云开发）服务器，位于中国境内</li><li>采用传输加密（HTTPS）和存储加密措施保护数据安全</li><li>仅授权人员可访问用户数据，且受严格的访问控制</li></ul><h2 id="五、信息的共享"><a href="#五、信息的共享" class="headerlink" title="五、信息的共享"></a>五、信息的共享</h2><p>我们<strong>不会</strong>将您的个人信息出售、出租或共享给第三方，但以下情况除外：</p><ul><li>经您明确同意</li><li>为提供核心服务所必需（如将作文文本发送至 AI 大模型服务商进行批改）</li><li>法律法规要求</li></ul><h3 id="AI-服务说明"><a href="#AI-服务说明" class="headerlink" title="AI 服务说明"></a>AI 服务说明</h3><p>本产品使用腾讯云 CloudBase AI 大模型服务（DeepSeek）进行作文批改。作文内容将传输至该服务进行分析处理，处理完成后不会被 AI 服务商额外存储或用于其他目的。</p><h2 id="六、您的权利"><a href="#六、您的权利" class="headerlink" title="六、您的权利"></a>六、您的权利</h2><p>您享有以下权利：</p><ul><li><strong>查看</strong>：随时查看您的批改历史和个人信息</li><li><strong>删除</strong>：可联系我们删除您的账号和相关数据</li><li><strong>撤回授权</strong>：可在微信设置中撤回对本小程序的授权</li></ul><h2 id="七、未成年人保护"><a href="#七、未成年人保护" class="headerlink" title="七、未成年人保护"></a>七、未成年人保护</h2><p>本产品的直接使用者为教师。若教师代学生提交作文进行批改，教师应确保已获得学生监护人的适当授权。</p><h2 id="八、隐私政策的更新"><a href="#八、隐私政策的更新" class="headerlink" title="八、隐私政策的更新"></a>八、隐私政策的更新</h2><p>我们可能适时修订本隐私政策。更新后的政策将在本页面发布，重大变更将通过小程序内通知告知。</p><h2 id="九、联系我们"><a href="#九、联系我们" class="headerlink" title="九、联系我们"></a>九、联系我们</h2><p>如对本隐私政策有任何疑问或建议，请通过以下方式联系：</p><ul><li><strong>邮箱</strong>：<a href="mailto:&#98;&#105;&#x6e;&#103;&#x63;&#104;&#x75;&#110;&#x2e;&#x7a;&#104;&#x61;&#x6f;&#x40;&#113;&#113;&#46;&#x63;&#111;&#x6d;">bingchun.zhao@qq.com</a></li></ul><hr><p><em>本隐私政策适用于「语师AI」微信小程序。</em></p>]]></content>
+        <content type="html"><![CDATA[<h1 id="语师AI-隐私政策"><a href="#语师AI-隐私政策" class="headerlink" title="语师AI 隐私政策"></a>语师AI 隐私政策</h1><p><strong>更新日期：2026年3月31日</strong><br><strong>生效日期：2026年3月31日</strong></p><h2 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h2><p>欢迎使用「语师AI」小程序（以下简称”本产品”）。我们深知个人信息对您的重要性，将严格遵守相关法律法规，保护您的个人信息及隐私安全。请您仔细阅读本隐私政策。</p><h2 id="二、我们收集的信息"><a href="#二、我们收集的信息" class="headerlink" title="二、我们收集的信息"></a>二、我们收集的信息</h2><h3 id="2-1-您主动提供的信息"><a href="#2-1-您主动提供的信息" class="headerlink" title="2.1 您主动提供的信息"></a>2.1 您主动提供的信息</h3><ul><li><strong>作文内容</strong>：您提交的作文文本或拍照上传的作文图片，用于 AI 批改服务</li><li><strong>微信授权信息</strong>：微信昵称、头像（仅在您授权后获取）</li></ul><h3 id="2-2-自动收集的信息"><a href="#2-2-自动收集的信息" class="headerlink" title="2.2 自动收集的信息"></a>2.2 自动收集的信息</h3><ul><li><strong>设备信息</strong>：设备型号、操作系统版本（用于适配和问题排查）</li><li><strong>使用记录</strong>：批改次数、功能使用频率（用于服务优化）</li></ul><h3 id="2-3-我们不收集的信息"><a href="#2-3-我们不收集的信息" class="headerlink" title="2.3 我们不收集的信息"></a>2.3 我们不收集的信息</h3><ul><li>❌ 手机号码、身份证号等身份证件信息</li><li>❌ 通讯录、短信等通信信息</li><li>❌ 精确地理位置信息</li><li>❌ 学生真实姓名（由老师自行管理，我们不做身份核验）</li></ul><h2 id="三、信息的使用目的"><a href="#三、信息的使用目的" class="headerlink" title="三、信息的使用目的"></a>三、信息的使用目的</h2><p>我们收集的信息仅用于以下目的：</p><ol><li><strong>提供批改服务</strong>：将作文内容发送至 AI 模型进行分析和批改</li><li><strong>服务改进</strong>：分析使用数据以优化产品体验</li><li><strong>安全保障</strong>：防止恶意使用、保障服务稳定运行</li></ol><h2 id="四、信息的存储与保护"><a href="#四、信息的存储与保护" class="headerlink" title="四、信息的存储与保护"></a>四、信息的存储与保护</h2><ul><li>作文内容及批改结果存储在腾讯云（微信云开发）服务器，位于中国境内</li><li>采用传输加密（HTTPS）和存储加密措施保护数据安全</li><li>仅授权人员可访问用户数据，且受严格的访问控制</li></ul><h2 id="五、信息的共享"><a href="#五、信息的共享" class="headerlink" title="五、信息的共享"></a>五、信息的共享</h2><p>我们<strong>不会</strong>将您的个人信息出售、出租或共享给第三方，但以下情况除外：</p><ul><li>经您明确同意</li><li>为提供核心服务所必需（如将作文文本发送至 AI 大模型服务商进行批改）</li><li>法律法规要求</li></ul><h3 id="AI-服务说明"><a href="#AI-服务说明" class="headerlink" title="AI 服务说明"></a>AI 服务说明</h3><p>本产品使用腾讯云 CloudBase AI 大模型服务（DeepSeek）进行作文批改。作文内容将传输至该服务进行分析处理，处理完成后不会被 AI 服务商额外存储或用于其他目的。</p><h2 id="六、您的权利"><a href="#六、您的权利" class="headerlink" title="六、您的权利"></a>六、您的权利</h2><p>您享有以下权利：</p><ul><li><strong>查看</strong>：随时查看您的批改历史和个人信息</li><li><strong>删除</strong>：可联系我们删除您的账号和相关数据</li><li><strong>撤回授权</strong>：可在微信设置中撤回对本小程序的授权</li></ul><h2 id="七、未成年人保护"><a href="#七、未成年人保护" class="headerlink" title="七、未成年人保护"></a>七、未成年人保护</h2><p>本产品的直接使用者为教师。若教师代学生提交作文进行批改，教师应确保已获得学生监护人的适当授权。</p><h2 id="八、隐私政策的更新"><a href="#八、隐私政策的更新" class="headerlink" title="八、隐私政策的更新"></a>八、隐私政策的更新</h2><p>我们可能适时修订本隐私政策。更新后的政策将在本页面发布，重大变更将通过小程序内通知告知。</p><h2 id="九、联系我们"><a href="#九、联系我们" class="headerlink" title="九、联系我们"></a>九、联系我们</h2><p>如对本隐私政策有任何疑问或建议，请通过以下方式联系：</p><ul><li><strong>邮箱</strong>：<a href="mailto:&#x62;&#105;&#x6e;&#x67;&#99;&#104;&#117;&#x6e;&#46;&#122;&#x68;&#x61;&#111;&#64;&#113;&#113;&#46;&#99;&#x6f;&#x6d;">bingchun.zhao@qq.com</a></li></ul><hr><p><em>本隐私政策适用于「语师AI」微信小程序。</em></p>]]></content>
       
     </entry>
     
     
     
     <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
+      <title>日志</title>
+      <link href="/timeline/index.html"/>
+      <url>/timeline/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
